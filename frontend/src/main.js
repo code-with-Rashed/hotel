@@ -1,4 +1,5 @@
-import './assets/main.css'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap-icons/font/bootstrap-icons.min.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
@@ -12,3 +13,7 @@ app.use(createPinia())
 app.use(router)
 
 app.mount('#app')
+
+router.beforeEach((to) => {
+  document.title = to.meta.title
+})
