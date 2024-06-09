@@ -20,6 +20,18 @@ const router = createRouter({
       name: 'rooms',
       component: () => import('../views/admin/RoomsView.vue'),
       meta: { title: 'Rooms' }
+    },
+    {
+      path: '/admin/room/features',
+      name: 'features',
+      component: () => import('../views/admin/FeaturesView.vue'),
+      meta: { title: 'Room Features' }
+    },
+    {
+      path: '/admin/room/facilities',
+      name: 'facilities',
+      component: () => import('../views/admin/FacilitiesView.vue'),
+      meta: { title: 'Room Facilities' }
     }
   ]
 })

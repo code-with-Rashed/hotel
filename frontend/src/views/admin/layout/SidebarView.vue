@@ -37,6 +37,18 @@ if (innerWidth > 1100) {
           <span>Rooms</span>
         </RouterLink>
       </li>
+      <li class="sidebar-item">
+        <RouterLink :to="{ name: 'features' }" class="sidebar-link" title="Room Features">
+          <i class="bi bi-layers fs-5 me-1"></i>
+          <span>Featuers</span>
+        </RouterLink>
+      </li>
+      <li class="sidebar-item">
+        <RouterLink :to="{ name: 'facilities' }" class="sidebar-link" title="Room Facilities">
+          <i class="bi bi-layers-half fs-5 me-1"></i>
+          <span>Facilities</span>
+        </RouterLink>
+      </li>
     </ul>
   </aside>
 </template>
