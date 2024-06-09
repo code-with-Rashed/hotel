@@ -14,6 +14,12 @@ const router = createRouter({
       name: 'dashboard',
       component: () => import('../views/admin/DashboardView.vue'),
       meta: { title: 'Dashboard' }
+    },
+    {
+      path: '/admin/rooms',
+      name: 'rooms',
+      component: () => import('../views/admin/RoomsView.vue'),
+      meta: { title: 'Rooms' }
     }
   ]
 })
