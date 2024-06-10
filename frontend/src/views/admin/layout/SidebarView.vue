@@ -81,6 +81,12 @@ if (innerWidth > 1100) {
           <span>Settings</span>
         </RouterLink>
       </li>
+      <li class="sidebar-item">
+        <RouterLink :to="{ name: 'address' }" class="sidebar-link" title="Address Management .">
+          <i class="bi bi-geo-alt fs-5 me-1"></i>
+          <span>Address</span>
+        </RouterLink>
+      </li>
     </ul>
   </aside>
 </template>

@@ -56,6 +56,12 @@ const router = createRouter({
       name: 'settings',
       component: () => import('../views/admin/SettingsView.vue'),
       meta: { title: 'Settings Management' }
+    },
+    {
+      path: '/admin/address',
+      name: 'address',
+      component: () => import('../views/admin/AddressView.vue'),
+      meta: { title: 'Address Management' }
     }
   ]
 })
