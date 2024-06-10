@@ -65,6 +65,12 @@ if (innerWidth > 1100) {
           <span>Contact Us</span>
         </RouterLink>
       </li>
+      <li class="sidebar-item">
+        <RouterLink :to="{ name: 'carousel' }" class="sidebar-link" title="Carousel image Management .">
+          <i class="bi bi-sliders fs-5 me-1"></i>
+          <span>Carousel</span>
+        </RouterLink>
+      </li>
     </ul>
   </aside>
 </template>

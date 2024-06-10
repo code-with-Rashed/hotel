@@ -44,6 +44,12 @@ const router = createRouter({
       name: 'contact-us',
       component: () => import('../views/admin/ContactUsView.vue'),
       meta: { title: 'Contact Us' }
+    },
+    {
+      path: '/admin/carousel/management',
+      name: 'carousel',
+      component: () => import('../views/admin/CarouselView.vue'),
+      meta: { title: 'Carousel Management' }
     }
   ]
 })
