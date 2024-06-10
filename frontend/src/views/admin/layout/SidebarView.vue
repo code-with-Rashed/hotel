@@ -88,5 +88,21 @@ if (innerWidth > 1100) {
         </RouterLink>
       </li>
     </ul>
+    <div class="sidebar-footer">
+      <RouterLink :to="{ name: 'profile' }" class="sidebar-link" title="Profile Management .">
+        <img
+          src="https://i.vimeocdn.com/portrait/62976452_640x640"
+          alt="profile"
+          width="30px"
+          height="30px"
+          class="rounded-circle"
+        />
+        <span class="ms-1">Rashed alam</span>
+      </RouterLink>
+      <a href="#" class="sidebar-link">
+        <i class="bi bi-box-arrow-left"></i>
+        <span>Logout</span>
+      </a>
+    </div>
   </aside>
 </template>

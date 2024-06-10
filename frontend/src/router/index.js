@@ -62,6 +62,12 @@ const router = createRouter({
       name: 'address',
       component: () => import('../views/admin/AddressView.vue'),
       meta: { title: 'Address Management' }
+    },
+    {
+      path: '/admin/profile',
+      name: 'profile',
+      component: () => import('../views/admin/ProfileView.vue'),
+      meta: { title: 'Profile Management' }
     }
   ]
 })
