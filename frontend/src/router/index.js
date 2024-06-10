@@ -32,6 +32,12 @@ const router = createRouter({
       name: 'facilities',
       component: () => import('../views/admin/FacilitiesView.vue'),
       meta: { title: 'Room Facilities' }
+    },
+    {
+      path: '/admin/contact-us',
+      name: 'contact-us',
+      component: () => import('../views/admin/ContactUsView.vue'),
+      meta: { title: 'Contact Us' }
     }
   ]
 })

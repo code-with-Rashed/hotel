@@ -49,6 +49,12 @@ if (innerWidth > 1100) {
           <span>Facilities</span>
         </RouterLink>
       </li>
+      <li class="sidebar-item">
+        <RouterLink :to="{ name: 'contact-us' }" class="sidebar-link" title="Visitior Contact Us">
+          <i class="bi bi-envelope fs-5 me-1"></i>
+          <span>Contact Us</span>
+        </RouterLink>
+      </li>
     </ul>
   </aside>
 </template>
