@@ -28,6 +28,12 @@ const router = createRouter({
       meta: { title: 'Room Features' }
     },
     {
+      path: '/admin/room/ratings/reviews',
+      name: 'ratings-reviews',
+      component: () => import('../views/admin/RatingsReviewsView.vue'),
+      meta: { title: 'Ratings & Reviews' }
+    },
+    {
       path: '/admin/room/facilities',
       name: 'facilities',
       component: () => import('../views/admin/FacilitiesView.vue'),
