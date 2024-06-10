@@ -50,6 +50,12 @@ const router = createRouter({
       name: 'carousel',
       component: () => import('../views/admin/CarouselView.vue'),
       meta: { title: 'Carousel Management' }
+    },
+    {
+      path: '/admin/settings',
+      name: 'settings',
+      component: () => import('../views/admin/SettingsView.vue'),
+      meta: { title: 'Settings Management' }
     }
   ]
 })

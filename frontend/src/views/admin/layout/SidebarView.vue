@@ -66,9 +66,19 @@ if (innerWidth > 1100) {
         </RouterLink>
       </li>
       <li class="sidebar-item">
-        <RouterLink :to="{ name: 'carousel' }" class="sidebar-link" title="Carousel image Management .">
+        <RouterLink
+          :to="{ name: 'carousel' }"
+          class="sidebar-link"
+          title="Carousel image Management ."
+        >
           <i class="bi bi-sliders fs-5 me-1"></i>
           <span>Carousel</span>
+        </RouterLink>
+      </li>
+      <li class="sidebar-item">
+        <RouterLink :to="{ name: 'settings' }" class="sidebar-link" title="Settings Management .">
+          <i class="bi bi-gear fs-5 me-1"></i>
+          <span>Settings</span>
         </RouterLink>
       </li>
     </ul>
