@@ -38,6 +38,39 @@ if (innerWidth > 1100) {
         </RouterLink>
       </li>
       <li class="sidebar-item">
+        <a
+          title="Bookings Details"
+          class="sidebar-link btn text-white text-start"
+          data-bs-toggle="collapse"
+          data-bs-target="#bookingLinks"
+        >
+          <i class="bi bi-grid-1x2 fs-5"></i>
+          Bookings Details
+        </a>
+        <div class="px-3 small mb-1 collapse" id="bookingLinks">
+          <ul class="nav nav-pills flex-column rounded border border-1 border-secondary">
+            <li class="sidebar-link">
+              <RouterLink class="sidebar-link" :to="{ name: 'new-bookings' }" title="New Bookings"
+                >New Bookings
+              </RouterLink>
+            </li>
+            <li class="sidebar-link">
+              <RouterLink
+                class="sidebar-link"
+                :to="{ name: 'refund-bookings' }"
+                title="Refund Bookings"
+                >Refund Bookings
+              </RouterLink>
+            </li>
+            <li class="sidebar-link">
+              <RouterLink class="sidebar-link" :to="{ name: 'all-bookings' }" title="All Bookings"
+                >All Bookings
+              </RouterLink>
+            </li>
+          </ul>
+        </div>
+      </li>
+      <li class="sidebar-item">
         <RouterLink :to="{ name: 'features' }" class="sidebar-link" title="Room Features">
           <i class="bi bi-layers fs-5 me-1"></i>
           <span>Featuers</span>

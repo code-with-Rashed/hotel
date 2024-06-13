@@ -22,6 +22,24 @@ const router = createRouter({
       meta: { title: 'Rooms' }
     },
     {
+      path: '/admin/new/bookings',
+      name: 'new-bookings',
+      component: () => import('../views/admin/NewBookings.vue'),
+      meta: { title: 'New Bookings' }
+    },
+    {
+      path: '/admin/refund/bookings',
+      name: 'refund-bookings',
+      component: () => import('../views/admin/RefundBookings.vue'),
+      meta: { title: 'Refund Bookings' }
+    },
+    {
+      path: '/admin/all/bookings',
+      name: 'all-bookings',
+      component: () => import('../views/admin/AllBookings.vue'),
+      meta: { title: 'All Bookings' }
+    },
+    {
       path: '/admin/room/features',
       name: 'features',
       component: () => import('../views/admin/FeaturesView.vue'),
