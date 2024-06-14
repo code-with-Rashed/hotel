@@ -5,87 +5,93 @@ const router = createRouter({
   routes: [
     {
       path: '/admin',
-      name: 'login',
-      component: () => import('../views/admin/LoginView.vue'),
-      meta: { title: 'Login' }
-    },
-    {
-      path: '/admin/dashboard',
-      name: 'dashboard',
-      component: () => import('../views/admin/DashboardView.vue'),
-      meta: { title: 'Dashboard' }
-    },
-    {
-      path: '/admin/rooms',
-      name: 'rooms',
-      component: () => import('../views/admin/RoomsView.vue'),
-      meta: { title: 'Rooms' }
-    },
-    {
-      path: '/admin/new/bookings',
-      name: 'new-bookings',
-      component: () => import('../views/admin/NewBookings.vue'),
-      meta: { title: 'New Bookings' }
-    },
-    {
-      path: '/admin/refund/bookings',
-      name: 'refund-bookings',
-      component: () => import('../views/admin/RefundBookings.vue'),
-      meta: { title: 'Refund Bookings' }
-    },
-    {
-      path: '/admin/all/bookings',
-      name: 'all-bookings',
-      component: () => import('../views/admin/AllBookings.vue'),
-      meta: { title: 'All Bookings' }
-    },
-    {
-      path: '/admin/room/features',
-      name: 'features',
-      component: () => import('../views/admin/FeaturesView.vue'),
-      meta: { title: 'Room Features' }
-    },
-    {
-      path: '/admin/room/ratings/reviews',
-      name: 'ratings-reviews',
-      component: () => import('../views/admin/RatingsReviewsView.vue'),
-      meta: { title: 'Ratings & Reviews' }
-    },
-    {
-      path: '/admin/room/facilities',
-      name: 'facilities',
-      component: () => import('../views/admin/FacilitiesView.vue'),
-      meta: { title: 'Room Facilities' }
-    },
-    {
-      path: '/admin/contact-us',
-      name: 'contact-us',
-      component: () => import('../views/admin/ContactUsView.vue'),
-      meta: { title: 'Contact Us' }
-    },
-    {
-      path: '/admin/carousel/management',
-      name: 'carousel',
-      component: () => import('../views/admin/CarouselView.vue'),
-      meta: { title: 'Carousel Management' }
-    },
-    {
-      path: '/admin/settings',
-      name: 'settings',
-      component: () => import('../views/admin/SettingsView.vue'),
-      meta: { title: 'Settings Management' }
-    },
-    {
-      path: '/admin/address',
-      name: 'address',
-      component: () => import('../views/admin/AddressView.vue'),
-      meta: { title: 'Address Management' }
-    },
-    {
-      path: '/admin/profile',
-      name: 'profile',
-      component: () => import('../views/admin/ProfileView.vue'),
-      meta: { title: 'Profile Management' }
+      children: [
+        {
+          path: '',
+          name: 'login',
+          meta: { title: 'Admin Login Page' },
+          component: () => import('../views/admin/LoginView.vue')
+        },
+        {
+          path: 'dashboard',
+          name: 'dashboard',
+          component: () => import('../views/admin/DashboardView.vue'),
+          meta: { title: 'Dashboard' }
+        },
+        {
+          path: 'rooms',
+          name: 'rooms',
+          component: () => import('../views/admin/RoomsView.vue'),
+          meta: { title: 'Rooms' }
+        },
+        {
+          path: 'new/bookings',
+          name: 'new-bookings',
+          component: () => import('../views/admin/NewBookings.vue'),
+          meta: { title: 'New Bookings' }
+        },
+        {
+          path: 'refund/bookings',
+          name: 'refund-bookings',
+          component: () => import('../views/admin/RefundBookings.vue'),
+          meta: { title: 'Refund Bookings' }
+        },
+
+        {
+          path: 'all/bookings',
+          name: 'all-bookings',
+          component: () => import('../views/admin/AllBookings.vue'),
+          meta: { title: 'All Bookings' }
+        },
+        {
+          path: 'room/features',
+          name: 'features',
+          component: () => import('../views/admin/FeaturesView.vue'),
+          meta: { title: 'Room Features' }
+        },
+        {
+          path: 'room/ratings/reviews',
+          name: 'ratings-reviews',
+          component: () => import('../views/admin/RatingsReviewsView.vue'),
+          meta: { title: 'Ratings & Reviews' }
+        },
+        {
+          path: 'room/facilities',
+          name: 'facilities',
+          component: () => import('../views/admin/FacilitiesView.vue'),
+          meta: { title: 'Room Facilities' }
+        },
+        {
+          path: 'contact-us',
+          name: 'contact-us',
+          component: () => import('../views/admin/ContactUsView.vue'),
+          meta: { title: 'Contact Us' }
+        },
+        {
+          path: 'carousel/management',
+          name: 'carousel',
+          component: () => import('../views/admin/CarouselView.vue'),
+          meta: { title: 'Carousel Management' }
+        },
+        {
+          path: 'settings',
+          name: 'settings',
+          component: () => import('../views/admin/SettingsView.vue'),
+          meta: { title: 'Settings Management' }
+        },
+        {
+          path: 'address',
+          name: 'address',
+          component: () => import('../views/admin/AddressView.vue'),
+          meta: { title: 'Address Management' }
+        },
+        {
+          path: 'profile',
+          name: 'profile',
+          component: () => import('../views/admin/ProfileView.vue'),
+          meta: { title: 'Profile Management' }
+        }
+      ]
     }
   ]
 })
