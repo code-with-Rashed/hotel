@@ -92,6 +92,36 @@ const router = createRouter({
           meta: { title: 'Profile Management' }
         }
       ]
+    },
+    {
+      path: '/',
+      name: 'home-page',
+      component: () => import('../views/visitior/HomeView.vue'),
+      meta: { title: 'Home' }
+    },
+    {
+      path: '/rooms',
+      name: 'rooms-page',
+      component: () => import('../views/visitior/RoomsView.vue'),
+      meta: { title: 'Rooms' }
+    },
+    {
+      path: '/facilities',
+      name: 'facilities-page',
+      component: () => import('../views/visitior/FacilitiesView.vue'),
+      meta: { title: 'Facilities' }
+    },
+    {
+      path: '/contact-us',
+      name: 'contact-page',
+      component: () => import('../views/visitior/ContactView.vue'),
+      meta: { title: 'Contact Us' }
+    },
+    {
+      path: '/about',
+      name: 'about-page',
+      component: () => import('../views/visitior/AboutView.vue'),
+      meta: { title: 'About Us' }
     }
   ]
 })
