@@ -1,5 +1,7 @@
 <script setup>
 import { RouterLink } from 'vue-router'
+import LoginModal from '@/components/visitior/LoginModal.vue'
+import RegisterModal from '@/components/visitior/RegisterModal.vue'
 </script>
 <template>
   <!-- Navbar start -->
@@ -92,4 +94,6 @@ import { RouterLink } from 'vue-router'
     </div>
   </nav>
   <!-- Navbar end -->
+  <LoginModal />
+  <RegisterModal />
 </template>
