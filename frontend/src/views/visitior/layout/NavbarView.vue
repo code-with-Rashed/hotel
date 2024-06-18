@@ -84,9 +84,15 @@ import RegisterModal from '@/components/visitior/RegisterModal.vue'
               Rashed islam
             </button>
             <ul class="dropdown-menu dropdown-menu-lg-end">
-              <li><a href="profile.php" class="dropdown-item">Profile</a></li>
-              <li><a href="bookings.php" class="dropdown-item">Bookings</a></li>
-              <li><a href="logout.php" class="dropdown-item">Logout</a></li>
+              <li>
+                <RouterLink :to="{ name: 'user-profile-page' }" class="dropdown-item"
+                  >Profile</RouterLink
+                >
+              </li>
+              <RouterLink :to="{ name: 'user-bookings-page' }" class="dropdown-item"
+                >My Bookings</RouterLink
+              >
+              <RouterLink to="/logout" class="dropdown-item">Logout</RouterLink>
             </ul>
           </div>
         </div>

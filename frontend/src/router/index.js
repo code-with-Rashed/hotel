@@ -122,6 +122,23 @@ const router = createRouter({
       name: 'about-page',
       component: () => import('../views/visitior/AboutView.vue'),
       meta: { title: 'About Us' }
+    },
+    {
+      path: '/user',
+      children: [
+        {
+          path: 'profile',
+          name: 'user-profile-page',
+          component: () => import('../views/users/ProfileView.vue'),
+          meta: { title: 'My Profile' }
+        },
+        {
+          path: 'my-bookings',
+          name: 'user-bookings-page',
+          component: () => import('../views/users/MyBookingsView.vue'),
+          meta: { title: 'My Bookings History' }
+        }
+      ]
     }
   ]
 })
