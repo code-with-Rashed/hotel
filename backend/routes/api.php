@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AdminPanel\AdminController;
+use App\Http\Controllers\AdminPanel\FeatureController;
 
 // Admin profile routes
 Route::prefix('/admin/profile')->group(function () {
@@ -14,3 +15,12 @@ Route::prefix('/admin/profile')->group(function () {
     });
 });
 //---------------------
+
+// Room feature routes
+Route::prefix("/admin/feature")->middleware("auth:sanctum")->group(function () {
+    Route::get("/", [FeatureController::class, 'index']);
+    Route::post("/create", [FeatureController::class, 'create']);
+    Route::put("/update/{id}", [FeatureController::class, 'update']);
+    Route::delete("/delete/{id}", [FeatureController::class, 'delete']);
+});
+//--------------------
