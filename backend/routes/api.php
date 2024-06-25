@@ -7,6 +7,7 @@ use App\Http\Controllers\AdminPanel\CarouselController;
 use App\Http\Controllers\AdminPanel\ContactController;
 use App\Http\Controllers\AdminPanel\FaviconController;
 use App\Http\Controllers\AdminPanel\FeatureController;
+use App\Http\Controllers\AdminPanel\LogoController;
 
 // Admin profile routes
 Route::prefix('/admin/profile')->group(function () {
@@ -49,4 +50,10 @@ Route::prefix("/admin/carousel")->middleware("auth:sanctum")->group(function () 
 Route::prefix("/admin/favicon")->middleware("auth:sanctum")->group(function () {
     Route::get("/", [FaviconController::class, "index"]);
     Route::post("/update", [FaviconController::class, "update"]);
+});
+
+// Logo routes for admin panel
+Route::prefix("/admin/logo")->middleware("auth:sanctum")->group(function () {
+    Route::get("/", [LogoController::class, "index"]);
+    Route::post("/update", [LogoController::class, "update"]);
 });
