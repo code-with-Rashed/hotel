@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminPanel\AdminController;
 use App\Http\Controllers\AdminPanel\CarouselController;
 use App\Http\Controllers\AdminPanel\ContactController;
+use App\Http\Controllers\AdminPanel\FaviconController;
 use App\Http\Controllers\AdminPanel\FeatureController;
 
 // Admin profile routes
@@ -42,4 +43,10 @@ Route::prefix("/admin/carousel")->middleware("auth:sanctum")->group(function () 
     Route::post("/create", [CarouselController::class, "create"]);
     Route::post("/update/{id}", [CarouselController::class, "update"]);
     Route::delete("/delete/{id}", [CarouselController::class, "delete"]);
+});
+
+// Favicon routes for admin panel
+Route::prefix("/admin/favicon")->middleware("auth:sanctum")->group(function () {
+    Route::get("/", [FaviconController::class, "index"]);
+    Route::post("/update", [FaviconController::class, "update"]);
 });
