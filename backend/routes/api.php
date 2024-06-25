@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AdminPanel\AdminController;
+use App\Http\Controllers\AdminPanel\CarouselController;
 use App\Http\Controllers\AdminPanel\ContactController;
 use App\Http\Controllers\AdminPanel\FeatureController;
 
@@ -34,3 +35,11 @@ Route::prefix("/admin/contact")->middleware("auth:sanctum")->group(function () {
     Route::delete("/delete/{id}", [ContactController::class, 'delete']);
 });
 //--------------------
+
+// Carousel routes for admin panel
+Route::prefix("/admin/carousel")->middleware("auth:sanctum")->group(function () {
+    Route::get("/", [CarouselController::class, "index"]);
+    Route::post("/create", [CarouselController::class, "create"]);
+    Route::post("/update/{id}", [CarouselController::class, "update"]);
+    Route::delete("/delete/{id}", [CarouselController::class, "delete"]);
+});
