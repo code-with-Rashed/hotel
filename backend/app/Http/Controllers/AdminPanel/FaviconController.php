@@ -11,10 +11,10 @@ class FaviconController extends Controller
     // show favicon
     public function index()
     {
-        $favicon = Favicon::all();
+        $favicon = Favicon::first();
         return response([
             "success" => true,
-            "favicons" => $favicon
+            "favicon" => $favicon
         ], 200);
     }
 
