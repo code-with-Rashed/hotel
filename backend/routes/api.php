@@ -8,6 +8,7 @@ use App\Http\Controllers\AdminPanel\ContactController;
 use App\Http\Controllers\AdminPanel\FaviconController;
 use App\Http\Controllers\AdminPanel\FeatureController;
 use App\Http\Controllers\AdminPanel\LogoController;
+use App\Http\Controllers\AdminPanel\TeamController;
 
 // Admin profile routes
 Route::prefix('/admin/profile')->group(function () {
@@ -56,4 +57,13 @@ Route::prefix("/admin/favicon")->middleware("auth:sanctum")->group(function () {
 Route::prefix("/admin/logo")->middleware("auth:sanctum")->group(function () {
     Route::get("/", [LogoController::class, "index"]);
     Route::post("/update", [LogoController::class, "update"]);
+});
+
+// Team member routes for admin panel
+Route::prefix("/admin/team")->middleware("auth:sanctum")->group(function () {
+    Route::get("/", [TeamController::class, "index"]);
+    Route::post("/create", [TeamController::class, "create"]);
+    Route::get("/show/{id}", [TeamController::class, "show"]);
+    Route::post("/update/{id}", [TeamController::class, "update"]);
+    Route::delete("/delete/{id}", [TeamController::class, "delete"]);
 });
