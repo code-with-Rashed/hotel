@@ -9,6 +9,7 @@ use App\Http\Controllers\AdminPanel\FacilityController;
 use App\Http\Controllers\AdminPanel\FaviconController;
 use App\Http\Controllers\AdminPanel\FeatureController;
 use App\Http\Controllers\AdminPanel\LogoController;
+use App\Http\Controllers\AdminPanel\SettingController;
 use App\Http\Controllers\AdminPanel\TeamController;
 
 // Admin profile routes
@@ -76,4 +77,11 @@ Route::prefix("/admin/facility")->middleware("auth:sanctum")->group(function () 
     Route::get("/show/{id}", [FacilityController::class, "show"]);
     Route::post("/update/{id}", [FacilityController::class, "update"]);
     Route::delete("/delete/{id}", [FacilityController::class, "delete"]);
+});
+
+// Settings routes for admin panel
+Route::prefix("/admin/setting")->middleware("auth:sanctum")->group(function () {
+    Route::get("/", [SettingController::class, "index"]);
+    Route::patch("/shutdown", [SettingController::class, 'shutdown']);
+    Route::patch("/update", [SettingController::class, "update"]);
 });
