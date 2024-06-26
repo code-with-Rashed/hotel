@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminPanel\AdminController;
 use App\Http\Controllers\AdminPanel\CarouselController;
 use App\Http\Controllers\AdminPanel\ContactController;
+use App\Http\Controllers\AdminPanel\FacilityController;
 use App\Http\Controllers\AdminPanel\FaviconController;
 use App\Http\Controllers\AdminPanel\FeatureController;
 use App\Http\Controllers\AdminPanel\LogoController;
@@ -66,4 +67,13 @@ Route::prefix("/admin/team")->middleware("auth:sanctum")->group(function () {
     Route::get("/show/{id}", [TeamController::class, "show"]);
     Route::post("/update/{id}", [TeamController::class, "update"]);
     Route::delete("/delete/{id}", [TeamController::class, "delete"]);
+});
+
+// Facility routes for admin panel
+Route::prefix("/admin/facility")->middleware("auth:sanctum")->group(function () {
+    Route::get("/", [FacilityController::class, "index"]);
+    Route::post("/create", [FacilityController::class, "create"]);
+    Route::get("/show/{id}", [FacilityController::class, "show"]);
+    Route::post("/update/{id}", [FacilityController::class, "update"]);
+    Route::delete("/delete/{id}", [FacilityController::class, "delete"]);
 });
