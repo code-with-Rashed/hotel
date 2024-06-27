@@ -8,6 +8,7 @@ use App\Http\Controllers\AdminPanel\ContactController;
 use App\Http\Controllers\AdminPanel\FacilityController;
 use App\Http\Controllers\AdminPanel\FaviconController;
 use App\Http\Controllers\AdminPanel\FeatureController;
+use App\Http\Controllers\AdminPanel\InformationController;
 use App\Http\Controllers\AdminPanel\LogoController;
 use App\Http\Controllers\AdminPanel\SettingController;
 use App\Http\Controllers\AdminPanel\TeamController;
@@ -84,4 +85,10 @@ Route::prefix("/admin/setting")->middleware("auth:sanctum")->group(function () {
     Route::get("/", [SettingController::class, "index"]);
     Route::patch("/shutdown", [SettingController::class, 'shutdown']);
     Route::patch("/update", [SettingController::class, "update"]);
+});
+
+// Information routes for admin panel
+Route::prefix("/admin/company/information")->middleware("auth:sanctum")->group(function () {
+    Route::get("/", [InformationController::class, "index"]);
+    Route::put("/update", [InformationController::class, "update"]);
 });
