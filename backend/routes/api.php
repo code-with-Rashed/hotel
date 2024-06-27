@@ -10,6 +10,7 @@ use App\Http\Controllers\AdminPanel\FaviconController;
 use App\Http\Controllers\AdminPanel\FeatureController;
 use App\Http\Controllers\AdminPanel\InformationController;
 use App\Http\Controllers\AdminPanel\LogoController;
+use App\Http\Controllers\AdminPanel\RoomController;
 use App\Http\Controllers\AdminPanel\SettingController;
 use App\Http\Controllers\AdminPanel\TeamController;
 
@@ -91,4 +92,13 @@ Route::prefix("/admin/setting")->middleware("auth:sanctum")->group(function () {
 Route::prefix("/admin/company/information")->middleware("auth:sanctum")->group(function () {
     Route::get("/", [InformationController::class, "index"]);
     Route::put("/update", [InformationController::class, "update"]);
+});
+
+// Roome routes for admin panel
+Route::prefix("/admin/room")->middleware("auth:sanctum")->group(function () {
+    Route::get("/", [RoomController::class, "index"]);
+    Route::post("/create", [RoomController::class, "create"]);
+    Route::get("/show/{id}", [RoomController::class, "show"]);
+    Route::put("/update/{id}", [RoomController::class, "update"]);
+    Route::patch("/status/{id}", [RoomController::class, "status"]);
 });
