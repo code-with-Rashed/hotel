@@ -11,6 +11,7 @@ use App\Http\Controllers\AdminPanel\FeatureController;
 use App\Http\Controllers\AdminPanel\InformationController;
 use App\Http\Controllers\AdminPanel\LogoController;
 use App\Http\Controllers\AdminPanel\RoomController;
+use App\Http\Controllers\AdminPanel\RoomImageController;
 use App\Http\Controllers\AdminPanel\SettingController;
 use App\Http\Controllers\AdminPanel\TeamController;
 
@@ -101,4 +102,13 @@ Route::prefix("/admin/room")->middleware("auth:sanctum")->group(function () {
     Route::get("/show/{id}", [RoomController::class, "show"]);
     Route::put("/update/{id}", [RoomController::class, "update"]);
     Route::patch("/status/{id}", [RoomController::class, "status"]);
+});
+
+// Roome Image routes for admin panel
+Route::prefix("/admin/room/image")->middleware("auth:sanctum")->group(function () {
+    Route::get("/{room_id}", [RoomImageController::class, "get_image"]);
+    Route::post("/create", [RoomImageController::class, "create"]);
+    Route::post("/update/{id}", [RoomImageController::class, "update"]);
+    Route::patch("/thumbnail/{id}", [RoomImageController::class, "thumbnail"]);
+    Route::delete("/delete/{id}", [RoomImageController::class, "delete"]);
 });
