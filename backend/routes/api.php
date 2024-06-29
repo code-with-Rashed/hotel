@@ -11,6 +11,7 @@ use App\Http\Controllers\AdminPanel\FeatureController;
 use App\Http\Controllers\AdminPanel\InformationController;
 use App\Http\Controllers\AdminPanel\LogoController;
 use App\Http\Controllers\AdminPanel\RoomController;
+use App\Http\Controllers\AdminPanel\RoomFeatureFacilityController;
 use App\Http\Controllers\AdminPanel\RoomImageController;
 use App\Http\Controllers\AdminPanel\SettingController;
 use App\Http\Controllers\AdminPanel\TeamController;
@@ -111,4 +112,12 @@ Route::prefix("/admin/room/image")->middleware("auth:sanctum")->group(function (
     Route::post("/update/{id}", [RoomImageController::class, "update"]);
     Route::patch("/thumbnail/{id}", [RoomImageController::class, "thumbnail"]);
     Route::delete("/delete/{id}", [RoomImageController::class, "delete"]);
+});
+
+// Roome feature & facility routes for admin panel
+Route::prefix("/admin/room/feature-facility")->middleware("auth:sanctum")->group(function () {
+    Route::get("/features-id/{room_id}", [RoomFeatureFacilityController::class, "get_room_features_id"]);
+    Route::get("/facilities-id/{room_id}", [RoomFeatureFacilityController::class, "get_room_facilities_id"]);
+    Route::post("/create", [RoomFeatureFacilityController::class, "create"]);
+    Route::patch("/update", [RoomFeatureFacilityController::class, "update"]);
 });
