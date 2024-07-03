@@ -2,54 +2,50 @@
 
 namespace App\Http\Controllers\AdminPanel;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 use App\Models\Feature;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
-class FeatureController extends Controller
+class FeatureController extends BaseController
 {
     // show room features
     public function index()
     {
-        $features = Feature::all();
-        return response([
-            "success" => true,
-            "features" => $features,
-        ], 200);
+        $results["features"] = Feature::all();
+        return $this->send_response(message: "Features data .", results: $results);
     }
 
     // create a new room feature
     public function create(Request $request)
     {
-        $request->validate([
+        $validation = Validator::make($request->all, [
             "name" => "required|string"
         ]);
+        if ($validation->fails()) {
+            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+        }
 
         $feature = new Feature();
         $feature->name = $request->name;
         $feature->save();
-
-        return response([
-            "success" => true,
-            "message" => "New feature successfully created .",
-        ], 201);
+        return $this->send_response(message: "New feature successfully created .", status_code: 201);
     }
 
     // update room feature
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $validation = Validator::make($request->all, [
             "name" => "required|string"
         ]);
+        if ($validation->fails()) {
+            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+        }
 
         $feature = Feature::find($id);
         $feature->name = $request->name;
         $feature->save();
-
-        return response([
-            "success" => true,
-            "message" => "Feature successfully updated .",
-        ], 200);
+        return $this->send_response(message: "Feature successfully updated .");
     }
 
     // delete room feature
@@ -58,10 +54,7 @@ class FeatureController extends Controller
         $feature = Feature::find($id);
         if (!is_null($feature)) {
             $feature->delete();
-            return response([
-                "success" => true,
-                "message" => "Feature successfully deleted .",
-            ], 200);
+            return $this->send_response(message: "Feature successfully deleted .");
         }
     }
 }

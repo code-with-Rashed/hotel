@@ -2,30 +2,31 @@
 
 namespace App\Http\Controllers\AdminPanel;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 use App\Models\Facility;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
-class FacilityController extends Controller
+class FacilityController extends BaseController
 {
     // show all facility
     public function index()
     {
-        $facilities = Facility::all();
-        return response([
-            "success" => true,
-            "facilities" => $facilities
-        ]);
+        $results["facilities"] = Facility::all();
+        return $this->send_response(message: "Facility data .", results: $results);
     }
 
     // create a new facility
     public function create(Request $request)
     {
-        $request->validate([
+        $validation = Validator::make($request->all, [
             "image" => "required|image|max:1024|mimes:svg,jpg,jpeg,png,webp",
             "name" => "required|string",
             "description" => "required|string"
         ]);
+        if ($validation->fails()) {
+            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+        }
 
         $image = $request->image->store("image/facility", "public");
 
@@ -34,31 +35,27 @@ class FacilityController extends Controller
         $facility->name = $request->name;
         $facility->description = $request->description;
         $facility->save();
-
-        return response([
-            "success" => true,
-            "message" => "New facility successfully created ."
-        ], 201);
+        return $this->send_response(message: "New facility successfully created .", status_code: 201);
     }
 
     // show single facility record
     public function show($id)
     {
-        $facility = Facility::find($id);
-        return response([
-            "success" => true,
-            "facility" => $facility
-        ]);
+        $results["facility"] = Facility::find($id);
+        return $this->send_response(message: "Facility data .", results: $results);
     }
 
     // update facility record
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $validation = Validator::make($request->all, [
             "image" => "nullable|image|max:1024|mimes:svg,jpg,jpeg,png,webp",
             "name" => "required|string",
             "description" => "required|string"
         ]);
+        if ($validation->fails()) {
+            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+        }
 
         $facility = Facility::find($id);
 
@@ -76,11 +73,7 @@ class FacilityController extends Controller
         $facility->name = $request->name;
         $facility->description = $request->description;
         $facility->save();
-
-        return response([
-            "success" => true,
-            "message" => "Facility record successfully updated ."
-        ]);
+        return $this->send_response(message: "Facility record successfully updated .");
     }
 
     // delete facility record
@@ -93,10 +86,7 @@ class FacilityController extends Controller
                 @unlink($image);
             }
             $facility->delete();
-            return response([
-                "success" => true,
-                "message" => "Facility record successfully deleted ."
-            ]);
+            return $this->send_response(message: "Facility record successfully deleted .");
         }
     }
 }

@@ -2,31 +2,32 @@
 
 namespace App\Http\Controllers\AdminPanel;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 use App\Models\Contact;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
-class ContactController extends Controller
+class ContactController extends BaseController
 {
     // show contact details
     public function index()
     {
-        $contact = Contact::all();
-        return response([
-            "success" => true,
-            "contact" => $contact
-        ], 200);
+        $results["contacts"] = Contact::all();
+        return $this->send_response(message: "Contacts Data .", results: $results);
     }
 
     // create new contact request
     public function create(Request $request)
     {
-        $request->validate([
+        $validation = Validator::make($request->all, [
             "name" => "required|string",
             "email" => "required|email",
             "subject" => "required|string",
             "message" => "required|string"
         ]);
+        if ($validation->fails()) {
+            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+        }
 
         $contact = new Contact();
         $contact->name = $request->name;
@@ -34,11 +35,7 @@ class ContactController extends Controller
         $contact->subject = $request->subject;
         $contact->message = $request->message;
         $contact->save();
-
-        return response([
-            "success" => true,
-            "message" => "Contact details successfully send .",
-        ], 201);
+        return $this->send_response(message: "Contact details successfully send .", status_code: 201);
     }
 
     // update contact message status
@@ -53,13 +50,9 @@ class ContactController extends Controller
             $contact->status = 1;
             $message = "The message mark as read .";
         }
-        
-        $contact->save();
 
-        return response([
-            "success" => true,
-            "message" => $message,
-        ], 200);
+        $contact->save();
+        return $this->send_response(message: $message);
     }
 
     // delete contact message
@@ -68,10 +61,7 @@ class ContactController extends Controller
         $contact = Contact::find($id);
         if (!is_null($contact)) {
             $contact->delete();
-            return response([
-                "success" => true,
-                "message" => "The message successfully deleted .",
-            ], 200);
+            return $this->send_response(message: "The message successfully deleted .");
         }
     }
 }

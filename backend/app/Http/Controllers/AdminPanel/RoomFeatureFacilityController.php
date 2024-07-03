@@ -2,43 +2,41 @@
 
 namespace App\Http\Controllers\AdminPanel;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 use App\Models\RoomFacility;
 use App\Models\RoomFeature;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
-class RoomFeatureFacilityController extends Controller
+class RoomFeatureFacilityController extends BaseController
 {
     // show room related saved features id
     public function get_room_features_id($room_id)
     {
-        $room_features = RoomFeature::where("room_id", $room_id)->get();
-        return response([
-            "success" => true,
-            "room_features" => $room_features
-        ]);
+        $results["room_features"] = RoomFeature::where("room_id", $room_id)->get();
+        return $this->send_response(message: "Rooms features .", results: $results);
     }
 
     // show room related saved facilities id
     public function get_room_facilities_id($room_id)
     {
-        $room_facilities = RoomFacility::where("room_id", $room_id)->get();
-        return response([
-            "success" => true,
-            "room_facilities" => $room_facilities
-        ]);
+        $results["facilities"] = RoomFacility::where("room_id", $room_id)->get();
+        return $this->send_response(message: "Rooms facilities .", results: $results);
     }
 
     // save room related feature & facility id
     public function create(Request $request)
     {
-        $request->validate([
+        $validation = Validator::make($request->all, [
             "room_id" => "required|integer|exists:rooms,id",
             "feature_id" => "required|array",
             "facility_id" => "required|array",
             "feature_id.*" => "required|integer|exists:features,id",
-            "facility_id.*" => "required|integer|exists:facilities,id",
+            "facility_id.*" => "required|integer|exists:facilities,id"
         ]);
+        if ($validation->fails()) {
+            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+        }
 
         foreach ($request->feature_id as $id) {
             $room_feature = new RoomFeature();
@@ -54,22 +52,22 @@ class RoomFeatureFacilityController extends Controller
             $room_facility->save();
         }
 
-        return response([
-            "success" => true,
-            "message" => "Hotel Room related feature & facility successfully saved ."
-        ], 201);
+        return $this->send_response(message: "Hotel Room related feature & facility successfully saved .", status_code: 201);
     }
 
     // update room related feature & facility id
     public function update(Request $request)
     {
-        $request->validate([
+        $validation = Validator::make($request->all, [
             "room_id" => "required|integer|exists:rooms,id",
             "feature_id" => "required|array",
             "facility_id" => "required|array",
             "feature_id.*" => "required|integer|exists:features,id",
-            "facility_id.*" => "required|integer|exists:facilities,id",
+            "facility_id.*" => "required|integer|exists:facilities,id"
         ]);
+        if ($validation->fails()) {
+            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+        }
 
         foreach ($request->feature_id as $id) {
             RoomFeature::updateOrInsert(
@@ -87,10 +85,7 @@ class RoomFeatureFacilityController extends Controller
 
         $this->delete($request->room_id, $request->feature_id, $request->facility_id);
 
-        return response([
-            "success" => true,
-            "message" => "Hotel Room related feature & facility successfully updated ."
-        ]);
+        return $this->send_response(message: "Hotel Room related feature & facility successfully updated .");
     }
 
     // non used room feature & facility id delete

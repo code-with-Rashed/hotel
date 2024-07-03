@@ -2,20 +2,18 @@
 
 namespace App\Http\Controllers\AdminPanel;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
-class SettingController extends Controller
+class SettingController extends BaseController
 {
     // show settings
     public function index()
     {
-        $setting = Setting::first();
-        return response([
-            "success" => true,
-            "setting" => $setting
-        ], 200);
+        $results["setting"] = Setting::first();
+        return $this->send_response(message: "Settings data.", results: $results);
     }
 
     // change web shutdown status
@@ -32,40 +30,31 @@ class SettingController extends Controller
         }
 
         $setting->save();
-
-        return response([
-            "success" => true,
-            "message" => $message,
-        ]);
+        return $this->send_response(message: $message);
     }
 
     // update the web descrition
     public function update(Request $request)
     {
-        $request->validate([
+        $validation = Validator::make($request->all, [
             "description" => "required|string"
         ]);
+        if ($validation->fails()) {
+            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+        }
 
         $setting = Setting::first();
 
         if (!is_null($setting)) {
             $setting->description = $request->description;
             $setting->save();
-
-            return response([
-                'success' => true,
-                'message' => 'The web description successfully updated !',
-            ]);
+            return $this->send_response(message: "The web description successfully updated .");
         }
 
         // if settings table is empty then create first the web description
         $setting = new Setting();
         $setting->description = $request->description;
         $setting->save();
-
-        return response([
-            'success' => true,
-            'message' => 'The web description successfully created !',
-        ]);
+        return $this->send_response(message: "The web description successfully created .", status_code: 201);
     }
 }

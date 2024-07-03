@@ -21,7 +21,7 @@ Route::prefix('/admin/profile')->group(function () {
     Route::post('/login', [AdminController::class, 'login']);
     Route::middleware("auth:sanctum")->group(function () {
         Route::put('/update/password/{id}', [AdminController::class, 'update_password']);
-        Route::post('/update/profile/{id}', [AdminController::class, 'update_profile']);
+        Route::put('/update/profile/{id}', [AdminController::class, 'update_profile']);
         Route::delete('/logout', [AdminController::class, 'logout']);
     });
 });
@@ -49,20 +49,20 @@ Route::prefix("/admin/contact")->middleware("auth:sanctum")->group(function () {
 Route::prefix("/admin/carousel")->middleware("auth:sanctum")->group(function () {
     Route::get("/", [CarouselController::class, "index"]);
     Route::post("/create", [CarouselController::class, "create"]);
-    Route::post("/update/{id}", [CarouselController::class, "update"]);
+    Route::put("/update/{id}", [CarouselController::class, "update"]);
     Route::delete("/delete/{id}", [CarouselController::class, "delete"]);
 });
 
 // Favicon routes for admin panel
 Route::prefix("/admin/favicon")->middleware("auth:sanctum")->group(function () {
     Route::get("/", [FaviconController::class, "index"]);
-    Route::post("/update", [FaviconController::class, "update"]);
+    Route::put("/update", [FaviconController::class, "update"]);
 });
 
 // Logo routes for admin panel
 Route::prefix("/admin/logo")->middleware("auth:sanctum")->group(function () {
     Route::get("/", [LogoController::class, "index"]);
-    Route::post("/update", [LogoController::class, "update"]);
+    Route::put("/update", [LogoController::class, "update"]);
 });
 
 // Team member routes for admin panel
@@ -70,7 +70,7 @@ Route::prefix("/admin/team")->middleware("auth:sanctum")->group(function () {
     Route::get("/", [TeamController::class, "index"]);
     Route::post("/create", [TeamController::class, "create"]);
     Route::get("/show/{id}", [TeamController::class, "show"]);
-    Route::post("/update/{id}", [TeamController::class, "update"]);
+    Route::put("/update/{id}", [TeamController::class, "update"]);
     Route::delete("/delete/{id}", [TeamController::class, "delete"]);
 });
 
@@ -79,15 +79,15 @@ Route::prefix("/admin/facility")->middleware("auth:sanctum")->group(function () 
     Route::get("/", [FacilityController::class, "index"]);
     Route::post("/create", [FacilityController::class, "create"]);
     Route::get("/show/{id}", [FacilityController::class, "show"]);
-    Route::post("/update/{id}", [FacilityController::class, "update"]);
+    Route::put("/update/{id}", [FacilityController::class, "update"]);
     Route::delete("/delete/{id}", [FacilityController::class, "delete"]);
 });
 
 // Settings routes for admin panel
 Route::prefix("/admin/setting")->middleware("auth:sanctum")->group(function () {
     Route::get("/", [SettingController::class, "index"]);
-    Route::patch("/shutdown", [SettingController::class, 'shutdown']);
-    Route::patch("/update", [SettingController::class, "update"]);
+    Route::put("/shutdown", [SettingController::class, 'shutdown']);
+    Route::put("/update", [SettingController::class, "update"]);
 });
 
 // Information routes for admin panel
@@ -102,15 +102,15 @@ Route::prefix("/admin/room")->middleware("auth:sanctum")->group(function () {
     Route::post("/create", [RoomController::class, "create"]);
     Route::get("/show/{id}", [RoomController::class, "show"]);
     Route::put("/update/{id}", [RoomController::class, "update"]);
-    Route::patch("/status/{id}", [RoomController::class, "status"]);
+    Route::put("/status/{id}", [RoomController::class, "status"]);
 });
 
 // Roome Image routes for admin panel
 Route::prefix("/admin/room/image")->middleware("auth:sanctum")->group(function () {
     Route::get("/{room_id}", [RoomImageController::class, "get_image"]);
     Route::post("/create", [RoomImageController::class, "create"]);
-    Route::post("/update/{id}", [RoomImageController::class, "update"]);
-    Route::patch("/thumbnail/{id}", [RoomImageController::class, "thumbnail"]);
+    Route::put("/update/{id}", [RoomImageController::class, "update"]);
+    Route::put("/thumbnail/{id}", [RoomImageController::class, "thumbnail"]);
     Route::delete("/delete/{id}", [RoomImageController::class, "delete"]);
 });
 
@@ -119,5 +119,5 @@ Route::prefix("/admin/room/feature-facility")->middleware("auth:sanctum")->group
     Route::get("/features-id/{room_id}", [RoomFeatureFacilityController::class, "get_room_features_id"]);
     Route::get("/facilities-id/{room_id}", [RoomFeatureFacilityController::class, "get_room_facilities_id"]);
     Route::post("/create", [RoomFeatureFacilityController::class, "create"]);
-    Route::patch("/update", [RoomFeatureFacilityController::class, "update"]);
+    Route::put("/update", [RoomFeatureFacilityController::class, "update"]);
 });

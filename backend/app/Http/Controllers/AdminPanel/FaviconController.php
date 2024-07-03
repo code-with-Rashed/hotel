@@ -2,28 +2,29 @@
 
 namespace App\Http\Controllers\AdminPanel;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 use App\Models\Favicon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
-class FaviconController extends Controller
+class FaviconController extends BaseController
 {
     // show favicon
     public function index()
     {
-        $favicon = Favicon::first();
-        return response([
-            "success" => true,
-            "favicon" => $favicon
-        ], 200);
+        $results["favicon"] = Favicon::first();
+        return $this->send_response(message: "Favicon .", results: $results);
     }
 
     // update favicon
     public function update(Request $request)
     {
-        $request->validate([
+        $validation = Validator::make($request->all, [
             "icon" => "required|image|max:1024|mimes:jpg,jpeg,png,svg,webp"
         ]);
+        if ($validation->fails()) {
+            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+        }
 
         $new_favicon = $request->icon->store("image/favicon", "public");
 
@@ -38,21 +39,13 @@ class FaviconController extends Controller
 
             $favicon->icon = $new_favicon;
             $favicon->save();
-
-            return response([
-                'success' => true,
-                'message' => 'Favicon successfully updated !',
-            ], 200);
+            return $this->send_response(message: "Favicon successfully updated .");
         }
 
         // if favicon table is empty then create & upload first favicon
         $favicon = new Favicon();
         $favicon->icon = $new_favicon;
         $favicon->save();
-
-        return response([
-            'success' => true,
-            'message' => 'Favicon successfully created !',
-        ], 200);
+        return $this->send_response(message: "Favicon successfully created .", status_code: 201);
     }
 }

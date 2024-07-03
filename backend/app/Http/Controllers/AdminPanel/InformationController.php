@@ -2,32 +2,33 @@
 
 namespace App\Http\Controllers\AdminPanel;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 use App\Models\Information;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
-class InformationController extends Controller
+class InformationController extends BaseController
 {
     // show company information
     public function index()
     {
-        $information = Information::first();
-        return response([
-            "success" => true,
-            "information" => $information
-        ]);
+        $results["company_information"] = Information::first();
+        return $this->send_response(message: "Company information .", results: $results);
     }
 
     // update company information
     public function update(Request $request)
     {
-        $request->validate([
+        $validation = Validator::make($request->all, [
             "address" => "required|string",
             "map" => "required|url:https",
             "email.*" => "required|email",
             "phone.*" => "required|numeric",
             "social.*" => "required|url:https"
         ]);
+        if ($validation->fails()) {
+            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+        }
 
         $information = Information::first();
         if (!is_null($information)) {
@@ -37,11 +38,7 @@ class InformationController extends Controller
             $information->phone = $request->phone;
             $information->social = $request->social;
             $information->save();
-
-            return response([
-                'success' => true,
-                'message' => 'Company information successfully updated !',
-            ]);
+            return $this->send_response(message: "Company information successfully updated .");
         }
 
         // if information table is empty then create first company information
@@ -52,10 +49,6 @@ class InformationController extends Controller
         $information->phone = $request->phone;
         $information->social = $request->social;
         $information->save();
-
-        return response([
-            'success' => true,
-            'message' => 'Company information successfully created !',
-        ], 201);
+        return $this->send_response(message: "Company information successfully created .", status_code: 201);
     }
 }

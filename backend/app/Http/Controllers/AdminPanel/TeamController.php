@@ -2,30 +2,31 @@
 
 namespace App\Http\Controllers\AdminPanel;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 use App\Models\Team;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
-class TeamController extends Controller
+class TeamController extends BaseController
 {
     // show team members
     public function index()
     {
-        $team = Team::all();
-        return response([
-            "success" => true,
-            "team" => $team
-        ]);
+        $results["team"] = Team::all();
+        return $this->send_response(message: "Team members data .", results: $results);
     }
 
     // create a new team member
     public function create(Request $request)
     {
-        $request->validate([
+        $validation = Validator::make($request->all, [
             "photo" => "required|image|max:2048|mimes:jpg,jpeg,png,webp,svg",
             "name" => "required|string",
             "designation" => "required|string"
         ]);
+        if ($validation->fails()) {
+            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+        }
 
         $photo = $request->photo->store("image/team", "public");
 
@@ -34,31 +35,27 @@ class TeamController extends Controller
         $team->name = $request->name;
         $team->designation = $request->designation;
         $team->save();
-
-        return response([
-            "success" => true,
-            "message" => "New team member successfully created ."
-        ], 201);
+        return $this->send_response(message: "New team member successfully created .", status_code: 201);
     }
 
     // show single team record
     public function show($id)
     {
-        $team = Team::find($id);
-        return response([
-            "success" => true,
-            "team" => $team
-        ]);
+        $results["team"] = Team::find($id);
+        return $this->send_response(message: "Team member data .", results: $results);
     }
 
     // update team record
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $validation = Validator::make($request->all, [
             "photo" => "nullable|image|max:2048|mimes:jpg,jpeg,png,webp,svg",
             "name" => "required|string",
             "designation" => "required|string"
         ]);
+        if ($validation->fails()) {
+            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+        }
 
         $team = Team::find($id);
 
@@ -76,11 +73,7 @@ class TeamController extends Controller
         $team->name = $request->name;
         $team->designation = $request->designation;
         $team->save();
-
-        return response([
-            "success" => true,
-            "message" => "Team member record successfully updated ."
-        ]);
+        return $this->send_response(message: "Team member record successfully updated .");
     }
 
     // delete team record
@@ -93,11 +86,7 @@ class TeamController extends Controller
                 @unlink($photo);
             }
             $team->delete();
-
-            return response([
-                "success" => true,
-                "message" => "Team member record successfully deleted ."
-            ]);
+            return $this->send_response(message: "Team member record successfully deleted .");
         }
     }
 }

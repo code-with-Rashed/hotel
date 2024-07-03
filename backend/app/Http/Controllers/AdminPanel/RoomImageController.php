@@ -2,29 +2,30 @@
 
 namespace App\Http\Controllers\AdminPanel;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 use App\Models\RoomImage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
-class RoomImageController extends Controller
+class RoomImageController extends BaseController
 {
     // show room images for related hotel room
     public function get_image($room_id)
     {
-        $room_images = RoomImage::where("room_id", $room_id)->get();
-        return response([
-            "success" => true,
-            "images" => $room_images
-        ]);
+        $results["images"] = RoomImage::where("room_id", $room_id)->get();
+        return $this->send_response(message: "Room images .", results: $results);
     }
 
     // create & upload room image & record
     public function create(Request $request)
     {
-        $request->validate([
+        $validation = Validator::make($request->all, [
             "room_id" => "required|integer|exists:rooms,id",
             "image" => "required|image|max:2048|mimes:jpg,jpeg,png,webp"
         ]);
+        if ($validation->fails()) {
+            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+        }
 
         $image = $request->image->store("image/rooms", "public");
 
@@ -32,19 +33,18 @@ class RoomImageController extends Controller
         $room_image->room_id = $request->room_id;
         $room_image->image = $image;
         $room_image->save();
-
-        return response([
-            "success" => true,
-            "message" => "The room image successfully created ."
-        ], 201);
+        return $this->send_response(message: "The room image successfully created .", status_code: 201);
     }
 
     // update & upload room image & record
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $validation = Validator::make($request->all, [
             "image" => "required|image|max:2048|mimes:jpg,jpeg,png,webp"
         ]);
+        if ($validation->fails()) {
+            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+        }
 
         $room_image = RoomImage::find($id);
 
@@ -59,17 +59,9 @@ class RoomImageController extends Controller
             $image = $request->image->store("image/rooms", "public");
             $room_image->image = $image;
             $room_image->save();
-
-            return response([
-                "success" => true,
-                "message" => "The room image successfully updated ."
-            ]);
+            return $this->send_response(message: "The room image successfully updated .");
         }
-
-        return response([
-            "success" => false,
-            "message" => "The room image record is not found ."
-        ], 400);
+        return $this->send_error(message: "This room image record is not found .");
     }
 
     // change thumbnail status
@@ -81,23 +73,14 @@ class RoomImageController extends Controller
             if ($room_image->thumbnail) {
                 $room_image->thumbnail = 0;
                 $room_image->save();
-                return response([
-                    "success" => true,
-                    "message" => "This room image is not a thumbnail image right now ."
-                ]);
+                return $this->send_response(message: "This room image is not a thumbnail image right now .");
             } else {
                 $room_image->thumbnail = 1;
                 $room_image->save();
-                return response([
-                    "success" => true,
-                    "message" => "This room image is a thumbnail image right now ."
-                ]);
+                return $this->send_response(message: "This room image is a thumbnail image right now .");
             }
         }
-        return response([
-            "success" => false,
-            "message" => "The room image record is not found ."
-        ], 400);
+        return $this->send_error(message: "This room image record is not found .");
     }
 
     // delete room image
@@ -113,11 +96,7 @@ class RoomImageController extends Controller
             }
 
             $room_image->delete();
-
-            return response([
-                "success" => true,
-                "message" => "The room image successfully deleted ."
-            ]);
+            return $this->send_response(message: "This room image successfully deleted .");
         }
     }
 }

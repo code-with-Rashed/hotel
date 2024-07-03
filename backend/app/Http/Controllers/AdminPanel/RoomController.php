@@ -2,26 +2,24 @@
 
 namespace App\Http\Controllers\AdminPanel;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 use App\Models\Room;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
-class RoomController extends Controller
+class RoomController extends BaseController
 {
     // show all rooms
     public function index()
     {
-        $rooms = Room::all();
-        return response([
-            "success" => true,
-            "rooms" => $rooms
-        ]);
+        $results["rooms"] = Room::all();
+        return $this->send_response(message: "Rooms data .", results: $results);
     }
 
     // create a new room
     public function create(Request $request)
     {
-        $request->validate([
+        $validation = Validator::make($request->all, [
             "name" => "required|string",
             "price" => "required|numeric",
             "quantity" => "required|integer",
@@ -30,6 +28,9 @@ class RoomController extends Controller
             "children" => "required|integer",
             "description" => "required|string"
         ]);
+        if ($validation->fails()) {
+            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+        }
 
         $room = new Room();
         $room->name = $request->name;
@@ -40,27 +41,20 @@ class RoomController extends Controller
         $room->children = $request->children;
         $room->description = $request->description;
         $room->save();
-
-        return response([
-            "success" => true,
-            "message" => "New Room successfully created .",
-        ], 201);
+        return $this->send_response(message: "New Room successfully created .", status_code: 201);
     }
 
     // show single room
     public function show($id)
     {
-        $room = Room::find($id);
-        return response([
-            "success" => true,
-            "room" => $room
-        ]);
+        $results["room"] = Room::find($id);
+        return $this->send_response(message: "Room data .", results: $results);
     }
 
     // update room record
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $validation = Validator::make($request->all, [
             "name" => "required|string",
             "price" => "required|numeric",
             "quantity" => "required|integer",
@@ -69,6 +63,9 @@ class RoomController extends Controller
             "children" => "required|integer",
             "description" => "required|string"
         ]);
+        if ($validation->fails()) {
+            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+        }
 
         $room = Room::find($id);
         $room->name = $request->name;
@@ -79,11 +76,7 @@ class RoomController extends Controller
         $room->children = $request->children;
         $room->description = $request->description;
         $room->save();
-
-        return response([
-            "success" => true,
-            "message" => "Room record successfully updated .",
-        ]);
+        return $this->send_response(message: "Room record successfully updated .");
     }
 
     // update room status
@@ -99,10 +92,6 @@ class RoomController extends Controller
             $message = "The room has been inactivate .";
         }
         $room->save();
-
-        return response([
-            "success" => true,
-            "message" => $message
-        ]);
+        return $this->send_response(message: $message);
     }
 }

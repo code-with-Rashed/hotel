@@ -2,46 +2,46 @@
 
 namespace App\Http\Controllers\AdminPanel;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 use App\Models\Carousel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
-class CarouselController extends Controller
+class CarouselController extends BaseController
 {
     // show all crousel image record
     public function index()
     {
-        $carousel = Carousel::all();
-        return response([
-            "success" => true,
-            "carousel" => $carousel
-        ], 200);
+        $results["carousel"] = Carousel::all();
+        return $this->send_response(message: "Carousel Data .", results: $results);
     }
 
     // create & upload a new carousel image
     public function create(Request $request)
     {
-        $request->validate([
+        $validation = Validator::make($request->all, [
             "image" => "required|image|mimes:jpg,jpeg,png,webp|max:3072"
         ]);
+        if ($validation->fails()) {
+            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+        }
 
         $image_path = $request->image->store("image/carousel", "public");
         $carousel = new Carousel();
         $carousel->image = $image_path;
         $carousel->save();
-
-        return response([
-            "success" => true,
-            "message" => "New carousel image successfully created ."
-        ], 201);
+        return $this->send_response(message: "New carousel image successfully created .", status_code: 201);
     }
 
     // update & upload crousel image 
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $validation = Validator::make($request->all, [
             "image" => "required|image|mimes:jpg,jpeg,png,webp|max:3072"
         ]);
+        if ($validation->fails()) {
+            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+        }
 
         $carousel = Carousel::find($id);
 
@@ -54,12 +54,7 @@ class CarouselController extends Controller
 
         $carousel->image = $image_path;
         $carousel->save();
-
-
-        return response([
-            'success' => true,
-            'message' => 'Carousel image successfully updated !',
-        ], 200);
+        return $this->send_response(message: "Carousel image successfully updated .");
     }
 
     // delete & unlinnk carousel image
@@ -73,10 +68,6 @@ class CarouselController extends Controller
             }
             $carousel->delete();
         }
-
-        return response([
-            'success' => true,
-            'message' => 'Carousel image successfully deleted !',
-        ], 200);
+        return $this->send_response(message: "Carousel image successfully deleted .");
     }
 }
