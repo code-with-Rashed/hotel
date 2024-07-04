@@ -23,9 +23,9 @@ const loginNow = async () => {
   submitBtn.value = true
 
   if (results.value.success) {
-    router.push({ name: 'dashboard' })
     storeToastMessage.showToastMessage(results.value.success, results.value.message)
     storeAdminCredentials.adminCredentials(results.value.data)
+    router.push({ name: 'dashboard' })
   } else {
     storeToastMessage.showToastMessage(results.value.success, results.value.message)
   }

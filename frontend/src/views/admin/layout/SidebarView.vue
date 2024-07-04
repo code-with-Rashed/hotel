@@ -11,6 +11,7 @@ const { results, errors, logout } = useAdminProfileApi()
 const storeAdminCredentials = useAdminCredentialsStore()
 const storeToastMessage = useToastMessageStore()
 const profilePhoto = storageUrl + storeAdminCredentials.admin.photo
+const profileName = storeAdminCredentials.admin.name
 
 const adminLogout = async () => {
   const authorizationToken = `${storeAdminCredentials.tokenType} ${storeAdminCredentials.adminAccessToken}`
@@ -150,7 +151,7 @@ if (innerWidth > 1100) {
     <div class="sidebar-footer">
       <RouterLink :to="{ name: 'profile' }" class="sidebar-link" title="Profile Management .">
         <img :src="profilePhoto" alt="profile" width="30px" height="30px" class="rounded-circle" />
-        <span class="ms-1">{{ storeAdminCredentials.admin.name }}</span>
+        <span class="ms-1">{{ profileName }}</span>
       </RouterLink>
       <a href="javascript:void(0)" @click="adminLogout()" class="sidebar-link">
         <i class="bi bi-box-arrow-left"></i>
