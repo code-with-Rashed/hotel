@@ -3,12 +3,19 @@ import { ref, watch } from 'vue'
 
 export const useToastMessageStore = defineStore('toastMessage', () => {
   const toggleToast = ref(false)
-  const success = ref(false)
-  const message = ref(null)
+  const successStatus = ref(false)
+  const messages = ref(null)
+  const runTimes = ref(null)
+  function showToastMessage(success, message, time = 5000) {
+    toggleToast.value = true
+    successStatus.value = success
+    messages.value = message
+    runTimes.value = time
+  }
   watch(toggleToast, () => {
     setTimeout(() => {
       toggleToast.value = false
-    }, 6000)
+    }, runTimes.value)
   })
-  return { toggleToast, success, message }
+  return { toggleToast, successStatus, messages, showToastMessage }
 })

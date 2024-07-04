@@ -9,17 +9,15 @@ const store = useToastMessageStore()
       :class="{
         show: store.toggleToast,
         hide: !store.toggleToast,
-        'text-bg-primary': store.success,
-        'text-bg-danger': !store.success
+        'text-bg-primary': store.successStatus,
+        'text-bg-danger': !store.successStatus
       }"
       role="alert"
       aria-live="assertive"
       aria-atomic="true"
     >
       <div class="d-flex">
-        <div class="toast-body">
-          {{ store.message }}
-        </div>
+        <div class="toast-body" v-html="store.messages"></div>
         <button
           type="button"
           class="btn-close btn-close-white me-2 m-auto"
