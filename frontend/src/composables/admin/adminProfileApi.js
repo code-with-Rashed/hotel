@@ -21,5 +21,24 @@ export default function useAdminProfileApi() {
     }
   }
 
-  return { results, errors, login }
+  const logout = async (token) => {
+    results.value = []
+    errors.value = null
+    try {
+      const request = await fetch(url + '/logout', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: token
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+
+  return { results, errors, login, logout }
 }

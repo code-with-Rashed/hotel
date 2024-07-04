@@ -1,7 +1,33 @@
 <script setup>
 import { ref, watch } from 'vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
+import useAdminProfileApi from '@/composables/admin/adminProfileApi'
+import { useAdminCredentialsStore } from '@/stores/adminCredentials'
+import { useToastMessageStore } from '@/stores/toastMessage'
+import ToastMessage from '@/components/ToastMessage.vue'
+const storageUrl = import.meta.env.VITE_API_STORAGE_URL
+const router = useRouter()
+const { results, errors, logout } = useAdminProfileApi()
+const storeAdminCredentials = useAdminCredentialsStore()
+const storeToastMessage = useToastMessageStore()
+const profilePhoto = storageUrl + storeAdminCredentials.admin.photo
 
+const adminLogout = async () => {
+  const authorizationToken = `${storeAdminCredentials.tokenType} ${storeAdminCredentials.adminAccessToken}`
+  await logout(authorizationToken)
+  if (results.value.success) {
+    storeAdminCredentials.destroyAdminCredentials()
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+    router.push({ name: 'login' })
+  } else {
+    storeToastMessage.showToastMessage(false, results.value.message)
+  }
+  if (errors.value) {
+    storeToastMessage.showToastMessage(false, errors.value.message)
+  }
+}
+
+// handle sidebar collapse
 const expand = ref(false)
 
 const emit = defineEmits(['layout'])
@@ -123,19 +149,14 @@ if (innerWidth > 1100) {
     </ul>
     <div class="sidebar-footer">
       <RouterLink :to="{ name: 'profile' }" class="sidebar-link" title="Profile Management .">
-        <img
-          src="https://i.vimeocdn.com/portrait/62976452_640x640"
-          alt="profile"
-          width="30px"
-          height="30px"
-          class="rounded-circle"
-        />
-        <span class="ms-1">Rashed alam</span>
+        <img :src="profilePhoto" alt="profile" width="30px" height="30px" class="rounded-circle" />
+        <span class="ms-1">{{ storeAdminCredentials.admin.name }}</span>
       </RouterLink>
-      <a href="#" class="sidebar-link">
+      <a href="javascript:void(0)" @click="adminLogout()" class="sidebar-link">
         <i class="bi bi-box-arrow-left"></i>
         <span>Logout</span>
       </a>
     </div>
   </aside>
+  <ToastMessage />
 </template>

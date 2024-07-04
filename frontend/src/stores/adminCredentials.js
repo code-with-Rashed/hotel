@@ -14,7 +14,20 @@ export const useAdminCredentialsStore = defineStore(
       adminAccessToken.value = data.admin_access_token
       admin.value = data.admin
     }
-    return { isAdminAuthenticate, tokenType, adminAccessToken, admin, adminCredentials }
+    function destroyAdminCredentials() {
+      isAdminAuthenticate.value = false
+      tokenType.value = null
+      adminAccessToken.value = null
+      admin.value = null
+    }
+    return {
+      isAdminAuthenticate,
+      tokenType,
+      adminAccessToken,
+      admin,
+      adminCredentials,
+      destroyAdminCredentials
+    }
   },
   { persist: true }
 )
