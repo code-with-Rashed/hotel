@@ -5,6 +5,7 @@ const router = createRouter({
   routes: [
     {
       path: '/admin',
+      meta: { isAdminPanelRoutes: true },
       children: [
         {
           path: '',
