@@ -40,5 +40,25 @@ export default function useAdminProfileApi() {
     }
   }
 
-  return { results, errors, login, logout }
+  // fetch admin profile record
+  const show = async (id, token) => {
+    results.value = []
+    errors.value = null
+    try {
+      const request = await fetch(url + '/show/' + id, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: token
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+
+  return { results, errors, login, logout, show }
 }

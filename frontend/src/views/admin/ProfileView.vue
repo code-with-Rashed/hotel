@@ -1,5 +1,36 @@
 <script setup>
 import LayoutView from './layout/LayoutView.vue'
+import useAdminProfileApi from '@/composables/admin/adminProfileApi'
+import { useToastMessageStore } from '@/stores/toastMessage'
+import ToastMessage from '@/components/ToastMessage.vue'
+import { onMounted, ref, reactive } from 'vue'
+import { useAdminCredentialsStore } from '@/stores/adminCredentials'
+
+const storeAdminCredentials = useAdminCredentialsStore()
+const adminProfileId = storeAdminCredentials.admin.id
+const token = storeAdminCredentials.tokenType + ' ' + storeAdminCredentials.adminAccessToken
+const { results, errors, show } = useAdminProfileApi()
+const storeToastMessage = useToastMessageStore()
+const profilePhoto = ref()
+const showProfile = reactive({
+  name: '',
+  email: ''
+})
+
+onMounted(async () => {
+  await show(adminProfileId, token)
+  if (results.value.success) {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+    profilePhoto.value = results.value.data.admin.photo
+    showProfile.name = results.value.data.admin.name
+    showProfile.email = results.value.data.admin.email
+  } else {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+  }
+  if (errors.value) {
+    storeToastMessage.showToastMessage(false, errors.value.message)
+  }
+})
 </script>
 <template>
   <LayoutView>
@@ -13,11 +44,7 @@ import LayoutView from './layout/LayoutView.vue'
               <div class="col-md-6">
                 <form class="shadow rounded p-4">
                   <div class="mb-4">
-                    <img
-                      src="https://i.vimeocdn.com/portrait/62976452_640x640"
-                      alt="Profile-Photo"
-                      class="rounded-circle w-25"
-                    />
+                    <img :src="profilePhoto" alt="Profile-Photo" class="rounded-circle w-25" />
                   </div>
                   <div class="form-group mb-3">
                     <label for="photo" class="mb-1">Change Photo</label>
@@ -29,9 +56,9 @@ import LayoutView from './layout/LayoutView.vue'
                       type="text"
                       id="name"
                       class="form-control"
-                      value="Rashed alam"
-                      maxlength="30"
+                      maxlength="50"
                       required
+                      v-model.trim="showProfile.name"
                     />
                   </div>
                   <div class="form-group mb-3">
@@ -40,9 +67,9 @@ import LayoutView from './layout/LayoutView.vue'
                       type="email"
                       id="email"
                       class="form-control"
-                      value="user@mail.com"
-                      maxlength="50"
+                      maxlength="60"
                       required
+                      v-model.trim="showProfile.email"
                     />
                   </div>
                   <button type="submit" class="btn btn-primary">Update</button>
@@ -96,4 +123,5 @@ import LayoutView from './layout/LayoutView.vue'
       </div>
     </template>
   </LayoutView>
+  <ToastMessage />
 </template>
