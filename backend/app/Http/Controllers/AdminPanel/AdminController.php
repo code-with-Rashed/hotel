@@ -47,6 +47,13 @@ class AdminController extends BaseController
         return $this->send_response(message: "You have been successfully logged out .");
     }
 
+    // show admin profile record
+    public function show($id)
+    {
+        $results['admin'] = Admin::find($id);
+        return $this->send_response(message: "admin profile record", results: $results);
+    }
+
     // Admin profile update
     public function update_profile(Request $request, $id)
     {

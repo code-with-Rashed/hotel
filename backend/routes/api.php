@@ -20,6 +20,7 @@ use App\Http\Controllers\AdminPanel\TeamController;
 Route::prefix('/admin/profile')->group(function () {
     Route::post('/login', [AdminController::class, 'login']);
     Route::middleware("auth:sanctum")->group(function () {
+        Route::get('/show/{id}',[AdminController::class,'show']);
         Route::put('/update/password/{id}', [AdminController::class, 'update_password']);
         Route::put('/update/profile/{id}', [AdminController::class, 'update_profile']);
         Route::delete('/logout', [AdminController::class, 'logout']);
