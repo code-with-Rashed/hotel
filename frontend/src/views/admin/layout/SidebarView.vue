@@ -5,12 +5,12 @@ import useAdminProfileApi from '@/composables/admin/adminProfileApi'
 import { useAdminCredentialsStore } from '@/stores/adminCredentials'
 import { useToastMessageStore } from '@/stores/toastMessage'
 import ToastMessage from '@/components/ToastMessage.vue'
-const storageUrl = import.meta.env.VITE_API_STORAGE_URL
+
 const router = useRouter()
 const { results, errors, logout } = useAdminProfileApi()
 const storeAdminCredentials = useAdminCredentialsStore()
 const storeToastMessage = useToastMessageStore()
-const profilePhoto = storageUrl + storeAdminCredentials.admin.photo
+const profilePhoto = storeAdminCredentials.admin.photo
 const profileName = storeAdminCredentials.admin.name
 
 const adminLogout = async () => {
