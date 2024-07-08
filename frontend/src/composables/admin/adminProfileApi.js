@@ -60,5 +60,31 @@ export default function useAdminProfileApi() {
     }
   }
 
-  return { results, errors, login, logout, show }
+  // update profile record
+  const update = async (id, token, updatedData, profilePhoto) => {
+    results.value = []
+    errors.value = null
+    try {
+      const formData = new FormData()
+      if (profilePhoto.value) {
+        formData.append('photo', profilePhoto.value)
+      }
+      formData.append('name', updatedData.name)
+      formData.append('email', updatedData.email)
+      const request = await fetch(url + '/update/' + id, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          Authorization: token
+        },
+        body: formData
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+
+  return { results, errors, login, logout, show, update }
 }

@@ -9,13 +9,41 @@ import { useAdminCredentialsStore } from '@/stores/adminCredentials'
 const storeAdminCredentials = useAdminCredentialsStore()
 const adminProfileId = storeAdminCredentials.admin.id
 const token = storeAdminCredentials.tokenType + ' ' + storeAdminCredentials.adminAccessToken
-const { results, errors, show } = useAdminProfileApi()
+const { results, errors, show, update } = useAdminProfileApi()
 const storeToastMessage = useToastMessageStore()
 const profilePhoto = ref()
+const newProfilePhoto = ref()
+const updateProfileBtn = ref(true)
+
 const showProfile = reactive({
   name: '',
   email: ''
 })
+const selectPhoto = (event) => {
+  newProfilePhoto.value = event.target.files[0]
+  profilePhoto.value = URL.createObjectURL(newProfilePhoto.value)
+}
+const updateProfileRecord = async () => {
+  updateProfileBtn.value = false
+  await update(adminProfileId, token, showProfile, newProfilePhoto)
+  updateProfileBtn.value = true
+
+  if (results.value.success) {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+  } else {
+    let message = ''
+    message += '<strong>' + results.value.message + '</strong><br>'
+    if (results.value.message == 'validation error') {
+      results.value.data.forEach((element) => {
+        message += element + '<br>'
+      })
+    }
+    storeToastMessage.showToastMessage(results.value.success, message, 10000)
+  }
+  if (errors.value) {
+    storeToastMessage.showToastMessage(false, errors.value.message)
+  }
+}
 
 onMounted(async () => {
   await show(adminProfileId, token)
@@ -42,13 +70,19 @@ onMounted(async () => {
             <div class="row py-3">
               <!-- Profile Update Area Start -->
               <div class="col-md-6">
-                <form class="shadow rounded p-4">
+                <form class="shadow rounded p-4" @submit.prevent="updateProfileRecord">
                   <div class="mb-4">
                     <img :src="profilePhoto" alt="Profile-Photo" class="rounded-circle w-25" />
                   </div>
                   <div class="form-group mb-3">
                     <label for="photo" class="mb-1">Change Photo</label>
-                    <input type="file" id="photo" class="form-control" accept="image/*" />
+                    <input
+                      type="file"
+                      id="photo"
+                      class="form-control"
+                      accept="image/*"
+                      @change="selectPhoto"
+                    />
                   </div>
                   <div class="form-group mb-3">
                     <label for="name" class="mb-1">Name</label>
@@ -72,7 +106,13 @@ onMounted(async () => {
                       v-model.trim="showProfile.email"
                     />
                   </div>
-                  <button type="submit" class="btn btn-primary">Update</button>
+                  <button type="submit" class="btn btn-primary" v-if="updateProfileBtn">
+                    Update
+                  </button>
+                  <button class="btn btn-primary" type="button" disabled v-else>
+                    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                    <span role="status"> Proccssing...</span>
+                  </button>
                 </form>
               </div>
               <!-- Profile Update Area End -->
