@@ -22,7 +22,7 @@ Route::prefix('/admin/profile')->group(function () {
     Route::middleware("auth:sanctum")->group(function () {
         Route::get('/show/{id}',[AdminController::class,'show']);
         Route::put('/update/password/{id}', [AdminController::class, 'update_password']);
-        Route::put('/update/profile/{id}', [AdminController::class, 'update_profile']);
+        Route::post('/update/{id}', [AdminController::class, 'update_profile']);
         Route::delete('/logout', [AdminController::class, 'logout']);
     });
 });

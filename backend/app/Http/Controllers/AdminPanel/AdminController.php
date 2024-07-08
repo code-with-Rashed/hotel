@@ -72,7 +72,7 @@ class AdminController extends BaseController
 
         if ($request->hasFile('photo')) {
 
-            $image_path = public_path('storage/') . $admin->photo;
+            $image_path = public_path('storage/') . $admin->getRawOriginal('photo');
             if (file_exists($image_path)) {
                 @unlink($image_path);
             }
