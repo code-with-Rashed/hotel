@@ -86,5 +86,25 @@ export default function useAdminProfileApi() {
     }
   }
 
-  return { results, errors, login, logout, show, update }
+  // update password
+  const updatePassword = async (id, token, password) => {
+    results.value = []
+    errors.value = null
+    try {
+      const request = await fetch(url + '/update/password/' + id, {
+        method: 'PUT',
+        headers: {
+          Authorization: token,
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(password)
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+  return { results, errors, login, logout, show, update, updatePassword }
 }

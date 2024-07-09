@@ -9,11 +9,12 @@ import { useAdminCredentialsStore } from '@/stores/adminCredentials'
 const storeAdminCredentials = useAdminCredentialsStore()
 const adminProfileId = storeAdminCredentials.admin.id
 const token = storeAdminCredentials.tokenType + ' ' + storeAdminCredentials.adminAccessToken
-const { results, errors, show, update } = useAdminProfileApi()
+const { results, errors, show, update, updatePassword } = useAdminProfileApi()
 const storeToastMessage = useToastMessageStore()
 const profilePhoto = ref()
 const newProfilePhoto = ref()
 const updateProfileBtn = ref(true)
+const updatePasswordBtn = ref(true)
 
 const showProfile = reactive({
   name: '',
@@ -44,6 +45,38 @@ const updateProfileRecord = async () => {
     storeToastMessage.showToastMessage(false, errors.value.message)
   }
 }
+
+// password updation proccess
+const password = reactive({
+  old_password: '',
+  password: '',
+  password_confirmation: ''
+})
+const passwordUpdateNow = async () => {
+  updatePasswordBtn.value = false
+  await updatePassword(adminProfileId, token, password)
+  updatePasswordBtn.value = true
+
+  if (results.value.success) {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+    password.old_password = ''
+    password.password = ''
+    password.password_confirmation = ''
+  } else {
+    let message = ''
+    message += '<strong>' + results.value.message + '</strong><br>'
+    if (results.value.message == 'validation error') {
+      results.value.data.forEach((element) => {
+        message += element + '<br>'
+      })
+    }
+    storeToastMessage.showToastMessage(results.value.success, message, 10000)
+  }
+  if (errors.value) {
+    storeToastMessage.showToastMessage(false, errors.value.message)
+  }
+}
+//---------------------
 
 onMounted(async () => {
   await show(adminProfileId, token)
@@ -118,7 +151,7 @@ onMounted(async () => {
               <!-- Profile Update Area End -->
               <!-- Change Password Area Start -->
               <div class="col-md-6">
-                <form class="shadow rounded p-4">
+                <form class="shadow rounded p-4" @submit.prevent="passwordUpdateNow">
                   <p class="h5 fw-bold mb-3">Update Password</p>
                   <div class="form-group mb-3">
                     <label for="oldPassword" class="mb-1">Old Password</label>
@@ -129,6 +162,7 @@ onMounted(async () => {
                       placeholder="Enter old password"
                       maxlength="25"
                       required
+                      v-model.trim="password.old_password"
                     />
                   </div>
                   <div class="form-group mb-3">
@@ -140,6 +174,7 @@ onMounted(async () => {
                       placeholder="Enter new password"
                       maxlength="25"
                       required
+                      v-model.trim="password.password"
                     />
                   </div>
                   <div class="form-group mb-3">
@@ -151,9 +186,16 @@ onMounted(async () => {
                       placeholder="Enter confirm password"
                       maxlength="25"
                       required
+                      v-model.trim="password.password_confirmation"
                     />
                   </div>
-                  <button type="submit" class="btn btn-primary">Change Password</button>
+                  <button type="submit" class="btn btn-primary" v-if="updatePasswordBtn">
+                    Change Password
+                  </button>
+                  <button class="btn btn-primary" type="button" disabled v-else>
+                    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                    <span role="status"> Proccssing...</span>
+                  </button>
                 </form>
               </div>
               <!-- Change Password Area End -->
