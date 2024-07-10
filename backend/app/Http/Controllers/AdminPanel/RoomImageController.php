@@ -19,7 +19,7 @@ class RoomImageController extends BaseController
     // create & upload room image & record
     public function create(Request $request)
     {
-        $validation = Validator::make($request->all, [
+        $validation = Validator::make($request->all(), [
             "room_id" => "required|integer|exists:rooms,id",
             "image" => "required|image|max:2048|mimes:jpg,jpeg,png,webp"
         ]);
@@ -39,7 +39,7 @@ class RoomImageController extends BaseController
     // update & upload room image & record
     public function update(Request $request, $id)
     {
-        $validation = Validator::make($request->all, [
+        $validation = Validator::make($request->all(), [
             "image" => "required|image|max:2048|mimes:jpg,jpeg,png,webp"
         ]);
         if ($validation->fails()) {

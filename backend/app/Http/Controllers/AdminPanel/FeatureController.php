@@ -19,7 +19,7 @@ class FeatureController extends BaseController
     // create a new room feature
     public function create(Request $request)
     {
-        $validation = Validator::make($request->all, [
+        $validation = Validator::make($request->all(), [
             "name" => "required|string"
         ]);
         if ($validation->fails()) {
@@ -35,7 +35,7 @@ class FeatureController extends BaseController
     // update room feature
     public function update(Request $request, $id)
     {
-        $validation = Validator::make($request->all, [
+        $validation = Validator::make($request->all(), [
             "name" => "required|string"
         ]);
         if ($validation->fails()) {

@@ -19,7 +19,7 @@ class FaviconController extends BaseController
     // update favicon
     public function update(Request $request)
     {
-        $validation = Validator::make($request->all, [
+        $validation = Validator::make($request->all(), [
             "icon" => "required|image|max:1024|mimes:jpg,jpeg,png,svg,webp"
         ]);
         if ($validation->fails()) {

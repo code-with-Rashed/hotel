@@ -19,7 +19,7 @@ class InformationController extends BaseController
     // update company information
     public function update(Request $request)
     {
-        $validation = Validator::make($request->all, [
+        $validation = Validator::make($request->all(), [
             "address" => "required|string",
             "map" => "required|url:https",
             "email.*" => "required|email",

@@ -19,7 +19,7 @@ class TeamController extends BaseController
     // create a new team member
     public function create(Request $request)
     {
-        $validation = Validator::make($request->all, [
+        $validation = Validator::make($request->all(), [
             "photo" => "required|image|max:2048|mimes:jpg,jpeg,png,webp,svg",
             "name" => "required|string",
             "designation" => "required|string"
@@ -48,7 +48,7 @@ class TeamController extends BaseController
     // update team record
     public function update(Request $request, $id)
     {
-        $validation = Validator::make($request->all, [
+        $validation = Validator::make($request->all(), [
             "photo" => "nullable|image|max:2048|mimes:jpg,jpeg,png,webp,svg",
             "name" => "required|string",
             "designation" => "required|string"

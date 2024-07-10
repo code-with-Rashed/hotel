@@ -19,7 +19,7 @@ class ContactController extends BaseController
     // create new contact request
     public function create(Request $request)
     {
-        $validation = Validator::make($request->all, [
+        $validation = Validator::make($request->all(), [
             "name" => "required|string",
             "email" => "required|email",
             "subject" => "required|string",

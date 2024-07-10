@@ -19,7 +19,7 @@ class RoomController extends BaseController
     // create a new room
     public function create(Request $request)
     {
-        $validation = Validator::make($request->all, [
+        $validation = Validator::make($request->all(), [
             "name" => "required|string",
             "price" => "required|numeric",
             "quantity" => "required|integer",
@@ -54,7 +54,7 @@ class RoomController extends BaseController
     // update room record
     public function update(Request $request, $id)
     {
-        $validation = Validator::make($request->all, [
+        $validation = Validator::make($request->all(), [
             "name" => "required|string",
             "price" => "required|numeric",
             "quantity" => "required|integer",

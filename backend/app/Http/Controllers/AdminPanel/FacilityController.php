@@ -19,7 +19,7 @@ class FacilityController extends BaseController
     // create a new facility
     public function create(Request $request)
     {
-        $validation = Validator::make($request->all, [
+        $validation = Validator::make($request->all(), [
             "image" => "required|image|max:1024|mimes:svg,jpg,jpeg,png,webp",
             "name" => "required|string",
             "description" => "required|string"
@@ -48,7 +48,7 @@ class FacilityController extends BaseController
     // update facility record
     public function update(Request $request, $id)
     {
-        $validation = Validator::make($request->all, [
+        $validation = Validator::make($request->all(), [
             "image" => "nullable|image|max:1024|mimes:svg,jpg,jpeg,png,webp",
             "name" => "required|string",
             "description" => "required|string"

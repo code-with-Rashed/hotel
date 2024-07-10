@@ -27,7 +27,7 @@ class RoomFeatureFacilityController extends BaseController
     // save room related feature & facility id
     public function create(Request $request)
     {
-        $validation = Validator::make($request->all, [
+        $validation = Validator::make($request->all(), [
             "room_id" => "required|integer|exists:rooms,id",
             "feature_id" => "required|array",
             "facility_id" => "required|array",
@@ -58,7 +58,7 @@ class RoomFeatureFacilityController extends BaseController
     // update room related feature & facility id
     public function update(Request $request)
     {
-        $validation = Validator::make($request->all, [
+        $validation = Validator::make($request->all(), [
             "room_id" => "required|integer|exists:rooms,id",
             "feature_id" => "required|array",
             "facility_id" => "required|array",

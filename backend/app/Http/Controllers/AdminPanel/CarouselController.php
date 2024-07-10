@@ -19,7 +19,7 @@ class CarouselController extends BaseController
     // create & upload a new carousel image
     public function create(Request $request)
     {
-        $validation = Validator::make($request->all, [
+        $validation = Validator::make($request->all(), [
             "image" => "required|image|mimes:jpg,jpeg,png,webp|max:3072"
         ]);
         if ($validation->fails()) {
@@ -36,7 +36,7 @@ class CarouselController extends BaseController
     // update & upload crousel image 
     public function update(Request $request, $id)
     {
-        $validation = Validator::make($request->all, [
+        $validation = Validator::make($request->all(), [
             "image" => "required|image|mimes:jpg,jpeg,png,webp|max:3072"
         ]);
         if ($validation->fails()) {

@@ -36,7 +36,7 @@ class SettingController extends BaseController
     // update the web descrition
     public function update(Request $request)
     {
-        $validation = Validator::make($request->all, [
+        $validation = Validator::make($request->all(), [
             "description" => "required|string"
         ]);
         if ($validation->fails()) {

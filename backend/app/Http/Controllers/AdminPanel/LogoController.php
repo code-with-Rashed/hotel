@@ -19,7 +19,7 @@ class LogoController extends BaseController
     // update logo
     public function update(Request $request)
     {
-        $validation = Validator::make($request->all, [
+        $validation = Validator::make($request->all(), [
             "logo" => "required|image|max:2048|mimes:jpg,jpeg,png,webp,svg"
         ]);
         if ($validation->fails()) {
