@@ -32,6 +32,13 @@ class FeatureController extends BaseController
         return $this->send_response(message: "New feature successfully created .", status_code: 201);
     }
 
+    // show single feature record
+    public function show($id)
+    {
+        $results["facility"] = Feature::find($id);
+        return $this->send_response(message: "Feature data .", results: $results);
+    }
+
     // update room feature
     public function update(Request $request, $id)
     {

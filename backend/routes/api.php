@@ -32,6 +32,7 @@ Route::prefix('/admin/profile')->group(function () {
 Route::prefix("/admin/feature")->middleware("auth:sanctum")->group(function () {
     Route::get("/", [FeatureController::class, 'index']);
     Route::post("/create", [FeatureController::class, 'create']);
+    Route::get("/show/{id}", [FeatureController::class, 'show']);
     Route::put("/update/{id}", [FeatureController::class, 'update']);
     Route::delete("/delete/{id}", [FeatureController::class, 'delete']);
 });
