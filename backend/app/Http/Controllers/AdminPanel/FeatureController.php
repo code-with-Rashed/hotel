@@ -35,7 +35,7 @@ class FeatureController extends BaseController
     // show single feature record
     public function show($id)
     {
-        $results["facility"] = Feature::find($id);
+        $results["feature"] = Feature::find($id);
         return $this->send_response(message: "Feature data .", results: $results);
     }
 
