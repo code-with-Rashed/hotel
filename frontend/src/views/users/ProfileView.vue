@@ -75,7 +75,8 @@ import { RouterLink } from 'vue-router'
                       rows="1"
                       maxlength="248"
                       required
-                    >Dhaka , Bangladesh.
+                    >
+Dhaka , Bangladesh.
                     </textarea>
                   </div>
                 </div>
