@@ -49,7 +49,7 @@ onMounted(() => facilityRecord())
                 type="button"
                 class="btn btn-dark btn-sm shadow-none"
                 data-bs-toggle="modal"
-                data-bs-target="#facility-s"
+                data-bs-target="#addFacilityRecord"
               >
                 <i class="bi bi-plus-square"></i>
                 Add Facility

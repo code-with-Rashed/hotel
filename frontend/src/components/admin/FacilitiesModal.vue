@@ -1,7 +1,60 @@
+<script setup>
+import { ref, reactive } from 'vue'
+import useFacilityApi from '@/composables/admin/facilityApi'
+import ToastMessage from '@/components/ToastMessage.vue'
+import { useToastMessageStore } from '@/stores/toastMessage'
+import { hideBsModal } from '@/helpers/hideBsModal'
+
+const { results, errors, post } = useFacilityApi()
+const storeToastMessage = useToastMessageStore()
+
+// handle facility image
+const facilityImage = ref()
+const showFacilityImage = ref()
+const selectFacilityImage = (event) => {
+  facilityImage.value = event.target.files[0]
+  showFacilityImage.value = URL.createObjectURL(facilityImage.value)
+}
+//------------------------
+
+// add facility record
+const facilityData = reactive({
+  name: '',
+  description: ''
+})
+const addFacilitySubmitBtn = ref(true)
+const postFacilityRecord = async () => {
+  addFacilitySubmitBtn.value = false
+  await post(facilityData, facilityImage)
+  addFacilitySubmitBtn.value = true
+
+  if (results.value.success) {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+    hideBsModal('addFacilityRecord')
+    facilityData.name = ''
+    facilityData.description = ''
+    facilityImage.value = null
+    showFacilityImage.value = null
+  } else {
+    let message = ''
+    message += '<strong>' + results.value.message + '</strong><br>'
+    if (results.value.message == 'validation error') {
+      results.value.data.forEach((element) => {
+        message += element + '<br>'
+      })
+    }
+    storeToastMessage.showToastMessage(results.value.success, message, 10000)
+  }
+  if (errors.value) {
+    storeToastMessage.showToastMessage(false, errors.value.message)
+  }
+}
+//-------------------
+</script>
 <template>
   <div
     class="modal fade"
-    id="facility-s"
+    id="addFacilityRecord"
     data-bs-backdrop="static"
     data-bs-keyboard="false"
     tabindex="-1"
@@ -10,7 +63,7 @@
     role="dialog"
   >
     <div class="modal-dialog">
-      <form id="facility-frm">
+      <form @submit.prevent="postFacilityRecord">
         <input
           type="hidden"
           name="CSRF_TOKEN"
@@ -34,10 +87,14 @@
                 type="file"
                 id="facility_picture_inp"
                 class="form-control shadow-none"
-                title="Enter a new Facility Picture (svg format)"
-                accept=".svg"
+                title="Enter a new Facility Picture (svg format) recomended ."
+                accept="image/*"
                 required
+                @change="selectFacilityImage"
               />
+            </div>
+            <div class="mb-3" v-if="showFacilityImage">
+              <img :src="showFacilityImage" alt="preview image" class="img-fluid" />
             </div>
             <div class="mb-3">
               <label class="form-label fw-bold">Facility Name</label>
@@ -46,8 +103,9 @@
                 id="facility_name_inp"
                 class="form-control shadow-none"
                 title="Enter a new Facility Name"
-                maxlength="20"
+                maxlength="50"
                 required
+                v-model.trim="facilityData.name"
               />
             </div>
             <div class="mb-3">
@@ -57,6 +115,7 @@
                 class="form-control shadow-none"
                 rows="5"
                 maxlength="250"
+                v-model.trim="facilityData.description"
               ></textarea>
             </div>
           </div>
@@ -64,10 +123,21 @@
             <button type="reset" class="btn text-secondary shadow-none" data-bs-dismiss="modal">
               Cancel
             </button>
-            <button type="submit" class="btn btn-primary text-white shadow-none">SUBMIT</button>
+            <button
+              type="submit"
+              class="btn btn-primary text-white shadow-none"
+              v-if="addFacilitySubmitBtn"
+            >
+              SUBMIT
+            </button>
+            <button class="btn btn-primary" type="button" disabled v-else>
+              <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+              <span role="status"> Proccssing...</span>
+            </button>
           </div>
         </div>
       </form>
     </div>
   </div>
+  <ToastMessage />
 </template>

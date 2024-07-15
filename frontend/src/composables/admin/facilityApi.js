@@ -31,5 +31,29 @@ export default function useFacilityApi() {
     }
   }
 
-  return { results, errors, get }
+  // post a facility record
+  const post = async (facilityData, facilityImage) => {
+    results.value = []
+    errors.value = null
+
+    try {
+      const formData = new FormData()
+      formData.append('name', facilityData.name)
+      formData.append('description', facilityData.description)
+      formData.append('image', facilityImage.value)
+      const request = await fetch(url + '/create', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          Accept: 'application/json',
+          Authorization: token
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+  return { results, errors, get, post }
 }
