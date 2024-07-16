@@ -1,11 +1,15 @@
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import useFacilityApi from '@/composables/admin/facilityApi'
 import ToastMessage from '@/components/ToastMessage.vue'
 import { useToastMessageStore } from '@/stores/toastMessage'
 import { hideBsModal } from '@/helpers/hideBsModal'
 
-const { results, errors, post } = useFacilityApi()
+const props = defineProps({
+  editFacilityId: Number
+})
+
+const { results, errors, post, show, put } = useFacilityApi()
 const storeToastMessage = useToastMessageStore()
 
 // handle facility image
@@ -50,6 +54,67 @@ const postFacilityRecord = async () => {
   }
 }
 //-------------------
+
+// handle update & delete instruction for facility record
+const currentEditFacilityId = ref()
+watch(props, (foundedIds) => {
+  if (foundedIds.editFacilityId && foundedIds.editFacilityId != currentEditFacilityId.value) {
+    getFacilityRecord(foundedIds.editFacilityId)
+  }
+  currentEditFacilityId.value = foundedIds.editFacilityId
+})
+//----------------
+
+// get single facility record for editing
+const getFacilityRecord = async (id) => {
+  await show(id)
+  if (results.value.success) {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+    showFacilityImage.value = results.value.data.facility.image
+    editFacilityRecord.name = results.value.data.facility.name
+    editFacilityRecord.description = results.value.data.facility.description
+  } else {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+  }
+  if (errors.value) {
+    storeToastMessage.showToastMessage(false, errors.value.message)
+  }
+}
+// --------------------------------------
+
+// update facility record
+const updateFacilitySubmitBtn = ref(true)
+const editFacilityRecord = reactive({
+  name: '',
+  description: ''
+})
+
+const updateFeatureRecord = async () => {
+  updateFacilitySubmitBtn.value = false
+  await put(currentEditFacilityId.value, editFacilityRecord, facilityImage)
+  updateFacilitySubmitBtn.value = true
+
+  if (results.value.success) {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+    hideBsModal('editFacilityRecord')
+    editFacilityRecord.name = ''
+    editFacilityRecord.description = ''
+    facilityImage.value = null
+    showFacilityImage.value = null
+  } else {
+    let message = ''
+    message += '<strong>' + results.value.message + '</strong><br>'
+    if (results.value.message == 'validation error') {
+      results.value.data.forEach((element) => {
+        message += element + '<br>'
+      })
+    }
+    storeToastMessage.showToastMessage(results.value.success, message, 10000)
+  }
+  if (errors.value) {
+    storeToastMessage.showToastMessage(false, errors.value.message)
+  }
+}
 </script>
 <template>
   <div
@@ -139,5 +204,89 @@ const postFacilityRecord = async () => {
       </form>
     </div>
   </div>
+  <!-- edit facility modal start -->
+  <div
+    class="modal fade"
+    id="editFacilityRecord"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
+    tabindex="-1"
+    aria-labelledby="staticBackdropLabel"
+    aria-modal="true"
+    role="dialog"
+  >
+    <div class="modal-dialog">
+      <form @submit.prevent="updateFeatureRecord">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">Edit Facility Record</h5>
+            <button
+              type="reset"
+              class="btn-close shadow-none"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label fw-bold">Facility Picture</label>
+              <input
+                type="file"
+                id="facility_picture_inp"
+                class="form-control shadow-none"
+                title="Enter a new Facility Picture (svg format) recomended ."
+                accept="image/*"
+                @change="selectFacilityImage"
+              />
+            </div>
+            <div class="mb-3" v-if="showFacilityImage">
+              <img :src="showFacilityImage" alt="preview image" class="img-fluid" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold" for="facility_name">Facility Name</label>
+              <input
+                type="text"
+                id="facility_name"
+                class="form-control shadow-none"
+                title="Edit Facility Name"
+                maxlength="50"
+                required
+                v-model.trim="editFacilityRecord.name"
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold" for="facility_description"
+                >Facility Description</label
+              >
+              <textarea
+                id="facility_description"
+                class="form-control shadow-none"
+                rows="5"
+                maxlength="250"
+                v-model.trim="editFacilityRecord.description"
+              ></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="reset" class="btn text-secondary shadow-none" data-bs-dismiss="modal">
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary text-white shadow-none"
+              v-if="updateFacilitySubmitBtn"
+            >
+              UPDATE
+            </button>
+            <button class="btn btn-primary" type="button" disabled v-else>
+              <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+              <span role="status"> Proccssing...</span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!-- edit facility modal end -->
   <ToastMessage />
 </template>

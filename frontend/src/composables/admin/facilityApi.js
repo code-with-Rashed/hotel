@@ -55,5 +55,53 @@ export default function useFacilityApi() {
       errors.value = error
     }
   }
-  return { results, errors, get, post }
+
+  // get a single facility record
+  const show = async (id) => {
+    results.value = []
+    errors.value = null
+    try {
+      const request = await fetch(url + '/show/' + id, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: token
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+
+  // update facility record
+  const put = async (id, editFacilityRecord, facilityImage) => {
+    results.value = []
+    errors.value = null
+
+    try {
+      const formData = new FormData()
+      formData.append('name', editFacilityRecord.name)
+      formData.append('description', editFacilityRecord.description)
+      if (facilityImage.value) {
+        formData.append('image', facilityImage.value)
+      }
+      const request = await fetch(url + '/update/' + id, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          Accept: 'application/json',
+          Authorization: token,
+          'X-HTTP-Method-Override': 'PUT'
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+  return { results, errors, get, post, show, put }
 }

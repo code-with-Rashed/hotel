@@ -9,6 +9,12 @@ import useFacilityApi from '@/composables/admin/facilityApi'
 const storeToastMessage = useToastMessageStore()
 const { results, errors, get } = useFacilityApi()
 
+// send facility id to child (FacilityModal) component for editing by facility record
+const editFacilityId = ref(0)
+const editFacility = (id) => {
+  editFacilityId.value = id
+}
+
 // get all facility record
 const reloader = ref(true)
 const facilityRecord = async () => {
@@ -62,7 +68,13 @@ onMounted(() => facilityRecord())
                     <div class="col-lg-4 col-md-6 mb-5 px-4">
                       <div class="bg-white shadow p-4 rounded border-4 border-top border-dark pop">
                         <div class="mb-1 text-end">
-                          <button class="btn btn-primary btn-sm shadow-none mx-1" type="button">
+                          <button
+                            class="btn btn-primary btn-sm shadow-none mx-1"
+                            type="button"
+                            data-bs-target="#editFacilityRecord"
+                            data-bs-toggle="modal"
+                            @click="editFacility(facility.id)"
+                          >
                             <i class="bi bi-pencil-square"></i> Edit
                           </button>
                           <button class="btn btn-danger btn-sm shadow-none" type="button">
@@ -92,6 +104,6 @@ onMounted(() => facilityRecord())
       </div>
     </template>
   </LayoutView>
-  <FacilitiesModal />
+  <FacilitiesModal :editFacilityId="editFacilityId" />
   <ToastMessage />
 </template>
