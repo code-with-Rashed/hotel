@@ -51,6 +51,7 @@ Route::prefix("/admin/contact")->middleware("auth:sanctum")->group(function () {
 Route::prefix("/admin/carousel")->middleware("auth:sanctum")->group(function () {
     Route::get("/", [CarouselController::class, "index"]);
     Route::post("/create", [CarouselController::class, "create"]);
+    Route::get("/show/{id}", [CarouselController::class, "show"]);
     Route::put("/update/{id}", [CarouselController::class, "update"]);
     Route::delete("/delete/{id}", [CarouselController::class, "delete"]);
 });

@@ -33,6 +33,13 @@ class CarouselController extends BaseController
         return $this->send_response(message: "New carousel image successfully created .", status_code: 201);
     }
 
+    // show single carousel record
+    public function show($id)
+    {
+        $results["carousel"] = Carousel::find($id);
+        return $this->send_response(message: "Carousel data .", results: $results);
+    }
+
     // update & upload crousel image 
     public function update(Request $request, $id)
     {
