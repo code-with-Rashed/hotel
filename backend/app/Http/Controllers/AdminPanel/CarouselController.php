@@ -52,7 +52,7 @@ class CarouselController extends BaseController
 
         $carousel = Carousel::find($id);
 
-        $old_image_path = public_path("storage/") . $carousel->image;
+        $old_image_path = public_path("storage/") . $carousel->getRawOriginal('image');
         if (file_exists($old_image_path)) {
             @unlink($old_image_path);
         }
@@ -69,7 +69,7 @@ class CarouselController extends BaseController
     {
         $carousel = Carousel::find($id);
         if (!is_null($carousel)) {
-            $image_path = public_path("storage/") . $carousel->image;
+            $image_path = public_path("storage/") . $carousel->getRawOriginal('image');
             if (file_exists($image_path)) {
                 @unlink($image_path);
             }
