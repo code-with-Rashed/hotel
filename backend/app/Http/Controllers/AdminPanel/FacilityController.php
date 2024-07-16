@@ -61,7 +61,7 @@ class FacilityController extends BaseController
 
         // if find a new image then delete old image
         if ($request->hasFile("image")) {
-            $old_image = public_path("storage/") . $facility->image;
+            $old_image = public_path("storage/") . $facility->getRawOriginal('image');
             if (file_exists($old_image)) {
                 @unlink($old_image);
             }
@@ -81,7 +81,7 @@ class FacilityController extends BaseController
     {
         $facility = Facility::find($id);
         if (!is_null($facility)) {
-            $image = public_path("storage/") . $facility->image;
+            $image = public_path("storage/") . $facility->getRawOriginal('image');
             if (file_exists($image)) {
                 @unlink($image);
             }
