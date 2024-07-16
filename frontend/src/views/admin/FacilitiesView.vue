@@ -15,6 +15,12 @@ const editFacility = (id) => {
   editFacilityId.value = id
 }
 
+// send facility id to child (FacilityModal) component for deleting by facility record
+const deleteFacilityId = ref(0)
+const deleteFacility = (id) => {
+  deleteFacilityId.value = id
+}
+
 // get all facility record
 const reloader = ref(true)
 const facilityRecord = async () => {
@@ -77,7 +83,13 @@ onMounted(() => facilityRecord())
                           >
                             <i class="bi bi-pencil-square"></i> Edit
                           </button>
-                          <button class="btn btn-danger btn-sm shadow-none" type="button">
+                          <button
+                            class="btn btn-danger btn-sm shadow-none"
+                            type="button"
+                            data-bs-target="#deleteFacilityModal"
+                            data-bs-toggle="modal"
+                            @click="deleteFacility(facility.id)"
+                          >
                             <i class="bi bi-trash"></i> Delete
                           </button>
                         </div>
@@ -104,6 +116,6 @@ onMounted(() => facilityRecord())
       </div>
     </template>
   </LayoutView>
-  <FacilitiesModal :editFacilityId="editFacilityId" />
+  <FacilitiesModal :editFacilityId="editFacilityId" :deleteFacilityId="deleteFacilityId" />
   <ToastMessage />
 </template>

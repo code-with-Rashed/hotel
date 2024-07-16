@@ -6,10 +6,11 @@ import { useToastMessageStore } from '@/stores/toastMessage'
 import { hideBsModal } from '@/helpers/hideBsModal'
 
 const props = defineProps({
-  editFacilityId: Number
+  editFacilityId: Number,
+  deleteFacilityId: Number
 })
 
-const { results, errors, post, show, put } = useFacilityApi()
+const { results, errors, post, show, put, destroy } = useFacilityApi()
 const storeToastMessage = useToastMessageStore()
 
 // handle facility image
@@ -62,6 +63,7 @@ watch(props, (foundedIds) => {
     getFacilityRecord(foundedIds.editFacilityId)
   }
   currentEditFacilityId.value = foundedIds.editFacilityId
+  currentDeleteFacilityId.value = foundedIds.deleteFacilityId
 })
 //----------------
 
@@ -110,6 +112,25 @@ const updateFeatureRecord = async () => {
       })
     }
     storeToastMessage.showToastMessage(results.value.success, message, 10000)
+  }
+  if (errors.value) {
+    storeToastMessage.showToastMessage(false, errors.value.message)
+  }
+}
+
+// delete facility record
+const currentDeleteFacilityId = ref()
+const deleteFacilitySubmitBtn = ref(true)
+
+const deleteFacilityRecord = async () => {
+  deleteFacilitySubmitBtn.value = false
+  await destroy(currentDeleteFacilityId.value)
+  deleteFacilitySubmitBtn.value = true
+  if (results.value.success) {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+    hideBsModal('deleteFacilityModal')
+  } else {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
   }
   if (errors.value) {
     storeToastMessage.showToastMessage(false, errors.value.message)
@@ -288,5 +309,56 @@ const updateFeatureRecord = async () => {
     </div>
   </div>
   <!-- edit facility modal end -->
+  <!-- delete feature modal start -->
+  <div
+    class="modal fade"
+    id="deleteFacilityModal"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
+    tabindex="-1"
+    aria-labelledby="staticBackdropLabel"
+    aria-modal="true"
+    role="dialog"
+  >
+    <div class="modal-dialog">
+      <form @submit.prevent="deleteFacilityRecord">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">Delete Feature Record</h5>
+            <button
+              type="reset"
+              class="btn-close shadow-none"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <p class="fw-bold text-center text-danger">
+                Are you sure ? you wan't to delete this record !
+              </p>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="reset" class="btn text-secondary shadow-none" data-bs-dismiss="modal">
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="btn btn-danger text-white shadow-none"
+              v-if="deleteFacilitySubmitBtn"
+            >
+              DELETE
+            </button>
+            <button class="btn btn-primary" type="button" disabled v-else>
+              <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+              <span role="status"> Proccssing...</span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!-- delete feature modal end -->
   <ToastMessage />
 </template>

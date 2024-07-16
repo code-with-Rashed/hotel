@@ -103,5 +103,25 @@ export default function useFacilityApi() {
       errors.value = error
     }
   }
-  return { results, errors, get, post, show, put }
+
+  // delete facility record
+  const destroy = async (id) => {
+    results.value = []
+    errors.value = null
+    try {
+      const request = await fetch(url + '/delete/' + id, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: token
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+  return { results, errors, get, post, show, put, destroy }
 }
