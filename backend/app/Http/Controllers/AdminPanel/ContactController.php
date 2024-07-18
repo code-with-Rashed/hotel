@@ -64,4 +64,11 @@ class ContactController extends BaseController
             return $this->send_response(message: "The message successfully deleted .");
         }
     }
+
+    // delete all contact messages
+    public function delete_all()
+    {
+        Contact::truncate();
+        return $this->send_response(message: "All contact messages are successfully deleted .");
+    }
 }

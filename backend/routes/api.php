@@ -20,7 +20,7 @@ use App\Http\Controllers\AdminPanel\TeamController;
 Route::prefix('/admin/profile')->group(function () {
     Route::post('/login', [AdminController::class, 'login']);
     Route::middleware("auth:sanctum")->group(function () {
-        Route::get('/show/{id}',[AdminController::class,'show']);
+        Route::get('/show/{id}', [AdminController::class, 'show']);
         Route::put('/update/password/{id}', [AdminController::class, 'update_password']);
         Route::post('/update/{id}', [AdminController::class, 'update_profile']);
         Route::delete('/logout', [AdminController::class, 'logout']);
@@ -44,6 +44,7 @@ Route::prefix("/admin/contact")->middleware("auth:sanctum")->group(function () {
     Route::post("/create", [ContactController::class, 'create']);
     Route::patch("/update/{id}", [ContactController::class, 'update']);
     Route::delete("/delete/{id}", [ContactController::class, 'delete']);
+    Route::delete("/delete/all/record", [ContactController::class, 'delete_all']);
 });
 //--------------------
 
