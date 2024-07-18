@@ -1,5 +1,30 @@
 <script setup>
 import LayoutView from './layout/LayoutView.vue'
+import { onMounted, ref } from 'vue'
+import { useToastMessageStore } from '@/stores/toastMessage'
+import ToastMessage from '@/components/ToastMessage.vue'
+import useContactApi from '@/composables/admin/contactApi'
+
+const storeToastMessage = useToastMessageStore()
+const { results, errors, get } = useContactApi()
+
+// get all contact request record
+const reloader = ref(true)
+const contactRecord = async () => {
+  reloader.value = false
+  await get()
+  reloader.value = true
+  if (results.value.success) {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+  } else {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+  }
+  if (errors.value) {
+    storeToastMessage.showToastMessage(false, errors.value.message)
+  }
+}
+onMounted(() => contactRecord())
+//-----------------------------
 </script>
 <template>
   <LayoutView>
@@ -10,6 +35,15 @@ import LayoutView from './layout/LayoutView.vue'
           <div class="card-body">
             <div class="d-flex align-items-center justify-content-between mb-3">
               <h5 class="card-title m-0">Contact Us List</h5>
+              <button
+                type="button"
+                class="btn btn-sm btn-primary"
+                @click="contactRecord"
+                title="Reload facility record list ."
+              >
+                Reload
+                <span class="badge text-bg-secondary"> <i class="bi bi-arrow-repeat"></i> </span>
+              </button>
               <div>
                 <button
                   class="btn btn-success btn-sm shadow-none m-1"
@@ -32,63 +66,69 @@ import LayoutView from './layout/LayoutView.vue'
                 <thead class="bg-dark text-white">
                   <tr>
                     <th width="5%">No.</th>
-                    <th width="12%">Name</th>
-                    <th width="15%">Email</th>
-                    <th width="19%">Subject</th>
-                    <th width="30%">Message</th>
-                    <th width="10%">Date</th>
-                    <th width="9%">Action</th>
+                    <th width="15%">Name</th>
+                    <th width="20%">Email</th>
+                    <th width="25%">Subject</th>
+                    <th width="8%">Status</th>
+                    <th width="12%">Date</th>
+                    <th width="15%">Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>1</td>
-                    <td>Test</td>
-                    <td>test@gmail.com</td>
-                    <td>test</td>
-                    <td>test</td>
-                    <td>22/05/2024</td>
-                    <td>
-                      <button
-                        class="btn btn-sm btn-danger mt-1 rounded shadow-none"
-                        title="Delete this message ."
-                      >
-                        <i class="bi bi-trash"></i> Delete
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>1</td>
-                    <td>Test</td>
-                    <td>test@gmail.com</td>
-                    <td>test</td>
-                    <td>test</td>
-                    <td>22/05/2024</td>
-                    <td>
-                      <button
-                        class="btn btn-sm btn-danger mt-1 rounded shadow-none"
-                        title="Delete this message ."
-                      >
-                        <i class="bi bi-trash"></i> Delete
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>1</td>
-                    <td>Test</td>
-                    <td>test@gmail.com</td>
-                    <td>test</td>
-                    <td>test</td>
-                    <td>22/05/2024</td>
-                    <td>
-                      <button
-                        class="btn btn-sm btn-danger mt-1 rounded shadow-none"
-                        title="Delete this message ."
-                      >
-                        <i class="bi bi-trash"></i> Delete
-                      </button>
-                    </td>
-                  </tr>
+                  <template v-if="reloader">
+                    <template v-if="results.data">
+                      <template v-for="contact in results.data.contacts" :key="contact.id">
+                        <tr>
+                          <td>{{ contact.id }}</td>
+                          <td>{{ contact.name }}</td>
+                          <td>{{ contact.email }}</td>
+                          <td>{{ contact.subject }}</td>
+                          <td>
+                            <span
+                              class="btn text-white fw-bold btn-sm bg-primary shadow-none"
+                              v-if="contact.status"
+                              >Readed</span
+                            >
+                            <span class="btn fw-bold btn-sm bg-warning shadow-none" v-else
+                              >Unread</span
+                            >
+                          </td>
+                          <td>
+                            {{
+                              new Date(contact.created_at).toLocaleDateString('en-GB', {
+                                day: 'numeric',
+                                month: 'long',
+                                year: 'numeric'
+                              })
+                            }}
+                          </td>
+                          <td>
+                            <button
+                              class="btn btn-sm btn-primary mt-1 rounded shadow-none mx-2"
+                              title="View Details message ."
+                            >
+                              <i class="bi bi-eye"></i> View
+                            </button>
+                            <button
+                              class="btn btn-sm btn-danger mt-1 rounded shadow-none"
+                              title="Delete this message ."
+                            >
+                              <i class="bi bi-trash"></i> Delete
+                            </button>
+                          </td>
+                        </tr>
+                      </template>
+                    </template>
+                  </template>
+                  <template v-else>
+                    <tr class="my-3 text-center">
+                      <td colspan="7">
+                        <div class="spinner-border" role="status">
+                          <span class="visually-hidden">Loading...</span>
+                        </div>
+                      </td>
+                    </tr>
+                  </template>
                 </tbody>
               </table>
               <ul class="pagination mt-2" id="pagination">
@@ -105,4 +145,5 @@ import LayoutView from './layout/LayoutView.vue'
       </div>
     </template>
   </LayoutView>
+  <ToastMessage />
 </template>
