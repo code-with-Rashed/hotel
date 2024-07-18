@@ -6,7 +6,7 @@ import ToastMessage from '@/components/ToastMessage.vue'
 import useContactApi from '@/composables/admin/contactApi'
 
 const storeToastMessage = useToastMessageStore()
-const { results, errors, get } = useContactApi()
+const { results, errors, get, deleteAll } = useContactApi()
 
 // get all contact request record
 const reloader = ref(true)
@@ -25,6 +25,20 @@ const contactRecord = async () => {
 }
 onMounted(() => contactRecord())
 //-----------------------------
+
+// delete all contact messages
+const deleteAllRecord = async () => {
+  await deleteAll()
+  if (results.value.success) {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+  } else {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+  }
+  if (errors.value) {
+    storeToastMessage.showToastMessage(false, errors.value.message)
+  }
+}
+// -----------------------------
 </script>
 <template>
   <LayoutView>
@@ -56,6 +70,7 @@ onMounted(() => contactRecord())
                   class="btn btn-danger btn-sm shadow-none m-1"
                   type="button"
                   title="Delete all messages ."
+                  @click="deleteAllRecord"
                 >
                   <i class="bi bi-trash"></i> Delete All
                 </button>
