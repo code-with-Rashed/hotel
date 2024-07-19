@@ -6,7 +6,7 @@ import ToastMessage from '@/components/ToastMessage.vue'
 import useContactApi from '@/composables/admin/contactApi'
 
 const storeToastMessage = useToastMessageStore()
-const { results, errors, get, deleteAll } = useContactApi()
+const { results, errors, get, deleteAll, updateAllStatus } = useContactApi()
 
 // get all contact request record
 const reloader = ref(true)
@@ -37,6 +37,22 @@ const deleteAllRecord = async () => {
   if (errors.value) {
     storeToastMessage.showToastMessage(false, errors.value.message)
   }
+  await contactRecord()
+}
+// -----------------------------
+
+// update all contact message status
+const updateAllRecordStatus = async () => {
+  await updateAllStatus()
+  if (results.value.success) {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+  } else {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+  }
+  if (errors.value) {
+    storeToastMessage.showToastMessage(false, errors.value.message)
+  }
+  await contactRecord()
 }
 // -----------------------------
 </script>
@@ -63,6 +79,7 @@ const deleteAllRecord = async () => {
                   class="btn btn-success btn-sm shadow-none m-1"
                   type="button"
                   title="Mark all readed ."
+                  @click="updateAllRecordStatus"
                 >
                   <i class="bi bi-eye"></i> Seen All
                 </button>

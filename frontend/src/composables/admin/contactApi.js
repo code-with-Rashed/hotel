@@ -48,5 +48,24 @@ export default function useContactApi() {
     }
   }
 
-  return { results, errors, get, deleteAll }
+  // update all contact message status
+  const updateAllStatus = async () => {
+    results.value = []
+    errors.value = null
+    try {
+      const request = await fetch(url + '/update/all/status', {
+        method: 'PATCH',
+        headers: {
+          Accept: 'application/json',
+          Authorization: token
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+
+  return { results, errors, get, deleteAll, updateAllStatus }
 }
