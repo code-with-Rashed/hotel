@@ -4,6 +4,7 @@ import { onMounted, ref } from 'vue'
 import { useToastMessageStore } from '@/stores/toastMessage'
 import ToastMessage from '@/components/ToastMessage.vue'
 import useContactApi from '@/composables/admin/contactApi'
+import ContactModal from '@/components/admin/ContactModal.vue'
 
 const storeToastMessage = useToastMessageStore()
 const { results, errors, get, deleteAll, updateAllStatus, update } = useContactApi()
@@ -70,6 +71,13 @@ const updateStatus = async (id) => {
   await contactRecord()
 }
 //------------------------------
+
+// send contact message id to child (CotactModal) component for view details
+const viewContactId = ref(0)
+const viewContact = (id) => {
+  viewContactId.value = id
+}
+//------------------------------------
 </script>
 <template>
   <LayoutView>
@@ -156,7 +164,10 @@ const updateStatus = async (id) => {
                           <td>
                             <button
                               class="btn btn-sm btn-primary mt-1 rounded shadow-none mx-2"
-                              title="View Details message ."
+                              title="View Details contact message ."
+                              data-bs-target="#viewContactMessageModal"
+                              data-bs-toggle="modal"
+                              @click="viewContact(contact.id)"
                             >
                               <i class="bi bi-eye"></i> View
                             </button>
@@ -196,5 +207,6 @@ const updateStatus = async (id) => {
       </div>
     </template>
   </LayoutView>
+  <ContactModal :viewContactId="viewContactId" />
   <ToastMessage />
 </template>

@@ -29,6 +29,25 @@ export default function useContactApi() {
     }
   }
 
+  // fetch single contact message
+  const show = async (id) => {
+    results.value = []
+    errors.value = null
+    try {
+      const request = await fetch(url + '/show/' + id, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          Authorization: token
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+
   // delete all contact messages
   const deleteAll = async () => {
     results.value = []
@@ -86,5 +105,5 @@ export default function useContactApi() {
     }
   }
 
-  return { results, errors, get, deleteAll, updateAllStatus, update }
+  return { results, errors, get, show, deleteAll, updateAllStatus, update }
 }
