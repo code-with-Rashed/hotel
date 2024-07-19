@@ -38,6 +38,13 @@ class ContactController extends BaseController
         return $this->send_response(message: "Contact details successfully send .", status_code: 201);
     }
 
+    // show single contact message
+    public function show($id)
+    {
+        $results["contact"] = Contact::find($id);
+        return $this->send_response(message: "View contact message .", results: $results);
+    }
+
     // update contact message status
     public function update($id)
     {
