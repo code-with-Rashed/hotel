@@ -6,7 +6,7 @@ import ToastMessage from '@/components/ToastMessage.vue'
 import useContactApi from '@/composables/admin/contactApi'
 
 const storeToastMessage = useToastMessageStore()
-const { results, errors, get, deleteAll, updateAllStatus } = useContactApi()
+const { results, errors, get, deleteAll, updateAllStatus, update } = useContactApi()
 
 // get all contact request record
 const reloader = ref(true)
@@ -55,6 +55,21 @@ const updateAllRecordStatus = async () => {
   await contactRecord()
 }
 // -----------------------------
+
+// update contact message status
+const updateStatus = async (id) => {
+  await update(id)
+  if (results.value.success) {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+  } else {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+  }
+  if (errors.value) {
+    storeToastMessage.showToastMessage(false, errors.value.message)
+  }
+  await contactRecord()
+}
+//------------------------------
 </script>
 <template>
   <LayoutView>
@@ -117,11 +132,15 @@ const updateAllRecordStatus = async () => {
                           <td>{{ contact.subject }}</td>
                           <td>
                             <span
+                              @click="updateStatus(contact.id)"
                               class="btn text-white fw-bold btn-sm bg-primary shadow-none"
                               v-if="contact.status"
                               >Readed</span
                             >
-                            <span class="btn fw-bold btn-sm bg-warning shadow-none" v-else
+                            <span
+                              @click="updateStatus(contact.id)"
+                              class="btn fw-bold btn-sm bg-warning shadow-none"
+                              v-else
                               >Unread</span
                             >
                           </td>
