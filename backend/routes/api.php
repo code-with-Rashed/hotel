@@ -43,6 +43,7 @@ Route::prefix("/admin/contact")->middleware("auth:sanctum")->group(function () {
     Route::get("/", [ContactController::class, 'index']);
     Route::post("/create", [ContactController::class, 'create']);
     Route::patch("/update/{id}", [ContactController::class, 'update']);
+    Route::patch("/update/all/status", [ContactController::class, 'update_all']);
     Route::delete("/delete/{id}", [ContactController::class, 'delete']);
     Route::delete("/delete/all/record", [ContactController::class, 'delete_all']);
 });

@@ -55,6 +55,13 @@ class ContactController extends BaseController
         return $this->send_response(message: $message);
     }
 
+    // update all contact message status
+    public function update_all()
+    {
+        Contact::where('status', 0)->update(['status' => 1]);
+        return $this->send_response('updated all contact message status successfully .');
+    }
+
     // delete contact message
     public function delete($id)
     {
