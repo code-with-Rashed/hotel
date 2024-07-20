@@ -78,6 +78,13 @@ const viewContact = (id) => {
   viewContactId.value = id
 }
 //------------------------------------
+
+// send contact message id to child (CotactModal) component for message delete
+const deleteContactId = ref(0)
+const deleteContact = (id) => {
+  deleteContactId.value = id
+}
+//------------------------------------
 </script>
 <template>
   <LayoutView>
@@ -174,6 +181,9 @@ const viewContact = (id) => {
                             <button
                               class="btn btn-sm btn-danger mt-1 rounded shadow-none"
                               title="Delete this message ."
+                              data-bs-target="#deleteContactMessageModal"
+                              data-bs-toggle="modal"
+                              @click="deleteContact(contact.id)"
                             >
                               <i class="bi bi-trash"></i> Delete
                             </button>
@@ -207,6 +217,6 @@ const viewContact = (id) => {
       </div>
     </template>
   </LayoutView>
-  <ContactModal :viewContactId="viewContactId" />
+  <ContactModal :viewContactId="viewContactId" :deleteContactId="deleteContactId" />
   <ToastMessage />
 </template>

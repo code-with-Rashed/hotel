@@ -105,5 +105,23 @@ export default function useContactApi() {
     }
   }
 
-  return { results, errors, get, show, deleteAll, updateAllStatus, update }
+  // delete contact message
+  const destroy = async (id) => {
+    results.value = []
+    errors.value = null
+    try {
+      const request = await fetch(url + '/delete/' + id, {
+        method: 'DELETE',
+        headers: {
+          Accept: 'application/json',
+          Authorization: token
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+  return { results, errors, get, show, deleteAll, updateAllStatus, update, destroy }
 }
