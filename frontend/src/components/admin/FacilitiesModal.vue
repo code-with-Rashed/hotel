@@ -309,7 +309,7 @@ const deleteFacilityRecord = async () => {
     </div>
   </div>
   <!-- edit facility modal end -->
-  <!-- delete feature modal start -->
+  <!-- delete facility modal start -->
   <div
     class="modal fade"
     id="deleteFacilityModal"
@@ -321,44 +321,43 @@ const deleteFacilityRecord = async () => {
     role="dialog"
   >
     <div class="modal-dialog">
-      <form @submit.prevent="deleteFacilityRecord">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="staticBackdropLabel">Delete Feature Record</h5>
-            <button
-              type="reset"
-              class="btn-close shadow-none"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <div class="mb-3">
-              <p class="fw-bold text-center text-danger">
-                Are you sure ? you wan't to delete this record !
-              </p>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="reset" class="btn text-secondary shadow-none" data-bs-dismiss="modal">
-              Cancel
-            </button>
-            <button
-              type="submit"
-              class="btn btn-danger text-white shadow-none"
-              v-if="deleteFacilitySubmitBtn"
-            >
-              DELETE
-            </button>
-            <button class="btn btn-primary" type="button" disabled v-else>
-              <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-              <span role="status"> Proccssing...</span>
-            </button>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Delete Facility Record</h5>
+          <button
+            type="button"
+            class="btn-close shadow-none"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <p class="fw-bold text-center text-danger">
+              Are you sure ? you wan't to delete this record !
+            </p>
           </div>
         </div>
-      </form>
+        <div class="modal-footer">
+          <button type="reset" class="btn text-secondary shadow-none" data-bs-dismiss="modal">
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger text-white shadow-none"
+            @click="deleteFacilityRecord"
+            v-if="deleteFacilitySubmitBtn"
+          >
+            DELETE
+          </button>
+          <button class="btn btn-primary" type="button" disabled v-else>
+            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+            <span role="status"> Proccssing...</span>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
-  <!-- delete feature modal end -->
+  <!-- delete facility modal end -->
   <ToastMessage />
 </template>
