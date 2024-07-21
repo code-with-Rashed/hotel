@@ -5,6 +5,7 @@ import { useToastMessageStore } from '@/stores/toastMessage'
 import ToastMessage from '@/components/ToastMessage.vue'
 import useContactApi from '@/composables/admin/contactApi'
 import ContactModal from '@/components/admin/ContactModal.vue'
+import { hideBsModal } from '@/helpers/hideBsModal'
 
 const storeToastMessage = useToastMessageStore()
 const { results, errors, get, deleteAll, updateAllStatus, update } = useContactApi()
@@ -28,10 +29,14 @@ onMounted(() => contactRecord())
 //-----------------------------
 
 // delete all contact messages
+const deleteAllContactMessageBtn = ref(true)
 const deleteAllRecord = async () => {
+  deleteAllContactMessageBtn.value = false
   await deleteAll()
+  deleteAllContactMessageBtn.value = true
   if (results.value.success) {
     storeToastMessage.showToastMessage(results.value.success, results.value.message)
+    hideBsModal('deleteAllContactMessageConfirmationModal')
   } else {
     storeToastMessage.showToastMessage(results.value.success, results.value.message)
   }
@@ -117,7 +122,8 @@ const deleteContact = (id) => {
                   class="btn btn-danger btn-sm shadow-none m-1"
                   type="button"
                   title="Delete all messages ."
-                  @click="deleteAllRecord"
+                  data-bs-toggle="modal"
+                  data-bs-target="#deleteAllContactMessageConfirmationModal"
                 >
                   <i class="bi bi-trash"></i> Delete All
                 </button>
@@ -219,4 +225,55 @@ const deleteContact = (id) => {
   </LayoutView>
   <ContactModal :viewContactId="viewContactId" :deleteContactId="deleteContactId" />
   <ToastMessage />
+
+  <!-- delete all contact message modal start -->
+  <div
+    class="modal fade"
+    id="deleteAllContactMessageConfirmationModal"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
+    tabindex="-1"
+    aria-labelledby="staticBackdropLabel"
+    aria-modal="true"
+    role="dialog"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Delete all Contact Messages</h5>
+          <button
+            type="reset"
+            class="btn-close shadow-none"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <p class="fw-bold text-center text-danger">
+              Are you sure ? you wan't to delete all contact messages !
+            </p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="reset" class="btn text-secondary shadow-none" data-bs-dismiss="modal">
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger text-white shadow-none"
+            @click="deleteAllRecord"
+            v-if="deleteAllContactMessageBtn"
+          >
+            DELETE
+          </button>
+          <button class="btn btn-primary" type="button" disabled v-else>
+            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+            <span role="status"> Proccssing...</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- delete all contact message modal end -->
 </template>
