@@ -32,7 +32,7 @@ class FaviconController extends BaseController
 
         if (!is_null($favicon)) {
 
-            $old_favicon = public_path("storage/") . $favicon->icon;
+            $old_favicon = public_path("storage/") . $favicon->getRawOriginal('icon');
             if (file_exists($old_favicon)) {
                 @unlink($old_favicon);
             }

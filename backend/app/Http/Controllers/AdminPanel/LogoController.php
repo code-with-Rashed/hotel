@@ -31,7 +31,7 @@ class LogoController extends BaseController
 
         $logo = Logo::first();
         if (!is_null($logo)) {
-            $old_logo = public_path("storage/") . $logo->logo;
+            $old_logo = public_path("storage/") . $logo->getRawOriginal('logo');
             if (file_exists($old_logo)) {
                 @unlink($old_logo);
             }
