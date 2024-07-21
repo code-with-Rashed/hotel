@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Logo extends Model
 {
     use HasFactory;
+
+    public function getLogoAttribute($photo)
+    {
+        return asset('storage') . "/" . $photo;
+    }
 }

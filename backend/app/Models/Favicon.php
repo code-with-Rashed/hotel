@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Favicon extends Model
 {
     use HasFactory;
+
+    public function getIconAttribute($photo)
+    {
+        return asset('storage') . "/" . $photo;
+    }
 }
