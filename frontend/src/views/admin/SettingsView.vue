@@ -1,6 +1,54 @@
 <script setup>
 import LayoutView from './layout/LayoutView.vue'
 import SettingsModal from '@/components/admin/SettingsModal.vue'
+import ToastMessage from '@/components/ToastMessage.vue'
+import { useToastMessageStore } from '@/stores/toastMessage'
+import useSettingsApi from '@/composables/admin/settingsApi'
+import { ref, onMounted } from 'vue'
+
+const storeToastMessage = useToastMessageStore()
+const { results, errors, get, shutdown } = useSettingsApi()
+
+// fetch site settings record
+const settingsResult = ref(null)
+const settingsResultReloader = ref(true)
+
+const getSettingsData = async () => {
+  settingsResultReloader.value = false
+  await get()
+  settingsResult.value = results.value
+  settingsResultReloader.value = true
+
+  if (settingsResult.value.success) {
+    storeToastMessage.showToastMessage(settingsResult.value.success, settingsResult.value.message)
+  } else {
+    storeToastMessage.showToastMessage(settingsResult.value.success, settingsResult.value.message)
+  }
+  if (errors.value) {
+    storeToastMessage.showToastMessage(false, errors.value.message)
+  }
+}
+// --------------------------
+
+// the web shutdown or running proccess
+const shutdownResult = ref(null)
+const shutdownProccess = async () => {
+  await shutdown()
+  shutdownResult.value = results.value
+  if (shutdownResult.value.success) {
+    storeToastMessage.showToastMessage(shutdownResult.value.success, shutdownResult.value.message)
+  } else {
+    storeToastMessage.showToastMessage(shutdownResult.value.success, shutdownResult.value.message)
+  }
+  if (errors.value) {
+    storeToastMessage.showToastMessage(false, errors.value.message)
+  }
+}
+// -----------------------------------
+
+onMounted(() => {
+  getSettingsData()
+})
 </script>
 <template>
   <LayoutView>
@@ -12,27 +60,62 @@ import SettingsModal from '@/components/admin/SettingsModal.vue'
           <div class="card-body">
             <div class="d-flex align-items-center justify-content-between mb-3">
               <h5 class="card-title m-0">General Settings</h5>
+              <button
+                type="button"
+                class="btn btn-sm btn-primary"
+                @click="getSettingsData"
+                title="Reload settings record ."
+              >
+                Reload
+                <span class="badge text-bg-secondary"> <i class="bi bi-arrow-repeat"></i> </span>
+              </button>
               <!-- Button trigger modal -->
               <button
                 type="button"
                 class="btn btn-dark btn-sm shadow-none"
                 data-bs-toggle="modal"
-                data-bs-target="#general-s"
+                data-bs-target="#editSettingsRecordModal"
               >
                 <i class="bi bi-pencil-square"></i>
                 Edit
               </button>
             </div>
-            <h6 class="card-subtitle mb-1 fw-bold">Site Title</h6>
-            <p class="card-text" id="site_title">My Hotel</p>
-            <h6 class="card-subtitle mb-1 fw-bold">About us</h6>
-            <p class="card-text" id="site_about">
-              About Lorem ipsum, dolor sit amet consectetur adipisicing elit. Veritatis error
-              voluptatem minus saepe asperiores ab, ducimus tempore optio aut exercitationem? Lorem
-              ipsum dolor sit, amet consectetur adipisicing elit. Odit, voluptatibus
+            <div v-if="settingsResultReloader">
+              <h6 class="card-subtitle mb-1 fw-bold">About us</h6>
+              <p class="card-text" id="site_about" v-if="settingsResult">
+                {{ settingsResult.data.setting.description }}
+              </p>
+            </div>
+            <div v-else>
+              <div class="d-flex justify-content-center my-3">
+                <div class="spinner-border" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Shutdown Settings -->
+        <div class="card border-0 shadow-sm mb-4">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <h5 class="card-title m-0">Shutdown Website</h5>
+              <div class="form-check form-switch" v-if="settingsResult">
+                <input
+                  type="checkbox"
+                  title="Shutdown Button"
+                  class="form-check-input"
+                  :checked="settingsResult.data.setting.shutdown"
+                  @change="shutdownProccess"
+                />
+              </div>
+            </div>
+            <p class="card-text">
+              No customers will be allowed to book hotel room, when shutdown mode is turned on.
             </p>
           </div>
         </div>
+
         <!-- Favicon Settings -->
         <div class="card mb-4 border-0 shadow-sm">
           <div class="card-body">
@@ -58,23 +141,6 @@ import SettingsModal from '@/components/admin/SettingsModal.vue'
               />
             </div>
           </div>
-        </div>
-      </div>
-
-      <!-- Shutdown Settings -->
-      <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
-          <div class="d-flex align-items-center justify-content-between mb-3">
-            <h5 class="card-title m-0">Shutdown Website</h5>
-            <div class="form-check form-switch">
-              <form>
-                <input type="checkbox" title="Shutdown Button" class="form-check-input" checked />
-              </form>
-            </div>
-          </div>
-          <p class="card-text">
-            No customers will be allowed to book hotel room, when shutdown mode is turned on.
-          </p>
         </div>
       </div>
 
@@ -161,4 +227,5 @@ import SettingsModal from '@/components/admin/SettingsModal.vue'
     </template>
   </LayoutView>
   <SettingsModal />
+  <ToastMessage />
 </template>
