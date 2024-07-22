@@ -50,5 +50,26 @@ export default function useSettingsApi() {
     }
   }
 
-  return { results, errors, get, shutdown }
+  // update settings record
+  const put = async (updateRecord) => {
+    results.value = []
+    errors.value = null
+    try {
+      const request = await fetch(url + '/update', {
+        method: 'PUT',
+        body: JSON.stringify(updateRecord),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: token
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+
+  return { results, errors, get, shutdown, put }
 }

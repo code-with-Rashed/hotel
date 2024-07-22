@@ -1,13 +1,42 @@
 <script setup>
 import LayoutView from './layout/LayoutView.vue'
-import SettingsModal from '@/components/admin/SettingsModal.vue'
 import ToastMessage from '@/components/ToastMessage.vue'
 import { useToastMessageStore } from '@/stores/toastMessage'
 import useSettingsApi from '@/composables/admin/settingsApi'
-import { ref, onMounted } from 'vue'
+import { hideBsModal } from '@/helpers/hideBsModal'
+import { ref, onMounted, reactive } from 'vue'
 
 const storeToastMessage = useToastMessageStore()
-const { results, errors, get, shutdown } = useSettingsApi()
+const { results, errors, get, shutdown, put } = useSettingsApi()
+
+// update site description
+const siteDescription = reactive({
+  description: ''
+})
+
+const updateSettingsBtn = ref(true)
+const updateSettings = async () => {
+  updateSettingsBtn.value = false
+  await put(siteDescription)
+  updateSettingsBtn.value = true
+  if (results.value.success) {
+    hideBsModal('editSettingsRecordModal')
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+  } else {
+    let message = ''
+    message += '<strong>' + results.value.message + '</strong><br>'
+    if (results.value.message == 'validation error') {
+      results.value.data.forEach((element) => {
+        message += element + '<br>'
+      })
+    }
+    storeToastMessage.showToastMessage(results.value.success, message, 10000)
+  }
+  if (errors.value) {
+    storeToastMessage.showToastMessage(false, errors.value.message)
+  }
+}
+// ----------------
 
 // fetch site settings record
 const settingsResult = ref(null)
@@ -21,6 +50,7 @@ const getSettingsData = async () => {
 
   if (settingsResult.value.success) {
     storeToastMessage.showToastMessage(settingsResult.value.success, settingsResult.value.message)
+    siteDescription.description = settingsResult.value.data.setting.description
   } else {
     storeToastMessage.showToastMessage(settingsResult.value.success, settingsResult.value.message)
   }
@@ -80,9 +110,7 @@ onMounted(() => {
             </div>
             <div v-if="settingsResultReloader">
               <h6 class="card-subtitle mb-1 fw-bold">About us</h6>
-              <p class="card-text" id="site_about" v-if="settingsResult">
-                {{ settingsResult.data.setting.description }}
-              </p>
+              <p class="card-text">{{ siteDescription.description }}</p>
             </div>
             <div v-else>
               <div class="d-flex justify-content-center my-3">
@@ -224,6 +252,67 @@ onMounted(() => {
       </div>
     </template>
   </LayoutView>
-  <SettingsModal />
   <ToastMessage />
+
+  <!-- modals -->
+
+  <!-- edit site description modal start -->
+  <div
+    class="modal fade"
+    id="editSettingsRecordModal"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
+    tabindex="-1"
+    aria-labelledby="staticBackdropLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <form @submit.prevent="updateSettings">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">General Settings</h5>
+            <button
+              type="button"
+              class="btn-close shadow-none"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label fw-bold" for="about">About us</label>
+              <textarea
+                name="about"
+                id="about"
+                rows="6"
+                class="form-control shadow-none"
+                title="About description your site "
+                maxlength="255"
+                required
+                v-model.trim="siteDescription.description"
+              ></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn text-secondary shadow-none" data-bs-dismiss="modal">
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary text-white shadow-none"
+              v-if="updateSettingsBtn"
+            >
+              SUBMIT
+            </button>
+            <button class="btn btn-primary" type="button" disabled v-else>
+              <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+              <span role="status"> Proccssing...</span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!-- edit site description modal end -->
+
 </template>
