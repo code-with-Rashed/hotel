@@ -31,14 +31,12 @@ const getSettingsData = async () => {
 // --------------------------
 
 // the web shutdown or running proccess
-const shutdownResult = ref(null)
 const shutdownProccess = async () => {
   await shutdown()
-  shutdownResult.value = results.value
-  if (shutdownResult.value.success) {
-    storeToastMessage.showToastMessage(shutdownResult.value.success, shutdownResult.value.message)
+  if (results.value.success) {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
   } else {
-    storeToastMessage.showToastMessage(shutdownResult.value.success, shutdownResult.value.message)
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
   }
   if (errors.value) {
     storeToastMessage.showToastMessage(false, errors.value.message)
