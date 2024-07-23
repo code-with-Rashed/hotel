@@ -134,7 +134,7 @@ const updateFaviconRecord = async () => {
 //---------------------
 
 // manage logo
-const { results: logoResults, errors: logoErrors, get: getLogo } = useLogoApi()
+const { results: logoResults, errors: logoErrors, get: getLogo, put: updateLogo } = useLogoApi()
 const logo = ref(null)
 
 // fetch logo
@@ -154,6 +154,36 @@ const getLogoData = async () => {
   }
 }
 // -------------
+
+// update logo record
+const newLogo = ref(null)
+const selectLogo = (event) => {
+  newLogo.value = event.target.files[0]
+  logo.value = URL.createObjectURL(newLogo.value)
+}
+const updateLogoBtn = ref(true)
+const updateLogoRecord = async () => {
+  updateLogoBtn.value = false
+  await updateLogo(newLogo)
+  updateLogoBtn.value = true
+  if (logoResults.value.success) {
+    hideBsModal('updateLogo')
+    storeToastMessage.showToastMessage(logoResults.value.success, logoResults.value.message)
+  } else {
+    let message = ''
+    message += '<strong>' + results.value.message + '</strong><br>'
+    if (results.value.message == 'validation error') {
+      results.value.data.forEach((element) => {
+        message += element + '<br>'
+      })
+    }
+    storeToastMessage.showToastMessage(logoResults.value.success, message, 10000)
+  }
+  if (logoErrors.value) {
+    storeToastMessage.showToastMessage(false, logoErrors.value.message)
+  }
+}
+//---------------------
 
 onMounted(() => {
   getSettingsData()
@@ -504,4 +534,66 @@ onMounted(() => {
     </div>
   </div>
   <!-- Update Favicon Modal end -->
+
+  <!-- Update Logo Modal start -->
+  <div
+    class="modal fade"
+    id="updateLogo"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
+    tabindex="-1"
+    aria-labelledby="staticBackdropLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <form @submit.prevent="updateLogoRecord">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">Set Logo</h5>
+            <button
+              type="reset"
+              class="btn-close shadow-none"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label fw-bold" for="favicon">Chose a Logo</label>
+              <input
+                type="file"
+                id="favicon"
+                class="form-control shadow-none"
+                title="Set your favicon"
+                accept="image/*"
+                required
+                @change="selectLogo"
+              />
+            </div>
+            <div class="mb-3" v-if="logo">
+              <strong class="d-block mb-1">Logo</strong>
+              <img :src="logo" alt="preview image" class="img-fluid" />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="reset" class="btn text-secondary shadow-none" data-bs-dismiss="modal">
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary text-white shadow-none"
+              v-if="updateLogoBtn"
+            >
+              SUBMIT
+            </button>
+            <button class="btn btn-primary" type="button" disabled v-else>
+              <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+              <span role="status"> Proccssing...</span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!-- Update Logo Modal end -->
 </template>

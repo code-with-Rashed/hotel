@@ -30,5 +30,29 @@ export default function useLogoApi() {
     }
   }
 
-  return { results, errors, get }
+  // update logo record
+  const put = async (logo) => {
+    results.value = []
+    errors.value = null
+
+    try {
+      const formData = new FormData()
+      formData.append('logo', logo.value)
+      const request = await fetch(url + '/update', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          Accept: 'application/json',
+          Authorization: token,
+          'X-HTTP-Method-Override': 'PUT'
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+
+  return { results, errors, get, put }
 }
