@@ -77,7 +77,12 @@ const shutdownProccess = async () => {
 // -----------------------------------
 
 // manage favicon
-const { results: faviconResults, errors: faviconErrors, get: getFavicon } = useFaviconApi()
+const {
+  results: faviconResults,
+  errors: faviconErrors,
+  get: getFavicon,
+  put: updateFavicon
+} = useFaviconApi()
 const favicon = ref(null)
 
 // fetch favicon
@@ -97,6 +102,36 @@ const getFaviconData = async () => {
   }
 }
 // -------------
+
+// update favicon record
+const newFavicon = ref(null)
+const selectFavicon = (event) => {
+  newFavicon.value = event.target.files[0]
+  favicon.value = URL.createObjectURL(newFavicon.value)
+}
+const updateFaviconBtn = ref(true)
+const updateFaviconRecord = async () => {
+  updateFaviconBtn.value = false
+  await updateFavicon(newFavicon)
+  updateFaviconBtn.value = true
+  if (faviconResults.value.success) {
+    hideBsModal('updateFavicon')
+    storeToastMessage.showToastMessage(faviconResults.value.success, faviconResults.value.message)
+  } else {
+    let message = ''
+    message += '<strong>' + results.value.message + '</strong><br>'
+    if (results.value.message == 'validation error') {
+      results.value.data.forEach((element) => {
+        message += element + '<br>'
+      })
+    }
+    storeToastMessage.showToastMessage(faviconResults.value.success, message, 10000)
+  }
+  if (faviconErrors.value) {
+    storeToastMessage.showToastMessage(false, faviconErrors.value.message)
+  }
+}
+//---------------------
 
 // manage logo
 const { results: logoResults, errors: logoErrors, get: getLogo } = useLogoApi()
@@ -407,4 +442,66 @@ onMounted(() => {
     </div>
   </div>
   <!-- edit site description modal end -->
+
+  <!-- Update Favicon Modal start -->
+  <div
+    class="modal fade"
+    id="updateFavicon"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
+    tabindex="-1"
+    aria-labelledby="staticBackdropLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <form @submit.prevent="updateFaviconRecord">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">Set Favicon</h5>
+            <button
+              type="reset"
+              class="btn-close shadow-none"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label fw-bold" for="favicon">Chose a Favicon</label>
+              <input
+                type="file"
+                id="favicon"
+                class="form-control shadow-none"
+                title="Set your favicon"
+                accept="image/*"
+                required
+                @change="selectFavicon"
+              />
+            </div>
+            <div class="mb-3" v-if="favicon">
+              <strong class="d-block mb-1">Favicon</strong>
+              <img :src="favicon" alt="preview image" class="img-fluid" />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="reset" class="btn text-secondary shadow-none" data-bs-dismiss="modal">
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary text-white shadow-none"
+              v-if="updateFaviconBtn"
+            >
+              SUBMIT
+            </button>
+            <button class="btn btn-primary" type="button" disabled v-else>
+              <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+              <span role="status"> Proccssing...</span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!-- Update Favicon Modal end -->
 </template>

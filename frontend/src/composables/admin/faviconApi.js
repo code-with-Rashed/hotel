@@ -30,5 +30,29 @@ export default function useFaviconApi() {
     }
   }
 
-  return { results, errors, get }
+  // update favicon record
+  const put = async (favicon) => {
+    results.value = []
+    errors.value = null
+
+    try {
+      const formData = new FormData()
+      formData.append('icon', favicon.value)
+      const request = await fetch(url + '/update', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          Accept: 'application/json',
+          Authorization: token,
+          'X-HTTP-Method-Override': 'PUT'
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+
+  return { results, errors, get, put }
 }
