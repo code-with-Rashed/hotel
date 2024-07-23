@@ -3,6 +3,7 @@ import LayoutView from './layout/LayoutView.vue'
 import ToastMessage from '@/components/ToastMessage.vue'
 import { useToastMessageStore } from '@/stores/toastMessage'
 import useSettingsApi from '@/composables/admin/settingsApi'
+import useFaviconApi from '@/composables/admin/faviconApi'
 import { hideBsModal } from '@/helpers/hideBsModal'
 import { ref, onMounted, reactive } from 'vue'
 
@@ -74,8 +75,31 @@ const shutdownProccess = async () => {
 }
 // -----------------------------------
 
+// manage favicon
+const { results: faviconResults, errors: faviconErrors, get: getFavicon } = useFaviconApi()
+const favicon = ref(null)
+
+// fetch favicon
+const faviconResultReloader = ref(true)
+const getFaviconData = async () => {
+  faviconResultReloader.value = false
+  await getFavicon()
+  faviconResultReloader.value = true
+  if (faviconResults.value.success) {
+    favicon.value = faviconResults.value.data.favicon.icon
+    storeToastMessage.showToastMessage(faviconResults.value.success, faviconResults.value.message)
+  } else {
+    storeToastMessage.showToastMessage(faviconResults.value.success, faviconResults.value.message)
+  }
+  if (faviconErrors.value) {
+    storeToastMessage.showToastMessage(false, faviconErrors.value.message)
+  }
+}
+// -------------
+
 onMounted(() => {
   getSettingsData()
+  getFaviconData()
 })
 </script>
 <template>
@@ -147,24 +171,33 @@ onMounted(() => {
           <div class="card-body">
             <div class="d-flex align-items-center justify-content-between mb-3">
               <h5 class="card-title m-0">Fav Icon</h5>
+              <button
+                type="button"
+                class="btn btn-sm btn-primary"
+                @click="getFaviconData"
+                title="Reload favicon record ."
+              >
+                Reload
+                <span class="badge text-bg-secondary"> <i class="bi bi-arrow-repeat"></i> </span>
+              </button>
               <!-- Button trigger modal -->
               <button
                 type="button"
                 class="btn btn-dark btn-sm shadow-none"
                 data-bs-toggle="modal"
-                data-bs-target="#favicon-s"
+                data-bs-target="#updateFavicon"
               >
                 <i class="bi bi-pencil-square"></i>
                 Edit
               </button>
             </div>
-            <div class="m-3" id="favicon">
-              <img
-                src="http://localhost/hotel/images/favicon/IMG41746.png"
-                alt="favicon"
-                width="50px"
-                title="favicon"
-              />
+            <div class="m-3" v-if="faviconResultReloader">
+              <img :src="favicon" alt="favicon" width="50px" title="favicon" />
+            </div>
+            <div class="d-flex justify-content-center my-3" v-else>
+              <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
             </div>
           </div>
         </div>
@@ -314,5 +347,4 @@ onMounted(() => {
     </div>
   </div>
   <!-- edit site description modal end -->
-
 </template>
