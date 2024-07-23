@@ -4,6 +4,7 @@ import ToastMessage from '@/components/ToastMessage.vue'
 import { useToastMessageStore } from '@/stores/toastMessage'
 import useSettingsApi from '@/composables/admin/settingsApi'
 import useFaviconApi from '@/composables/admin/faviconApi'
+import useLogoApi from '@/composables/admin/logoApi'
 import { hideBsModal } from '@/helpers/hideBsModal'
 import { ref, onMounted, reactive } from 'vue'
 
@@ -97,9 +98,32 @@ const getFaviconData = async () => {
 }
 // -------------
 
+// manage logo
+const { results: logoResults, errors: logoErrors, get: getLogo } = useLogoApi()
+const logo = ref(null)
+
+// fetch logo
+const logoResultReloader = ref(true)
+const getLogoData = async () => {
+  logoResultReloader.value = false
+  await getLogo()
+  logoResultReloader.value = true
+  if (logoResults.value.success) {
+    logo.value = logoResults.value.data.logo.logo
+    storeToastMessage.showToastMessage(logoResults.value.success, logoResults.value.message)
+  } else {
+    storeToastMessage.showToastMessage(logoResults.value.success, logoResults.value.message)
+  }
+  if (logoErrors.value) {
+    storeToastMessage.showToastMessage(false, logoErrors.value.message)
+  }
+}
+// -------------
+
 onMounted(() => {
   getSettingsData()
   getFaviconData()
+  getLogoData()
 })
 </script>
 <template>
@@ -193,6 +217,42 @@ onMounted(() => {
             </div>
             <div class="m-3" v-if="faviconResultReloader">
               <img :src="favicon" alt="favicon" width="50px" title="favicon" />
+            </div>
+            <div class="d-flex justify-content-center my-3" v-else>
+              <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Logo Settings -->
+        <div class="card mb-4 border-0 shadow-sm">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <h5 class="card-title m-0">Logo</h5>
+              <button
+                type="button"
+                class="btn btn-sm btn-primary"
+                @click="getLogoData"
+                title="Reload favicon record ."
+              >
+                Reload
+                <span class="badge text-bg-secondary"> <i class="bi bi-arrow-repeat"></i> </span>
+              </button>
+              <!-- Button trigger modal -->
+              <button
+                type="button"
+                class="btn btn-dark btn-sm shadow-none"
+                data-bs-toggle="modal"
+                data-bs-target="#updateLogo"
+              >
+                <i class="bi bi-pencil-square"></i>
+                Edit
+              </button>
+            </div>
+            <div class="m-3" v-if="logoResultReloader">
+              <img :src="logo" alt="logo" width="100px" title="logo" />
             </div>
             <div class="d-flex justify-content-center my-3" v-else>
               <div class="spinner-border" role="status">
