@@ -91,7 +91,7 @@ const editFacilityRecord = reactive({
   description: ''
 })
 
-const updateFeatureRecord = async () => {
+const updateFacilityRecord = async () => {
   updateFacilitySubmitBtn.value = false
   await put(currentEditFacilityId.value, editFacilityRecord, facilityImage)
   updateFacilitySubmitBtn.value = true
@@ -237,7 +237,7 @@ const deleteFacilityRecord = async () => {
     role="dialog"
   >
     <div class="modal-dialog">
-      <form @submit.prevent="updateFeatureRecord">
+      <form @submit.prevent="updateFacilityRecord">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="staticBackdropLabel">Edit Facility Record</h5>
