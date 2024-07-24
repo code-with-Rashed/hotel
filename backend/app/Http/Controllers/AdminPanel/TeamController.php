@@ -61,7 +61,7 @@ class TeamController extends BaseController
 
         // if find a new photo then delete old photo
         if ($request->hasFile("photo")) {
-            $old_photo = public_path("storage/") . $team->photo;
+            $old_photo = public_path("storage/") . $team->getRawOriginal('photo');
             if (file_exists($old_photo)) {
                 @unlink($old_photo);
             }
@@ -81,7 +81,7 @@ class TeamController extends BaseController
     {
         $team = Team::find($id);
         if (!is_null($team)) {
-            $photo = public_path("storage/") . $team->photo;
+            $photo = public_path("storage/") . $team->getRawOriginal('photo');
             if (file_exists($photo)) {
                 @unlink($photo);
             }
