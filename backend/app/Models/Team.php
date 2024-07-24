@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Team extends Model
 {
     use HasFactory;
+
+    public function getPhotoAttribute($photo)
+    {
+        return asset('storage') . "/" . $photo;
+    }
 }
