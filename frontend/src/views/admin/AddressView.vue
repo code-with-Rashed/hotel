@@ -1,6 +1,32 @@
 <script setup>
 import LayoutView from './layout/LayoutView.vue'
 import AddressModal from '@/components/admin/AddressModal.vue'
+import { onMounted, ref } from 'vue'
+import { useToastMessageStore } from '@/stores/toastMessage'
+import ToastMessage from '@/components/ToastMessage.vue'
+import useAddressApi from '@/composables/admin/addressApi'
+
+const storeToastMessage = useToastMessageStore()
+const { results, errors, get } = useAddressApi()
+
+// get company address information record
+const reloader = ref(true)
+const address = ref(null)
+const addressRecord = async () => {
+  reloader.value = false
+  await get()
+  reloader.value = true
+  if (results.value.success) {
+    address.value = results.value.data.company_information
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+  } else {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+  }
+  if (errors.value) {
+    storeToastMessage.showToastMessage(false, errors.value.message)
+  }
+}
+onMounted(() => addressRecord())
 </script>
 <template>
   <LayoutView>
@@ -9,8 +35,17 @@ import AddressModal from '@/components/admin/AddressModal.vue'
         <h3>Address Management</h3>
         <div class="card mb-4 border-0 shadow-sm">
           <div class="card-body">
-            <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="d-flex align-items-center justify-content-between mb-4">
               <h5 class="card-title m-0">Contact Details</h5>
+              <button
+                type="button"
+                class="btn btn-sm btn-primary"
+                @click="addressRecord"
+                title="Reload carousel image record list ."
+              >
+                Reload
+                <span class="badge text-bg-secondary"> <i class="bi bi-arrow-repeat"></i> </span>
+              </button>
               <!-- Button trigger modal -->
               <button
                 type="button"
@@ -22,64 +57,66 @@ import AddressModal from '@/components/admin/AddressModal.vue'
               </button>
             </div>
             <div class="row">
-              <div class="col-md-6">
-                <div class="mb-4">
-                  <div class="card-subtitle fw-bold mb-1">Address</div>
-                  <p class="card-text">
-                    <i class="bi bi-geo-alt me-1"></i
-                    ><span id="address">XYZ Road , ABC Building New Yourk, USA</span>
-                  </p>
+              <template v-if="reloader">
+                <template v-if="address">
+                  <div class="col-md-6">
+                    <div class="mb-4">
+                      <div class="card-subtitle fw-bold mb-1">Address</div>
+                      <p class="card-text">
+                        <i class="bi bi-geo-alt me-1"></i><span>{{ address.address }}</span>
+                      </p>
+                    </div>
+                    <div class="mb-4">
+                      <div class="card-subtitle fw-bold mb-1">Contact number</div>
+                      <template v-for="(phone, i) in address.phone" :key="i">
+                        <p class="card-text">
+                          <i class="bi bi-telephone-fill me-1"></i>
+                          <span>+88 {{ phone }}</span>
+                        </p>
+                      </template>
+                    </div>
+                    <div class="mb-4">
+                      <div class="card-subtitle fw-bold mb-1">E-mail</div>
+                      <template v-for="(email, i) in address.email" :key="i">
+                        <p class="card-text">
+                          <i class="bi bi-envelope-fill me-1"></i>
+                          <span>{{ email }}</span>
+                        </p>
+                      </template>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-4">
+                      <div class="card-subtitle fw-bold mb-1">Social links</div>
+                      <template v-for="(social, i) in address.social" :key="i">
+                        <p class="card-text">
+                          <i
+                            class="bi fw-bold fs-6 me-1"
+                            :class="'bi-' + social.split('//')[1].split('.')[0]"
+                          ></i>
+                          <span id="facebook" class="text-dark">{{ social }}</span>
+                        </p>
+                      </template>
+                    </div>
+                  </div>
+                  <div class="mb-4">
+                    <div class="card-subtitle fw-bold mb-1">Location</div>
+                    <iframe
+                      :src="address.map"
+                      loading="lazy"
+                      class="w-100 border p-2"
+                      id="iframe"
+                    ></iframe>
+                  </div>
+                </template>
+              </template>
+              <template v-else>
+                <div class="d-flex justify-content-center my-3">
+                  <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
                 </div>
-                <div class="mb-4">
-                  <div class="card-subtitle fw-bold mb-1">Contact number</div>
-                  <p class="card-text">
-                    <i class="bi bi-telephone-fill"></i>
-                    <span>+88 01921042138</span>
-                  </p>
-                </div>
-                <div class="mb-4">
-                  <div class="card-subtitle fw-bold mb-1">E-mail</div>
-                  <p class="card-text">
-                    <i class="bi bi-envelope-fill"></i>
-                    <span id="email"> hotel@support.com</span>
-                  </p>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="mb-4">
-                  <div class="card-subtitle fw-bold mb-1">Social links</div>
-                  <p class="card-text">
-                    <i class="bi bi-facebook fw-bold fs-6 me-1"></i>
-                    <span id="facebook" class="text-dark" title="Facebook link"
-                      >https://facebook.com</span
-                    >
-                  </p>
-                  <p class="card-text">
-                    <i class="bi bi-twitter fw-bold fs-6 me-1"></i>
-                    <span id="twitter" class="text-dark" title="Twitter link"
-                      >https://twitter.com</span
-                    >
-                  </p>
-                  <p class="card-text">
-                    <i class="bi bi-linkedin fw-bold fs-6 me-1"></i>
-                    <span
-                      id="instagram"
-                      class="text-decoration-none text-dark"
-                      title="Instagram link"
-                      >https://linkedin.com</span
-                    >
-                  </p>
-                </div>
-              </div>
-              <div class="mb-4">
-                <div class="card-subtitle fw-bold mb-1">iframe link</div>
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d387194.06225701555!2d-74.30932678804537!3d40.697019288954785!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c24fa5d33f083b%3A0xc80b8f06e177fe62!2sNew%20York%2C%20NY%2C%20USA!5e0!3m2!1sen!2sbd!4v1700986766942!5m2!1sen!2sbd"
-                  loading="lazy"
-                  class="w-100 border p-2"
-                  id="iframe"
-                ></iframe>
-              </div>
+              </template>
             </div>
           </div>
         </div>
@@ -87,4 +124,5 @@ import AddressModal from '@/components/admin/AddressModal.vue'
     </template>
   </LayoutView>
   <AddressModal />
+  <ToastMessage />
 </template>
