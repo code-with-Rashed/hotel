@@ -142,6 +142,12 @@ if (innerWidth > 1100) {
         </RouterLink>
       </li>
       <li class="sidebar-item">
+        <RouterLink :to="{ name: 'team' }" class="sidebar-link" title="Team Profile Management .">
+          <i class="bi bi-person-lines-fill fs-5 me-1"></i>
+          <span>Team Profile</span>
+        </RouterLink>
+      </li>
+      <li class="sidebar-item">
         <RouterLink :to="{ name: 'address' }" class="sidebar-link" title="Address Management .">
           <i class="bi bi-geo-alt fs-5 me-1"></i>
           <span>Address</span>

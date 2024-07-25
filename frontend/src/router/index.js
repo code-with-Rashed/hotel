@@ -81,6 +81,12 @@ const router = createRouter({
           meta: { title: 'Settings Management' }
         },
         {
+          path: 'team-profile',
+          name: 'team',
+          component: () => import('../views/admin/TeamView.vue'),
+          meta: { title: 'Team Profile Management' }
+        },
+        {
           path: 'address',
           name: 'address',
           component: () => import('../views/admin/AddressView.vue'),
