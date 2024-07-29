@@ -5,6 +5,7 @@ import { onMounted, ref } from 'vue'
 import { useToastMessageStore } from '@/stores/toastMessage'
 import ToastMessage from '@/components/ToastMessage.vue'
 import useAddressApi from '@/composables/admin/addressApi'
+import { urlBasename } from '@/helpers/urlBasename'
 
 const storeToastMessage = useToastMessageStore()
 const { results, errors, get } = useAddressApi()
@@ -92,9 +93,9 @@ onMounted(() => addressRecord())
                         <p class="card-text">
                           <i
                             class="bi fw-bold fs-6 me-1"
-                            :class="'bi-' + social.split('//')[1].split('.')[0]"
+                            :class="'bi-' + urlBasename(social, 'globe')"
                           ></i>
-                          <span id="facebook" class="text-dark">{{ social }}</span>
+                          <span class="text-dark">{{ social }}</span>
                         </p>
                       </template>
                     </div>
