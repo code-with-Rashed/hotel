@@ -29,5 +29,26 @@ export default function useAddressApi() {
     }
   }
 
-  return { results, errors, get }
+  // update company address information record
+  const put = async (updatedAddress) => {
+    results.value = []
+    errors.value = null
+    try {
+      const request = await fetch(url + '/update', {
+        method: 'PUT',
+        body: JSON.stringify(updatedAddress),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: token
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+
+  return { results, errors, get, put }
 }

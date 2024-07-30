@@ -124,6 +124,6 @@ onMounted(() => addressRecord())
       </div>
     </template>
   </LayoutView>
-  <AddressModal />
+  <AddressModal :address="address" />
   <ToastMessage />
 </template>
