@@ -4,6 +4,7 @@ import useContactApi from '@/composables/admin/contactApi'
 import ToastMessage from '@/components/ToastMessage.vue'
 import { useToastMessageStore } from '@/stores/toastMessage'
 import { hideBsModal } from '@/helpers/hideBsModal'
+import { dateFormatter,timeFormatter } from '@/helpers/dateTime'
 
 const props = defineProps({
   viewContactId: Number,
@@ -72,26 +73,13 @@ const deleteViewsMessage = () => {
 </script>
 <template>
   <!-- view details contact message modal start -->
-  <div
-    class="modal fade"
-    id="viewContactMessageModal"
-    data-bs-backdrop="static"
-    data-bs-keyboard="false"
-    tabindex="-1"
-    aria-labelledby="staticBackdropLabel"
-    aria-modal="true"
-    role="dialog"
-  >
+  <div class="modal fade" id="viewContactMessageModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-modal="true" role="dialog">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="staticBackdropLabel">View Details Contact Message</h5>
-          <button
-            type="button"
-            class="btn-close shadow-none"
-            data-bs-dismiss="modal"
-            aria-label="Close"
-          ></button>
+          <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <div class="mb-3">
@@ -102,13 +90,8 @@ const deleteViewsMessage = () => {
               <p><strong>Message : </strong> {{ viewContactMessage.message }}</p>
               <p>
                 <strong>Date : </strong>
-                {{
-                  new Date(viewContactMessage.created_at).toLocaleDateString('en-GB', {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric'
-                  })
-                }}
+                {{ dateFormatter(viewContactMessage.created_at) }}
+                {{ timeFormatter(viewContactMessage.created_at) }}
               </p>
             </template>
             <template v-else>
@@ -120,13 +103,8 @@ const deleteViewsMessage = () => {
           <button type="button" class="btn text-secondary shadow-none" data-bs-dismiss="modal">
             Cancel
           </button>
-          <button
-            type="submit"
-            class="btn btn-danger text-white shadow-none"
-            data-bs-toggle="modal"
-            data-bs-target="#deleteContactMessageModal"
-            @click="deleteViewsMessage"
-          >
+          <button type="submit" class="btn btn-danger text-white shadow-none" data-bs-toggle="modal"
+            data-bs-target="#deleteContactMessageModal" @click="deleteViewsMessage">
             DELETE
           </button>
         </div>
@@ -135,26 +113,13 @@ const deleteViewsMessage = () => {
   </div>
   <!-- view details contact message modal end -->
   <!-- delete contact message modal start -->
-  <div
-    class="modal fade"
-    id="deleteContactMessageModal"
-    data-bs-backdrop="static"
-    data-bs-keyboard="false"
-    tabindex="-1"
-    aria-labelledby="staticBackdropLabel"
-    aria-modal="true"
-    role="dialog"
-  >
+  <div class="modal fade" id="deleteContactMessageModal" data-bs-backdrop="static" data-bs-keyboard="false"
+    tabindex="-1" aria-labelledby="staticBackdropLabel" aria-modal="true" role="dialog">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="staticBackdropLabel">Delete Contact Message</h5>
-          <button
-            type="reset"
-            class="btn-close shadow-none"
-            data-bs-dismiss="modal"
-            aria-label="Close"
-          ></button>
+          <button type="reset" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <div class="mb-3">
@@ -167,12 +132,8 @@ const deleteViewsMessage = () => {
           <button type="reset" class="btn text-secondary shadow-none" data-bs-dismiss="modal">
             Cancel
           </button>
-          <button
-            type="button"
-            class="btn btn-danger text-white shadow-none"
-            @click="deleteContactMessage"
-            v-if="deleteContactMessageBtn"
-          >
+          <button type="button" class="btn btn-danger text-white shadow-none" @click="deleteContactMessage"
+            v-if="deleteContactMessageBtn">
             DELETE
           </button>
           <button class="btn btn-primary" type="button" disabled v-else>

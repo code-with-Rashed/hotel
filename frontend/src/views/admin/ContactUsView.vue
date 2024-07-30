@@ -6,6 +6,7 @@ import ToastMessage from '@/components/ToastMessage.vue'
 import useContactApi from '@/composables/admin/contactApi'
 import ContactModal from '@/components/admin/ContactModal.vue'
 import { hideBsModal } from '@/helpers/hideBsModal'
+import { dateFormatter } from '@/helpers/dateTime'
 
 const storeToastMessage = useToastMessageStore()
 const { results, errors, get, deleteAll, updateAllStatus, update } = useContactApi()
@@ -166,13 +167,7 @@ const deleteContact = (id) => {
                             >
                           </td>
                           <td>
-                            {{
-                              new Date(contact.created_at).toLocaleDateString('en-GB', {
-                                day: 'numeric',
-                                month: 'long',
-                                year: 'numeric'
-                              })
-                            }}
+                            {{ dateFormatter(contact.created_at) }}
                           </td>
                           <td>
                             <button
