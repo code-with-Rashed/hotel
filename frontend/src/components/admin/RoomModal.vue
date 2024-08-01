@@ -1,8 +1,59 @@
+<script setup>
+import { ref, reactive } from 'vue'
+import useRoomApi from '@/composables/admin/roomApi'
+import ToastMessage from '@/components/ToastMessage.vue'
+import { useToastMessageStore } from '@/stores/toastMessage'
+import { hideBsModal } from '@/helpers/hideBsModal'
+
+const { results, errors, post } = useRoomApi()
+const storeToastMessage = useToastMessageStore()
+
+// add new room record
+const addRoomSubmitBtn = ref(true)
+const newRoom = reactive({
+  name: '',
+  price: '',
+  quantity: '',
+  area: '',
+  adult: '',
+  children: '',
+  description: ''
+})
+const addNewRoom = async () => {
+  addRoomSubmitBtn.value = false
+  await post(newRoom)
+  addRoomSubmitBtn.value = true
+  if (results.value.success) {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+    hideBsModal('addRoomModal')
+    ;(newRoom.name = ''),
+      (newRoom.price = ''),
+      (newRoom.quantity = ''),
+      (newRoom.area = ''),
+      (newRoom.adult = ''),
+      (newRoom.children = ''),
+      (newRoom.description = '')
+  } else {
+    let message = ''
+    message += '<strong>' + results.value.message + '</strong><br>'
+    if (results.value.message == 'validation error') {
+      results.value.data.forEach((element) => {
+        message += element + '<br>'
+      })
+    }
+    storeToastMessage.showToastMessage(results.value.success, message, 10000)
+  }
+  if (errors.value) {
+    storeToastMessage.showToastMessage(false, errors.value.message)
+  }
+}
+//--------------------
+</script>
 <template>
-  <!-- Room Data Modal -->
+  <!-- Add Room Data Modal -->
   <div
     class="modal fade"
-    id="room-s"
+    id="addRoomModal"
     data-bs-backdrop="static"
     data-bs-keyboard="false"
     tabindex="-1"
@@ -10,7 +61,7 @@
     aria-hidden="true"
   >
     <div class="modal-dialog modal-lg">
-      <form id="room-frm">
+      <form @submit.prevent="addNewRoom">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="staticBackdropLabel">Add New Room</h5>
@@ -29,25 +80,14 @@
                   type="text"
                   name="name"
                   class="form-control shadow-none"
-                  maxlength="40"
+                  maxlength="60"
                   title="Enter a new Room name"
                   required
+                  v-model.trim="newRoom.name"
                 />
               </div>
               <div class="col-md-6 mb-3">
-                <label class="form-label fw-bold">Room Aria</label>
-                <input
-                  type="number"
-                  name="aria"
-                  class="form-control shadow-none"
-                  min="2"
-                  maxlength="4"
-                  title="Enter a new Room Square fit."
-                  required
-                />
-              </div>
-              <div class="col-md-6 mb-3">
-                <label class="form-label fw-bold">Room Price</label>
+                <label class="form-label fw-bold">Room Price ( per day )</label>
                 <input
                   type="number"
                   name="price"
@@ -56,6 +96,7 @@
                   maxlength="6"
                   title="Enter a new Room Price"
                   required
+                  v-model.number="newRoom.price"
                 />
               </div>
               <div class="col-md-6 mb-3">
@@ -68,6 +109,20 @@
                   maxlength="3"
                   title="Enter total room quantity"
                   required
+                  v-model.number="newRoom.quantity"
+                />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Room Aria</label>
+                <input
+                  type="number"
+                  name="aria"
+                  class="form-control shadow-none"
+                  min="2"
+                  maxlength="4"
+                  title="Enter a new Room Square fit."
+                  required
+                  v-model.number="newRoom.area"
                 />
               </div>
               <div class="col-md-6 mb-3">
@@ -80,6 +135,7 @@
                   maxlength="2"
                   title="Enter adult quantity"
                   required
+                  v-model.number="newRoom.adult"
                 />
               </div>
               <div class="col-md-6 mb-3">
@@ -92,45 +148,8 @@
                   maxlength="2"
                   title="Enter child quantity"
                   required
+                  v-model.number="newRoom.children"
                 />
-              </div>
-              <div class="col-md-12 mb-4">
-                <h6 class="fw-bold">Features</h6>
-                <label class="form-check-label me-3 pointer">
-                  <input type="checkbox" name="features" class="form-check-input" value="5" />
-                  Belcony </label
-                ><label class="form-check-label me-3 pointer">
-                  <input type="checkbox" name="features" class="form-check-input" value="3" />
-                  Buth </label
-                ><label class="form-check-label me-3 pointer">
-                  <input type="checkbox" name="features" class="form-check-input" value="9" />
-                  Door </label
-                ><label class="form-check-label me-3 pointer">
-                  <input type="checkbox" name="features" class="form-check-input" value="4" />
-                  Window
-                </label>
-              </div>
-              <div class="col-md-12 mb-4">
-                <h6 class="fw-bold">Facilities</h6>
-                <label class="form-check-label me-3 pointer">
-                  <input type="checkbox" name="facilities" class="form-check-input" value="4" />
-                  wifi </label
-                ><label class="form-check-label me-3 pointer">
-                  <input type="checkbox" name="facilities" class="form-check-input" value="5" />
-                  Telivision </label
-                ><label class="form-check-label me-3 pointer">
-                  <input type="checkbox" name="facilities" class="form-check-input" value="6" />
-                  Ac </label
-                ><label class="form-check-label me-3 pointer">
-                  <input type="checkbox" name="facilities" class="form-check-input" value="7" />
-                  Cleaner </label
-                ><label class="form-check-label me-3 pointer">
-                  <input type="checkbox" name="facilities" class="form-check-input" value="8" />
-                  Hitter </label
-                ><label class="form-check-label me-3 pointer">
-                  <input type="checkbox" name="facilities" class="form-check-input" value="9" />
-                  Micro oven
-                </label>
               </div>
               <div class="col mb-2">
                 <label class="form-label fw-bold">Description</label>
@@ -141,6 +160,7 @@
                   class="form-control shadow-none"
                   title="Enter Room Description"
                   required
+                  v-model.trim="newRoom.description"
                 ></textarea>
               </div>
             </div>
@@ -149,7 +169,17 @@
             <button type="reset" class="btn text-secondary shadow-none" data-bs-dismiss="modal">
               Cancel
             </button>
-            <button type="submit" class="btn btn-primary text-white shadow-none">SUBMIT</button>
+            <button
+              type="submit"
+              class="btn btn-primary text-white shadow-none"
+              v-if="addRoomSubmitBtn"
+            >
+              SUBMIT
+            </button>
+            <button class="btn btn-primary" type="button" disabled v-else>
+              <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+              <span role="status"> Proccssing...</span>
+            </button>
           </div>
         </div>
       </form>
@@ -449,4 +479,5 @@ About Lorem ipsum, dolor sit amet consectetur adipisicing elit. Veritatis error 
       </div>
     </div>
   </div>
+  <ToastMessage />
 </template>

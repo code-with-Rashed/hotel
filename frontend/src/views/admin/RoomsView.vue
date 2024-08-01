@@ -44,7 +44,7 @@ onMounted(() => roomRecord())
                 type="button"
                 class="btn btn-dark btn-sm shadow-none"
                 data-bs-toggle="modal"
-                data-bs-target="#room-s"
+                data-bs-target="#addRoomModal"
               >
                 <i class="bi bi-plus-square"></i>
                 Add

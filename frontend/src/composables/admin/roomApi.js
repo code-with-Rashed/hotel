@@ -29,5 +29,26 @@ export default function useRoomApi() {
     }
   }
 
-  return { results, errors, get }
+  // post a new room record
+  const post = async (newRoom) => {
+    results.value = []
+    errors.value = null
+    try {
+      const request = await fetch(url + '/create', {
+        method: 'POST',
+        body: JSON.stringify(newRoom),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: token
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+
+  return { results, errors, get, post }
 }
