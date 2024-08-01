@@ -50,5 +50,24 @@ export default function useRoomApi() {
     }
   }
 
-  return { results, errors, get, post }
+  // update room status
+  const roomStatus = async (id) => {
+    results.value = []
+    errors.value = null
+    try {
+      const request = await fetch(url + '/status/' + id, {
+        method: 'PUT',
+        headers: {
+          Accept: 'application/json',
+          Authorization: token
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+
+  return { results, errors, get, post, roomStatus }
 }

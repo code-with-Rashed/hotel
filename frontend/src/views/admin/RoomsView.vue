@@ -6,8 +6,23 @@ import useRoomApi from '@/composables/admin/roomApi'
 import ToastMessage from '@/components/ToastMessage.vue'
 import { useToastMessageStore } from '@/stores/toastMessage'
 
-const { results, errors, get } = useRoomApi()
+const { results, errors, get, roomStatus } = useRoomApi()
 const storeToastMessage = useToastMessageStore()
+
+// update room status
+const updateRoomStatus = async (id) => {
+  await roomStatus(id)
+  if (results.value.success) {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+  } else {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+  }
+  if (errors.value) {
+    storeToastMessage.showToastMessage(false, errors.value.message)
+  }
+  await roomRecord()
+}
+//------------------------------
 
 // get all hotel room record
 const reloader = ref(true)
@@ -84,7 +99,20 @@ onMounted(() => roomRecord())
                               >
                             </td>
                             <td>
-                              <button class="btn btn-sm shadow-none btn-primary">Active</button>
+                              <button
+                                class="btn btn-sm shadow-none btn-warning"
+                                @click="updateRoomStatus(room.id)"
+                                v-if="room.status"
+                              >
+                                Inactive
+                              </button>
+                              <button
+                                class="btn btn-sm shadow-none btn-primary"
+                                @click="updateRoomStatus(room.id)"
+                                v-else
+                              >
+                                Active
+                              </button>
                             </td>
                             <td>
                               <button
