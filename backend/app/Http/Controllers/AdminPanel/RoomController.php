@@ -94,4 +94,14 @@ class RoomController extends BaseController
         $room->save();
         return $this->send_response(message: $message);
     }
+
+    // delete room record
+    public function delete($id)
+    {
+        $room = Room::find($id);
+        if (!is_null($room)) {
+            $room->delete();
+            return $this->send_response(message: "Room successfully deleted .");
+        }
+    }
 }

@@ -109,6 +109,7 @@ Route::prefix("/admin/room")->middleware("auth:sanctum")->group(function () {
     Route::get("/show/{id}", [RoomController::class, "show"]);
     Route::put("/update/{id}", [RoomController::class, "update"]);
     Route::put("/status/{id}", [RoomController::class, "status"]);
+    Route::delete("/delete/{id}", [RoomController::class, "delete"]);
 });
 
 // Roome Image routes for admin panel
