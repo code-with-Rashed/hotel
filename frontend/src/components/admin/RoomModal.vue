@@ -26,13 +26,13 @@ const addNewRoom = async () => {
   if (results.value.success) {
     storeToastMessage.showToastMessage(results.value.success, results.value.message)
     hideBsModal('addRoomModal')
-    ;(newRoom.name = ''),
-      (newRoom.price = ''),
-      (newRoom.quantity = ''),
-      (newRoom.area = ''),
-      (newRoom.adult = ''),
-      (newRoom.children = ''),
-      (newRoom.description = '')
+    newRoom.name = ''
+    newRoom.price = ''
+    newRoom.quantity = ''
+    newRoom.area = ''
+    newRoom.adult = ''
+    newRoom.children = ''
+    newRoom.description = ''
   } else {
     let message = ''
     message += '<strong>' + results.value.message + '</strong><br>'
