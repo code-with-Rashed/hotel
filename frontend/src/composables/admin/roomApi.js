@@ -69,5 +69,24 @@ export default function useRoomApi() {
     }
   }
 
-  return { results, errors, get, post, roomStatus }
+  // delete a room record
+  const destroy = async (id) => {
+    results.value = []
+    errors.value = null
+    try {
+      const request = await fetch(url + '/delete/' + id, {
+        method: 'DELETE',
+        headers: {
+          Accept: 'application/json',
+          Authorization: token
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+
+  return { results, errors, get, post, roomStatus, destroy }
 }

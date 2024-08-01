@@ -24,6 +24,13 @@ const updateRoomStatus = async (id) => {
 }
 //------------------------------
 
+// send room id to child (RoomModal) component for deleting room record
+const deleteRoomId = ref(0)
+const deleteRoom = (id) => {
+  deleteRoomId.value = id
+}
+// --------------------------
+
 // get all hotel room record
 const reloader = ref(true)
 const roomRecord = async () => {
@@ -137,6 +144,9 @@ onMounted(() => roomRecord())
                                 type="button"
                                 class="btn btn-sm shadow-none btn-danger"
                                 title="Delete"
+                                data-bs-toggle="modal"
+                                data-bs-target="#deleteRoomModal"
+                                @click="deleteRoom(room.id)"
                               >
                                 <i class="bi bi-trash"></i>
                               </button>
@@ -173,6 +183,6 @@ onMounted(() => roomRecord())
       </div>
     </template>
   </LayoutView>
-  <RoomModal />
+  <RoomModal :deleteRoomId="deleteRoomId" />
   <ToastMessage />
 </template>

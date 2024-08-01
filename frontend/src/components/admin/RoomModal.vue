@@ -5,7 +5,11 @@ import ToastMessage from '@/components/ToastMessage.vue'
 import { useToastMessageStore } from '@/stores/toastMessage'
 import { hideBsModal } from '@/helpers/hideBsModal'
 
-const { results, errors, post } = useRoomApi()
+const props = defineProps({
+  deleteRoomId: Number
+})
+
+const { results, errors, post, destroy } = useRoomApi()
 const storeToastMessage = useToastMessageStore()
 
 // add new room record
@@ -48,6 +52,25 @@ const addNewRoom = async () => {
   }
 }
 //--------------------
+
+// delete room record
+const deleteRoomSubmitBtn = ref(true)
+const deleteRoomRecord = async () => {
+  deleteRoomSubmitBtn.value = false
+  await destroy(props.deleteRoomId)
+  deleteRoomSubmitBtn.value = true
+
+  if (results.value.success) {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+    hideBsModal('deleteRoomModal')
+  } else {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+  }
+  if (errors.value) {
+    storeToastMessage.showToastMessage(false, errors.value.message)
+  }
+}
+// ---------------------
 </script>
 <template>
   <!-- Add Room Data Modal -->
@@ -479,5 +502,56 @@ About Lorem ipsum, dolor sit amet consectetur adipisicing elit. Veritatis error 
       </div>
     </div>
   </div>
+
+  <!-- delete room modal start -->
+  <div
+    class="modal fade"
+    id="deleteRoomModal"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
+    tabindex="-1"
+    aria-labelledby="staticBackdropLabel"
+    aria-modal="true"
+    role="dialog"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Delete Feature Record</h5>
+          <button
+            type="button"
+            class="btn-close shadow-none"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <p class="fw-bold text-center text-danger">
+              Are you sure ? you wan't to delete this room record !
+            </p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn text-secondary shadow-none" data-bs-dismiss="modal">
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="btn btn-danger text-white shadow-none"
+            @click="deleteRoomRecord()"
+            v-if="deleteRoomSubmitBtn"
+          >
+            DELETE
+          </button>
+          <button class="btn btn-primary" type="button" disabled v-else>
+            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+            <span role="status"> Proccssing...</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <ToastMessage />
 </template>
