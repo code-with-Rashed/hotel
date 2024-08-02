@@ -9,6 +9,9 @@ import { useToastMessageStore } from '@/stores/toastMessage'
 const { results, errors, get, roomStatus } = useRoomApi()
 const storeToastMessage = useToastMessageStore()
 
+// send instruction props
+const instruction = ref('')
+
 // update room status
 const updateRoomStatus = async (id) => {
   await roomStatus(id)
@@ -23,6 +26,14 @@ const updateRoomStatus = async (id) => {
   await roomRecord()
 }
 //------------------------------
+
+// send room id to child (RoomModal) component for editing room record
+const editRoomId = ref(0)
+const editRoom = (id) => {
+  editRoomId.value = id
+  instruction.value = 'show'
+}
+// --------------------------
 
 // send room id to child (RoomModal) component for deleting room record
 const deleteRoomId = ref(0)
@@ -135,8 +146,9 @@ onMounted(() => roomRecord())
                                 type="button"
                                 class="btn btn-sm shadow-none btn-secondary mx-1"
                                 data-bs-toggle="modal"
-                                data-bs-target="#edit-room-s"
+                                data-bs-target="#editRoomModal"
                                 title="Edit"
+                                @click="editRoom(room.id)"
                               >
                                 <i class="bi bi-pencil-square"></i>
                               </button>
@@ -183,6 +195,6 @@ onMounted(() => roomRecord())
       </div>
     </template>
   </LayoutView>
-  <RoomModal :deleteRoomId="deleteRoomId" />
+  <RoomModal :deleteRoomId="deleteRoomId" :editRoomId="editRoomId" :instruction="instruction" />
   <ToastMessage />
 </template>

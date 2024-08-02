@@ -50,6 +50,46 @@ export default function useRoomApi() {
     }
   }
 
+  // get a single room record
+  const show = async (id) => {
+    results.value = []
+    errors.value = null
+    try {
+      const request = await fetch(url + '/show/' + id, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          Authorization: token
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+
+  // update room record
+  const put = async (id, updateRoom) => {
+    results.value = []
+    errors.value = null
+    try {
+      const request = await fetch(url + '/update/' + id, {
+        method: 'PUT',
+        body: JSON.stringify(updateRoom),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: token
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+
   // update room status
   const roomStatus = async (id) => {
     results.value = []
@@ -88,5 +128,5 @@ export default function useRoomApi() {
     }
   }
 
-  return { results, errors, get, post, roomStatus, destroy }
+  return { results, errors, get, post, roomStatus, destroy, show, put }
 }

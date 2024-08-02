@@ -1,16 +1,26 @@
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import useRoomApi from '@/composables/admin/roomApi'
 import ToastMessage from '@/components/ToastMessage.vue'
 import { useToastMessageStore } from '@/stores/toastMessage'
 import { hideBsModal } from '@/helpers/hideBsModal'
 
 const props = defineProps({
-  deleteRoomId: Number
+  instruction: String,
+  deleteRoomId: Number,
+  editRoomId: Number
 })
 
-const { results, errors, post, destroy } = useRoomApi()
+const { results, errors, post, destroy, show, put } = useRoomApi()
 const storeToastMessage = useToastMessageStore()
+
+// handle props instruction
+watch(props, (propsValues) => {
+  if (propsValues.instruction == 'show') {
+    showRoom(propsValues.editRoomId)
+  }
+})
+//----------------
 
 // add new room record
 const addRoomSubmitBtn = ref(true)
@@ -52,6 +62,61 @@ const addNewRoom = async () => {
   }
 }
 //--------------------
+
+// update room record
+const updateRoomSubmitBtn = ref(true)
+const editRoom = reactive({
+  name: '',
+  price: '',
+  quantity: '',
+  area: '',
+  adult: '',
+  children: '',
+  description: ''
+})
+const updateRoom = async () => {
+  updateRoomSubmitBtn.value = false
+  await put(props.editRoomId, editRoom)
+  updateRoomSubmitBtn.value = true
+  if (results.value.success) {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+    hideBsModal('editRoomModal')
+  } else {
+    let message = ''
+    message += '<strong>' + results.value.message + '</strong><br>'
+    if (results.value.message == 'validation error') {
+      results.value.data.forEach((element) => {
+        message += element + '<br>'
+      })
+    }
+    storeToastMessage.showToastMessage(results.value.success, message, 10000)
+  }
+  if (errors.value) {
+    storeToastMessage.showToastMessage(false, errors.value.message)
+  }
+}
+// ----------------
+
+// show room record
+const showRoom = async (id) => {
+  await show(id)
+  if (results.value.success) {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+    editRoom.name = results.value.data.room.name
+    editRoom.price = results.value.data.room.price
+    editRoom.quantity = results.value.data.room.quantity
+    editRoom.area = results.value.data.room.area
+    editRoom.adult = results.value.data.room.adult
+    editRoom.children = results.value.data.room.children
+    editRoom.description = results.value.data.room.description
+  } else {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+  }
+  if (errors.value) {
+    storeToastMessage.showToastMessage(false, errors.value.message)
+  }
+}
+// ----------------
 
 // delete room record
 const deleteRoomSubmitBtn = ref(true)
@@ -212,7 +277,7 @@ const deleteRoomRecord = async () => {
   <!--Edit Room Data Modal -->
   <div
     class="modal fade"
-    id="edit-room-s"
+    id="editRoomModal"
     data-bs-backdrop="static"
     data-bs-keyboard="false"
     tabindex="-1"
@@ -220,13 +285,13 @@ const deleteRoomRecord = async () => {
     aria-hidden="true"
   >
     <div class="modal-dialog modal-lg">
-      <form id="edit-room-frm">
+      <form @submit.prevent="updateRoom">
         <input type="hidden" name="room_id" />
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="staticBackdropLabel">Edit Room</h5>
             <button
-              type="reset"
+              type="button"
               class="btn-close shadow-none"
               data-bs-dismiss="modal"
               aria-label="Close"
@@ -240,23 +305,10 @@ const deleteRoomRecord = async () => {
                   type="text"
                   name="name"
                   class="form-control shadow-none"
-                  maxlength="40"
-                  title="Enter a new Room name"
+                  maxlength="60"
+                  title="Edit the Room name"
                   required
-                  value="Dulex"
-                />
-              </div>
-              <div class="col-md-6 mb-3">
-                <label class="form-label fw-bold">Room Aria</label>
-                <input
-                  type="number"
-                  name="area"
-                  class="form-control shadow-none"
-                  min="2"
-                  maxlength="4"
-                  title="Enter a new Room Square fit."
-                  required
-                  value="120"
+                  v-model.trim="editRoom.name"
                 />
               </div>
               <div class="col-md-6 mb-3">
@@ -266,10 +318,9 @@ const deleteRoomRecord = async () => {
                   name="price"
                   class="form-control shadow-none"
                   min="2"
-                  maxlength="6"
-                  title="Enter a new Room Price"
+                  title="Edit Room Price"
                   required
-                  value="5000"
+                  v-model.number="editRoom.price"
                 />
               </div>
               <div class="col-md-6 mb-3">
@@ -279,10 +330,21 @@ const deleteRoomRecord = async () => {
                   name="quantity"
                   class="form-control shadow-none"
                   min="1"
-                  maxlength="3"
-                  title="Enter total room quantity"
+                  title="Edit room quantity"
                   required
-                  value="10"
+                  v-model.number="editRoom.quantity"
+                />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Room Aria</label>
+                <input
+                  type="number"
+                  name="area"
+                  class="form-control shadow-none"
+                  min="2"
+                  title="Edit Room Square fit."
+                  required
+                  v-model.number="editRoom.area"
                 />
               </div>
               <div class="col-md-6 mb-3">
@@ -293,9 +355,9 @@ const deleteRoomRecord = async () => {
                   class="form-control shadow-none"
                   min="1"
                   maxlength="2"
-                  title="Enter adult quantity"
+                  title="Edit adult quantity"
                   required
-                  value="5"
+                  v-model.number="editRoom.adult"
                 />
               </div>
               <div class="col-md-6 mb-3">
@@ -306,78 +368,10 @@ const deleteRoomRecord = async () => {
                   class="form-control shadow-none"
                   min="1"
                   maxlength="2"
-                  title="Enter child quantity"
+                  title="Edit child quantity"
                   required
-                  value="5"
+                  v-model.number="editRoom.children"
                 />
-              </div>
-              <div class="col-md-12 mb-4">
-                <h6 class="fw-bold">Features</h6>
-                <label class="form-check-label me-3 pointer">
-                  <input
-                    type="checkbox"
-                    name="features"
-                    class="form-check-input"
-                    value="5"
-                    checked
-                  />
-                  Belcony </label
-                ><label class="form-check-label me-3 pointer">
-                  <input type="checkbox" name="features" class="form-check-input" value="3" />
-                  Buth </label
-                ><label class="form-check-label me-3 pointer">
-                  <input
-                    type="checkbox"
-                    name="features"
-                    class="form-check-input"
-                    value="9"
-                    checked
-                  />
-                  Door </label
-                ><label class="form-check-label me-3 pointer">
-                  <input type="checkbox" name="features" class="form-check-input" value="4" />
-                  Window
-                </label>
-              </div>
-              <div class="col-md-12 mb-4">
-                <h6 class="fw-bold">Facilities</h6>
-                <label class="form-check-label me-3 pointer">
-                  <input
-                    type="checkbox"
-                    name="facilities"
-                    class="form-check-input"
-                    value="4"
-                    checked
-                  />
-                  wifi </label
-                ><label class="form-check-label me-3 pointer">
-                  <input type="checkbox" name="facilities" class="form-check-input" value="5" />
-                  Telivision </label
-                ><label class="form-check-label me-3 pointer">
-                  <input
-                    type="checkbox"
-                    name="facilities"
-                    class="form-check-input"
-                    value="6"
-                    checked
-                  />
-                  Ac </label
-                ><label class="form-check-label me-3 pointer">
-                  <input type="checkbox" name="facilities" class="form-check-input" value="7" />
-                  Cleaner </label
-                ><label class="form-check-label me-3 pointer">
-                  <input
-                    type="checkbox"
-                    name="facilities"
-                    class="form-check-input"
-                    value="8"
-                    checked
-                  />
-                  Hitter </label
-                ><label class="form-check-label me-3 pointer">
-                  <input type="checkbox" name="facilities" class="form-check-input" value="9" />
-                  Micro oven
-                </label>
               </div>
               <div class="col mb-2">
                 <label class="form-label fw-bold">Description</label>
@@ -386,22 +380,29 @@ const deleteRoomRecord = async () => {
                   rows="3"
                   maxlength="1000"
                   class="form-control shadow-none"
-                  title="Enter Room Description"
+                  title="Edit Room Description"
                   required
+                  v-model.number="editRoom.description"
                 >
-About Lorem ipsum, dolor sit amet consectetur adipisicing elit. Veritatis error voluptatem minus saepe asperiores ab, ducimus tempore optio aut exercitationem? Lorem ipsum dolor sit, amet consectetur adipisicing elit. Odit, voluptatibus About Lorem
-About Lorem ipsum, dolor sit amet consectetur adipisicing elit. Veritatis error voluptatem minus saepe asperiores ab, ducimus tempore optio aut exercitationem? Lorem ipsum dolor sit, amet consectetur adipisicing elit. Odit, voluptatibus About Lorem
-About Lorem ipsum, dolor sit amet consectetur adipisicing elit. Veritatis error voluptatem minus saepe asperiores ab, ducimus tempore optio aut exercitationem? Lorem ipsum dolor sit, amet consectetur adipisicing elit. Odit, voluptatibus About Lorem
-About Lorem ipsum, dolor sit amet consectetur adipisicing elit. Veritatis error voluptatem minus saepe asperiores ab, ducimus tempore optio aut exercitationem? Lorem ipsum dolor sit, amet consectetur adipisicing elit. Odit, voluptatibus About Lorem</textarea
-                >
+                </textarea>
               </div>
             </div>
           </div>
           <div class="modal-footer">
-            <button type="reset" class="btn text-secondary shadow-none" data-bs-dismiss="modal">
+            <button type="button" class="btn text-secondary shadow-none" data-bs-dismiss="modal">
               Cancel
             </button>
-            <button type="submit" class="btn btn-primary text-white shadow-none">UPDATE</button>
+            <button
+              type="submit"
+              class="btn btn-primary text-white shadow-none"
+              v-if="updateRoomSubmitBtn"
+            >
+              UPDATE
+            </button>
+            <button class="btn btn-primary" type="button" disabled v-else>
+              <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+              <span role="status"> Proccssing...</span>
+            </button>
           </div>
         </div>
       </form>
