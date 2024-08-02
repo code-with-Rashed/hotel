@@ -51,7 +51,7 @@ class RoomImageController extends BaseController
         if (!is_null($room_image)) {
 
             // if upload a new image then delete old image
-            $old_image = public_path("storage/") . $room_image->image;
+            $old_image = public_path("storage/") . $room_image->getRawOriginal('image');
             if (file_exists($old_image)) {
                 @unlink($old_image);
             }
@@ -90,7 +90,7 @@ class RoomImageController extends BaseController
         if (!is_null($room_image)) {
 
             // delete room image from folder
-            $old_image = public_path("storage/") . $room_image->image;
+            $old_image = public_path("storage/") . $room_image->getRawOriginal('image');
             if (file_exists($old_image)) {
                 @unlink($old_image);
             }
