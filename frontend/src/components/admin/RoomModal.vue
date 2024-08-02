@@ -1,6 +1,7 @@
 <script setup>
 import { ref, reactive, watch } from 'vue'
 import useRoomApi from '@/composables/admin/roomApi'
+import useRoomImageApi from '@/composables/admin/roomImageApi'
 import ToastMessage from '@/components/ToastMessage.vue'
 import { useToastMessageStore } from '@/stores/toastMessage'
 import { hideBsModal } from '@/helpers/hideBsModal'
@@ -8,16 +9,21 @@ import { hideBsModal } from '@/helpers/hideBsModal'
 const props = defineProps({
   instruction: String,
   deleteRoomId: Number,
-  editRoomId: Number
+  editRoomId: Number,
+  roomId: Number
 })
 
 const { results, errors, post, destroy, show, put } = useRoomApi()
+const { results: roomImageResults, errors: roomImageErrors, get } = useRoomImageApi()
 const storeToastMessage = useToastMessageStore()
 
 // handle props instruction
 watch(props, (propsValues) => {
   if (propsValues.instruction == 'show') {
     showRoom(propsValues.editRoomId)
+  }
+  if (propsValues.instruction == 'manage-room-image') {
+    showRoomImage(propsValues.roomId)
   }
 })
 //----------------
@@ -136,6 +142,30 @@ const deleteRoomRecord = async () => {
   }
 }
 // ---------------------
+
+// manage room images
+
+// show room imaged
+const reloader = ref(true)
+const showRoomImage = async (id) => {
+  reloader.value = false
+  await get(id)
+  reloader.value = true
+  if (roomImageResults.value.success) {
+    storeToastMessage.showToastMessage(
+      roomImageResults.value.success,
+      roomImageResults.value.message
+    )
+  } else {
+    storeToastMessage.showToastMessage(
+      roomImageResults.value.success,
+      roomImageResults.value.message
+    )
+  }
+  if (roomImageErrors.value) {
+    storeToastMessage.showToastMessage(false, roomImageErrors.value.message)
+  }
+}
 </script>
 <template>
   <!-- Add Room Data Modal -->
@@ -412,7 +442,7 @@ const deleteRoomRecord = async () => {
   <!-- Image Modal -->
   <div
     class="modal fade"
-    id="room-img-s"
+    id="roomImageModal"
     data-bs-backdrop="static"
     data-bs-keyboard="false"
     tabindex="-1"
@@ -433,12 +463,11 @@ const deleteRoomRecord = async () => {
               aria-label="Close"
             ></button>
           </div>
-          <div class="modal-body" id="room-img-message">
+          <div class="modal-body">
             <div class="mb-3">
               <label class="form-label fw-bold">Room Picture</label>
               <input
                 type="file"
-                name="room_img"
                 class="form-control shadow-none"
                 title="Enter a new Room Picture"
                 accept="image/*"
@@ -454,6 +483,12 @@ const deleteRoomRecord = async () => {
           </div>
         </form>
         <div class="row px-4 mt-4">
+          <div class="col-12 text-center my-3">
+            <button type="button" class="btn btn-sm btn-primary" @click="showRoomImage(roomId)">
+              Reload
+              <span class="badge text-bg-secondary"> <i class="bi bi-arrow-repeat"></i> </span>
+            </button>
+          </div>
           <table class="table">
             <thead class="bg-dark text-white">
               <tr>
@@ -462,41 +497,42 @@ const deleteRoomRecord = async () => {
                 <th>Action</th>
               </tr>
             </thead>
-            <tbody id="room-img-data">
-              <tr>
-                <td>
-                  <img
-                    src="http://localhost/hotel/images/rooms/IMG11314.jpg"
-                    alt="img"
-                    width="250px"
-                  />
-                </td>
-                <td>
-                  <button class="btn btn-primary" title="Set Thumbnail">
-                    <i class="bi bi-check2-circle"></i>
-                  </button>
-                </td>
-                <td>
-                  <button class="btn btn-danger"><i class="bi bi-trash"></i> Delete</button>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <img
-                    src="http://localhost/hotel/images/rooms/IMG80276.png"
-                    alt="img"
-                    width="250px"
-                  />
-                </td>
-                <td>
-                  <button class="btn btn-secondary" title="Set Thumbnail">
-                    <i class="bi bi-check2-circle"></i>
-                  </button>
-                </td>
-                <td>
-                  <button class="btn btn-danger"><i class="bi bi-trash"></i> Delete</button>
-                </td>
-              </tr>
+            <tbody>
+              <template v-if="reloader">
+                <template v-if="roomImageResults.data">
+                  <template v-for="roomImage in roomImageResults.data.images" :key="roomImage.id">
+                    <tr>
+                      <td>
+                        <img :src="roomImage.image" alt="room-img" width="250px" />
+                      </td>
+                      <td>
+                        <button
+                          class="btn btn-primary"
+                          title="This room image is active thumbnail . Change Thumbnail Status"
+                          v-if="roomImage.thumbnail"
+                        >
+                          <i class="bi bi-check2-circle"></i>
+                        </button>
+                        <button class="btn btn-secondary" title="Change Thumbnail Status" v-else>
+                          <i class="bi bi-check2-circle"></i>
+                        </button>
+                      </td>
+                      <td>
+                        <button class="btn btn-danger"><i class="bi bi-trash"></i> Delete</button>
+                      </td>
+                    </tr>
+                  </template>
+                </template>
+              </template>
+              <template v-else>
+                <tr class="text-center">
+                  <td colspan="3">
+                    <div class="spinner-border my-4" role="status">
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
+                  </td>
+                </tr>
+              </template>
             </tbody>
           </table>
         </div>

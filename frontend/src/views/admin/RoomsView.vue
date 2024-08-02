@@ -35,6 +35,14 @@ const editRoom = (id) => {
 }
 // --------------------------
 
+// send room id to child (RoomModal) component for manage room image record
+const roomId = ref(0)
+const manageRoomImage = (id) => {
+  roomId.value = id
+  instruction.value = 'manage-room-image'
+}
+// --------------------------
+
 // send room id to child (RoomModal) component for deleting room record
 const deleteRoomId = ref(0)
 const deleteRoom = (id) => {
@@ -137,8 +145,9 @@ onMounted(() => roomRecord())
                                 type="button"
                                 class="btn btn-sm shadow-none btn-primary"
                                 data-bs-toggle="modal"
-                                data-bs-target="#room-img-s"
-                                title="Add Img"
+                                data-bs-target="#roomImageModal"
+                                title="Manage Room images"
+                                @click="manageRoomImage(room.id)"
                               >
                                 <i class="bi bi-images"></i>
                               </button>
@@ -195,6 +204,11 @@ onMounted(() => roomRecord())
       </div>
     </template>
   </LayoutView>
-  <RoomModal :deleteRoomId="deleteRoomId" :editRoomId="editRoomId" :instruction="instruction" />
+  <RoomModal
+    :deleteRoomId="deleteRoomId"
+    :editRoomId="editRoomId"
+    :instruction="instruction"
+    :roomId="roomId"
+  />
   <ToastMessage />
 </template>
