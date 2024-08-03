@@ -30,6 +30,30 @@ export default function useRoomImageApi() {
     }
   }
 
+  // post a room image
+  const post = async (roomId, roomImage) => {
+    results.value = []
+    errors.value = null
+
+    try {
+      const formData = new FormData()
+      formData.append('room_id', roomId)
+      formData.append('image', roomImage.value)
+      const request = await fetch(url + '/create', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          Accept: 'application/json',
+          Authorization: token
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+
   // update room image thumbnail status
   const thumbnail = async (id) => {
     results.value = []
@@ -68,5 +92,5 @@ export default function useRoomImageApi() {
     }
   }
 
-  return { results, errors, get, thumbnail, destroy }
+  return { results, errors, get, post, thumbnail, destroy }
 }

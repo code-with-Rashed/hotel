@@ -18,6 +18,7 @@ const {
   results: roomImageResults,
   errors: roomImageErrors,
   get,
+  post: postNewRoomImage,
   thumbnail,
   destroy: destroyRoomImage
 } = useRoomImageApi()
@@ -212,6 +213,46 @@ const deleteRoomImage = async (id) => {
   }
   await showRoomImage(props.roomId)
 }
+
+// handle room image
+const newRoomImage = ref()
+const tempRoomImage = ref()
+const selectRoomImage = (event) => {
+  newRoomImage.value = event.target.files[0]
+  tempRoomImage.value = URL.createObjectURL(newRoomImage.value)
+}
+//------------------------
+
+// post new room image
+const postRoomImageSubmitBtn = ref(true)
+const postRoomImage = async () => {
+  postRoomImageSubmitBtn.value = false
+  await postNewRoomImage(props.roomId, newRoomImage)
+  postRoomImageSubmitBtn.value = true
+
+  if (roomImageResults.value.success) {
+    storeToastMessage.showToastMessage(
+      roomImageResults.value.success,
+      roomImageResults.value.message
+    )
+    newRoomImage.value = null
+    tempRoomImage.value = null
+  } else {
+    let message = ''
+    message += '<strong>' + roomImageResults.value.message + '</strong><br>'
+    if (results.value.message == 'validation error') {
+      results.value.data.forEach((element) => {
+        message += element + '<br>'
+      })
+    }
+    storeToastMessage.showToastMessage(roomImageResults.value.success, message, 10000)
+  }
+  if (roomImageErrors.value) {
+    storeToastMessage.showToastMessage(false, roomImageErrors.value.message)
+  }
+  await showRoomImage(props.roomId)
+}
+// --------------------
 </script>
 <template>
   <!-- Add Room Data Modal -->
@@ -497,7 +538,7 @@ const deleteRoomImage = async (id) => {
   >
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
-        <form id="room-img-frm">
+        <form @submit.prevent="postRoomImage">
           <input type="hidden" name="CSRF_TOKEN" value="<?php echo $CSRF_TOKEN;?>" />
           <input type="hidden" name="room_id" />
           <div class="modal-header">
@@ -518,14 +559,28 @@ const deleteRoomImage = async (id) => {
                 title="Enter a new Room Picture"
                 accept="image/*"
                 required
+                @change="selectRoomImage"
               />
+            </div>
+            <div class="mb-3" v-if="tempRoomImage">
+              <img :src="tempRoomImage" alt="preview image" class="img-fluid" />
             </div>
           </div>
           <div class="modal-footer">
             <button type="reset" class="btn text-secondary shadow-none" data-bs-dismiss="modal">
               Cancel
             </button>
-            <button type="submit" class="btn btn-primary text-white shadow-none">SUBMIT</button>
+            <button
+              type="submit"
+              class="btn btn-primary text-white shadow-none"
+              v-if="postRoomImageSubmitBtn"
+            >
+              SUBMIT
+            </button>
+            <button class="btn btn-primary" type="button" disabled v-else>
+              <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+              <span role="status"> Proccssing...</span>
+            </button>
           </div>
         </form>
         <div class="row px-4 mt-4">
