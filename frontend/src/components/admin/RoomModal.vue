@@ -14,7 +14,7 @@ const props = defineProps({
 })
 
 const { results, errors, post, destroy, show, put } = useRoomApi()
-const { results: roomImageResults, errors: roomImageErrors, get } = useRoomImageApi()
+const { results: roomImageResults, errors: roomImageErrors, get, thumbnail } = useRoomImageApi()
 const storeToastMessage = useToastMessageStore()
 
 // handle props instruction
@@ -165,6 +165,26 @@ const showRoomImage = async (id) => {
   if (roomImageErrors.value) {
     storeToastMessage.showToastMessage(false, roomImageErrors.value.message)
   }
+}
+
+// update room image thumbnail
+const changeThumbnail = async (id) => {
+  await thumbnail(id)
+  if (roomImageResults.value.success) {
+    storeToastMessage.showToastMessage(
+      roomImageResults.value.success,
+      roomImageResults.value.message
+    )
+  } else {
+    storeToastMessage.showToastMessage(
+      roomImageResults.value.success,
+      roomImageResults.value.message
+    )
+  }
+  if (roomImageErrors.value) {
+    storeToastMessage.showToastMessage(false, roomImageErrors.value.message)
+  }
+  await showRoomImage(props.roomId)
 }
 </script>
 <template>
@@ -510,10 +530,16 @@ const showRoomImage = async (id) => {
                           class="btn btn-primary"
                           title="This room image is active thumbnail . Change Thumbnail Status"
                           v-if="roomImage.thumbnail"
+                          @click="changeThumbnail(roomImage.id)"
                         >
                           <i class="bi bi-check2-circle"></i>
                         </button>
-                        <button class="btn btn-secondary" title="Change Thumbnail Status" v-else>
+                        <button
+                          class="btn btn-secondary"
+                          title="Change Thumbnail Status"
+                          @click="changeThumbnail(roomImage.id)"
+                          v-else
+                        >
                           <i class="bi bi-check2-circle"></i>
                         </button>
                       </td>

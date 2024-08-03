@@ -30,5 +30,24 @@ export default function useRoomImageApi() {
     }
   }
 
-  return { results, errors, get }
+  // update room image thumbnail status
+  const thumbnail = async (id) => {
+    results.value = []
+    errors.value = null
+    try {
+      const request = await fetch(url + '/thumbnail/' + id, {
+        method: 'PUT',
+        headers: {
+          Accept: 'application/json',
+          Authorization: token
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+
+  return { results, errors, get, thumbnail }
 }
