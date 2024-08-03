@@ -14,7 +14,13 @@ const props = defineProps({
 })
 
 const { results, errors, post, destroy, show, put } = useRoomApi()
-const { results: roomImageResults, errors: roomImageErrors, get, thumbnail } = useRoomImageApi()
+const {
+  results: roomImageResults,
+  errors: roomImageErrors,
+  get,
+  thumbnail,
+  destroy: destroyRoomImage
+} = useRoomImageApi()
 const storeToastMessage = useToastMessageStore()
 
 // handle props instruction
@@ -170,6 +176,26 @@ const showRoomImage = async (id) => {
 // update room image thumbnail
 const changeThumbnail = async (id) => {
   await thumbnail(id)
+  if (roomImageResults.value.success) {
+    storeToastMessage.showToastMessage(
+      roomImageResults.value.success,
+      roomImageResults.value.message
+    )
+  } else {
+    storeToastMessage.showToastMessage(
+      roomImageResults.value.success,
+      roomImageResults.value.message
+    )
+  }
+  if (roomImageErrors.value) {
+    storeToastMessage.showToastMessage(false, roomImageErrors.value.message)
+  }
+  await showRoomImage(props.roomId)
+}
+
+// delete room image
+const deleteRoomImage = async (id) => {
+  await destroyRoomImage(id)
   if (roomImageResults.value.success) {
     storeToastMessage.showToastMessage(
       roomImageResults.value.success,
@@ -544,7 +570,9 @@ const changeThumbnail = async (id) => {
                         </button>
                       </td>
                       <td>
-                        <button class="btn btn-danger"><i class="bi bi-trash"></i> Delete</button>
+                        <button class="btn btn-danger" @click="deleteRoomImage(roomImage.id)">
+                          <i class="bi bi-trash"></i> Delete
+                        </button>
                       </td>
                     </tr>
                   </template>
