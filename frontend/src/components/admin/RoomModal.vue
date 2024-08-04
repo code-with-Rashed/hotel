@@ -153,7 +153,7 @@ const deleteRoomRecord = async () => {
 
 // manage room images
 
-// show room imaged
+// show room images
 const reloader = ref(true)
 const showRoomImage = async (id) => {
   reloader.value = false
@@ -215,7 +215,7 @@ const deleteRoomImage = async (id) => {
   await showRoomImage(props.roomId)
 }
 
-// handle room image
+// handle room image for posting
 const newRoomImage = ref()
 const tempRoomImage = ref()
 const selectRoomImage = (event) => {
@@ -681,7 +681,7 @@ const updateRoomImage = async (id) => {
                           <i class="bi bi-pencil-square"></i>
                         </button>
                         <button class="btn btn-danger" @click="deleteRoomImage(roomImage.id)">
-                          <i class="bi bi-trash"></i> Delete
+                          <i class="bi bi-trash"></i>
                         </button>
                       </td>
                     </tr>
