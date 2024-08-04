@@ -54,6 +54,30 @@ export default function useRoomImageApi() {
     }
   }
 
+  // update a room image
+  const put = async (id, roomImage) => {
+    results.value = []
+    errors.value = null
+
+    try {
+      const formData = new FormData()
+      formData.append('image', roomImage.value)
+      const request = await fetch(url + '/update/' + id, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          Authorization: token,
+          Accept: 'application/json',
+          'X-HTTP-Method-Override': 'PUT'
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+
   // update room image thumbnail status
   const thumbnail = async (id) => {
     results.value = []
@@ -92,5 +116,5 @@ export default function useRoomImageApi() {
     }
   }
 
-  return { results, errors, get, post, thumbnail, destroy }
+  return { results, errors, get, post, put, thumbnail, destroy }
 }

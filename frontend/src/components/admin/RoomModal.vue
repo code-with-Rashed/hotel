@@ -19,6 +19,7 @@ const {
   errors: roomImageErrors,
   get,
   post: postNewRoomImage,
+  put: updateImage,
   thumbnail,
   destroy: destroyRoomImage
 } = useRoomImageApi()
@@ -253,6 +254,52 @@ const postRoomImage = async () => {
   await showRoomImage(props.roomId)
 }
 // --------------------
+
+// handle room image for updating
+const updatedRoomImage = ref()
+const temporaryRoomImage = ref()
+const changeRoomImage = (event) => {
+  updatedRoomImage.value = event.target.files[0]
+  temporaryRoomImage.value = URL.createObjectURL(updatedRoomImage.value)
+}
+//------------------------
+
+// open modal for editing room image
+const roomImageId = ref(0)
+const editRoomImage = (id, imgUrl) => {
+  temporaryRoomImage.value = imgUrl
+  roomImageId.value = id
+}
+
+// update room image
+const updateRoomImageSubmitBtn = ref(true)
+const updateRoomImage = async (id) => {
+  updateRoomImageSubmitBtn.value = false
+  await updateImage(id, updatedRoomImage)
+  updateRoomImageSubmitBtn.value = true
+
+  if (roomImageResults.value.success) {
+    storeToastMessage.showToastMessage(
+      roomImageResults.value.success,
+      roomImageResults.value.message
+    )
+    updatedRoomImage.value = null
+    temporaryRoomImage.value = null
+    hideBsModal('updateRoomImageModal')
+  } else {
+    let message = ''
+    message += '<strong>' + roomImageResults.value.message + '</strong><br>'
+    if (results.value.message == 'validation error') {
+      results.value.data.forEach((element) => {
+        message += element + '<br>'
+      })
+    }
+    storeToastMessage.showToastMessage(roomImageResults.value.success, message, 10000)
+  }
+  if (roomImageErrors.value) {
+    storeToastMessage.showToastMessage(false, roomImageErrors.value.message)
+  }
+}
 </script>
 <template>
   <!-- Add Room Data Modal -->
@@ -625,6 +672,14 @@ const postRoomImage = async () => {
                         </button>
                       </td>
                       <td>
+                        <button
+                          class="btn btn-primary me-1"
+                          @click="editRoomImage(roomImage.id, roomImage.image)"
+                          data-bs-target="#updateRoomImageModal"
+                          data-bs-toggle="modal"
+                        >
+                          <i class="bi bi-pencil-square"></i>
+                        </button>
                         <button class="btn btn-danger" @click="deleteRoomImage(roomImage.id)">
                           <i class="bi bi-trash"></i> Delete
                         </button>
@@ -645,6 +700,73 @@ const postRoomImage = async () => {
             </tbody>
           </table>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Room Image Modal -->
+  <div
+    class="modal fade"
+    id="updateRoomImageModal"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
+    tabindex="-1"
+    aria-labelledby="staticBackdropLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <form @submit.prevent="updateRoomImage(roomImageId)">
+          <div class="modal-header">
+            <h5 class="modal-title">Change Room Image</h5>
+            <button
+              type="reset"
+              class="btn-close shadow-none"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+              data-bs-target="#roomImageModal"
+              data-bs-toggle="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label fw-bold">Room Picture</label>
+              <input
+                type="file"
+                class="form-control shadow-none"
+                title="Enter a new Room Picture"
+                accept="image/*"
+                required
+                @change="changeRoomImage"
+              />
+            </div>
+            <div class="mb-3" v-if="temporaryRoomImage">
+              <img :src="temporaryRoomImage" alt="preview image" class="img-fluid" />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="reset"
+              class="btn text-secondary shadow-none"
+              data-bs-dismiss="modal"
+              data-bs-target="#roomImageModal"
+              data-bs-toggle="modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary text-white shadow-none"
+              v-if="updateRoomImageSubmitBtn"
+            >
+              UPDATE
+            </button>
+            <button class="btn btn-primary" type="button" disabled v-else>
+              <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+              <span role="status">Proccssing...</span>
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
