@@ -23,6 +23,7 @@ const store = useToastMessageStore()
           class="btn-close btn-close-white me-2 m-auto"
           data-bs-dismiss="toast"
           aria-label="Close"
+          @click="store.toggleToast = !store.toggleToast"
         ></button>
       </div>
     </div>
