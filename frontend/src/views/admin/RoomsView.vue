@@ -43,6 +43,13 @@ const manageRoomImage = (id) => {
 }
 // --------------------------
 
+// send room id to child (RoomModal) component for manage room feature & facility record
+const roomFeatueFacility = (id) => {
+  roomId.value = id
+  instruction.value = 'manage-room-feature-facility'
+}
+// ---------------------------
+
 // send room id to child (RoomModal) component for deleting room record
 const deleteRoomId = ref(0)
 const deleteRoom = (id) => {
@@ -150,6 +157,16 @@ onMounted(() => roomRecord())
                                 @click="manageRoomImage(room.id)"
                               >
                                 <i class="bi bi-images"></i>
+                              </button>
+                              <button
+                                type="button"
+                                class="btn btn-sm shadow-none btn-success ms-1"
+                                data-bs-toggle="modal"
+                                data-bs-target="#roomFeatureFacility"
+                                title="Manage Room Feature & Facility ."
+                                @click="roomFeatueFacility(room.id)"
+                              >
+                                <i class="bi bi-puzzle"></i>
                               </button>
                               <button
                                 type="button"

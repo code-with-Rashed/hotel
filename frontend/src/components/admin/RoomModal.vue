@@ -5,6 +5,8 @@ import useRoomImageApi from '@/composables/admin/roomImageApi'
 import ToastMessage from '@/components/ToastMessage.vue'
 import { useToastMessageStore } from '@/stores/toastMessage'
 import { hideBsModal } from '@/helpers/hideBsModal'
+import useFeaturesApi from '@/composables/admin/featuresApi'
+import useFacilityApi from '@/composables/admin/facilityApi'
 
 const props = defineProps({
   instruction: String,
@@ -24,6 +26,8 @@ const {
   destroy: destroyRoomImage
 } = useRoomImageApi()
 const storeToastMessage = useToastMessageStore()
+const { results: featureResults, errors: featureErrors, get: getFeature } = useFeaturesApi()
+const { results: facilityResults, errors: facilityErrors, get: getFacility } = useFacilityApi()
 
 // handle props instruction
 watch(props, (propsValues) => {
@@ -32,6 +36,10 @@ watch(props, (propsValues) => {
   }
   if (propsValues.instruction == 'manage-room-image') {
     showRoomImage(propsValues.roomId)
+  }
+  if (propsValues.instruction == 'manage-room-feature-facility') {
+    showAllFeature()
+    showAllFacility()
   }
 })
 //----------------
@@ -300,6 +308,39 @@ const updateRoomImage = async (id) => {
     storeToastMessage.showToastMessage(false, roomImageErrors.value.message)
   }
 }
+//-----------------------
+
+// show all feature & facility
+const featureReloader = ref(true)
+const showAllFeature = async () => {
+  featureReloader.value = false
+  await getFeature()
+  featureReloader.value = true
+  if (featureResults.value.success) {
+    storeToastMessage.showToastMessage(featureResults.value.success, featureResults.value.message)
+  } else {
+    storeToastMessage.showToastMessage(featureResults.value.success, featureResults.value.message)
+  }
+  if (featureErrors.value) {
+    storeToastMessage.showToastMessage(false, featureErrors.value.message)
+  }
+}
+
+const facilityReloader = ref(true)
+const showAllFacility = async () => {
+  facilityReloader.value = false
+  await getFacility()
+  facilityReloader.value = true
+  if (facilityResults.value.success) {
+    storeToastMessage.showToastMessage(facilityResults.value.success, facilityResults.value.message)
+  } else {
+    storeToastMessage.showToastMessage(facilityResults.value.success, facilityResults.value.message)
+  }
+  if (facilityErrors.value) {
+    storeToastMessage.showToastMessage(false, facilityErrors.value.message)
+  }
+}
+// ----------------
 </script>
 <template>
   <!-- Add Room Data Modal -->
@@ -432,6 +473,106 @@ const updateRoomImage = async (id) => {
               <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
               <span role="status"> Proccssing...</span>
             </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Manage Room Feature & Facility Modal -->
+  <div
+    class="modal fade"
+    id="roomFeatureFacility"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
+    tabindex="-1"
+    aria-labelledby="staticBackdropLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-lg">
+      <form @submit.prevent="">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">
+              Add / Update Room Feature & Facility
+            </h5>
+            <button
+              type="reset"
+              class="btn-close shadow-none"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-12 mb-4">
+                <h6 class="fw-bold">
+                  Features
+                  <span
+                    class="badge rounded-pill bg-primary text-wrap ms-3"
+                    type="button"
+                    title="Reload all Room Features"
+                    @click="showAllFeature"
+                    ><i class="bi bi-arrow-repeat"></i
+                  ></span>
+                </h6>
+                <template v-if="featureReloader">
+                  <template v-if="featureResults.data">
+                    <template v-for="feature in featureResults.data.features" :key="feature.id">
+                      <label class="form-check-label me-3 pointer">
+                        <input type="checkbox" class="form-check-input" :value="feature.id" />
+                        {{ feature.name }}
+                      </label>
+                    </template>
+                  </template>
+                </template>
+                <template v-else>
+                  <div class="d-flex justify-content-center my-3">
+                    <div class="spinner-border" role="status">
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
+                  </div>
+                </template>
+              </div>
+              <div class="col-md-12 mb-4">
+                <h6 class="fw-bold">
+                  Facilities
+                  <span
+                    class="badge rounded-pill bg-primary text-wrap ms-3"
+                    type="button"
+                    title="Reload all Room Facility"
+                    @click="showAllFacility"
+                    ><i class="bi bi-arrow-repeat"></i
+                  ></span>
+                </h6>
+                <template v-if="facilityReloader">
+                  <template v-if="facilityResults.data">
+                    <template
+                      v-for="facility in facilityResults.data.facilities"
+                      :key="facility.id"
+                    >
+                      <label class="form-check-label me-3 pointer">
+                        <input type="checkbox" class="form-check-input" :value="facility.id" />
+                        {{ facility.name }}
+                      </label>
+                    </template>
+                  </template>
+                </template>
+                <template v-else>
+                  <div class="d-flex justify-content-center my-3">
+                    <div class="spinner-border" role="status">
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="reset" class="btn text-secondary shadow-none" data-bs-dismiss="modal">
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary text-white shadow-none">SAVE</button>
           </div>
         </div>
       </form>
