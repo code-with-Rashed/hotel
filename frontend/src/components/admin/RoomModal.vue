@@ -7,6 +7,7 @@ import { useToastMessageStore } from '@/stores/toastMessage'
 import { hideBsModal } from '@/helpers/hideBsModal'
 import useFeaturesApi from '@/composables/admin/featuresApi'
 import useFacilityApi from '@/composables/admin/facilityApi'
+import useRoomFeatureFacilityApi from '@/composables/admin/roomFeatureFacilityApi'
 
 const props = defineProps({
   instruction: String,
@@ -28,6 +29,13 @@ const {
 const storeToastMessage = useToastMessageStore()
 const { results: featureResults, errors: featureErrors, get: getFeature } = useFeaturesApi()
 const { results: facilityResults, errors: facilityErrors, get: getFacility } = useFacilityApi()
+const {
+  results: assignedFeatureFacilityResults,
+  getAssignedRoomFeatures,
+  getAssignedRoomFacility,
+  post: postFeatureFacility,
+  put: putFeatureFacility
+} = useRoomFeatureFacilityApi()
 
 // handle props instruction
 watch(props, (propsValues) => {
@@ -315,6 +323,7 @@ const featureReloader = ref(true)
 const showAllFeature = async () => {
   featureReloader.value = false
   await getFeature()
+  await assignedRoomFeatures()
   featureReloader.value = true
   if (featureResults.value.success) {
     storeToastMessage.showToastMessage(featureResults.value.success, featureResults.value.message)
@@ -330,6 +339,7 @@ const facilityReloader = ref(true)
 const showAllFacility = async () => {
   facilityReloader.value = false
   await getFacility()
+  await assignedRoomFacility()
   facilityReloader.value = true
   if (facilityResults.value.success) {
     storeToastMessage.showToastMessage(facilityResults.value.success, facilityResults.value.message)
@@ -341,6 +351,87 @@ const showAllFacility = async () => {
   }
 }
 // ----------------
+
+// get assigned room feature & facility ids
+const isExistFeatureFacility = ref(true)
+
+const assignedFeature = ref()
+const assignedRoomFeatures = async () => {
+  await getAssignedRoomFeatures(props.roomId)
+  assignedFeature.value = assignedFeatureFacilityResults.value
+  featureIds.value = []
+  if (assignedFeature.value.success) {
+    if (assignedFeature.value.data.room_features.length > 0) {
+      assignedFeature.value.data.room_features.forEach((data) =>
+        featureIds.value.push(data.feature_id)
+      )
+      isExistFeatureFacility.value = true
+    } else {
+      isExistFeatureFacility.value = false
+    }
+  }
+}
+
+const assignedFacility = ref()
+const assignedRoomFacility = async () => {
+  await getAssignedRoomFacility(props.roomId)
+  assignedFacility.value = assignedFeatureFacilityResults.value
+  facilityIds.value = []
+  if (assignedFacility.value.success) {
+    if (assignedFacility.value.data.facilities.length > 0) {
+      assignedFacility.value.data.facilities.forEach((data) =>
+        facilityIds.value.push(data.facility_id)
+      )
+      isExistFeatureFacility.value = true
+    } else {
+      isExistFeatureFacility.value = false
+    }
+  }
+}
+// ----------------------------------------
+
+// assigne or unassigne feature & facility id for room
+const featureIds = ref([])
+const facilityIds = ref([])
+const featureFacility = reactive({
+  room_id: 0,
+  feature_id: [],
+  facility_id: []
+})
+
+const featureFacilitySubmitBtn = ref(true)
+const roomFeatureFacility = async () => {
+  featureFacility.room_id = props.roomId
+  featureFacility.feature_id = featureIds.value
+  featureFacility.facility_id = facilityIds.value
+
+  featureFacilitySubmitBtn.value = false
+  if (isExistFeatureFacility.value) {
+    await putFeatureFacility(featureFacility)
+  } else {
+    await postFeatureFacility(featureFacility)
+  }
+  featureFacilitySubmitBtn.value = true
+
+  if (assignedFeatureFacilityResults.value.success) {
+    storeToastMessage.showToastMessage(
+      assignedFeatureFacilityResults.value.success,
+      assignedFeatureFacilityResults.value.message
+    )
+    hideBsModal('roomFeatureFacility')
+    featureIds.value = []
+    facilityIds.value = []
+  } else {
+    let message = ''
+    message += '<strong>' + assignedFeatureFacilityResults.value.message + '</strong><br>'
+    if (assignedFeatureFacilityResults.value.message == 'validation error') {
+      assignedFeatureFacilityResults.value.data.forEach((element) => {
+        message += element + '<br>'
+      })
+    }
+    storeToastMessage.showToastMessage(assignedFeatureFacilityResults.value.success, message, 10000)
+  }
+}
 </script>
 <template>
   <!-- Add Room Data Modal -->
@@ -490,7 +581,7 @@ const showAllFacility = async () => {
     aria-hidden="true"
   >
     <div class="modal-dialog modal-lg">
-      <form @submit.prevent="">
+      <form @submit.prevent="roomFeatureFacility">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="staticBackdropLabel">
@@ -520,7 +611,12 @@ const showAllFacility = async () => {
                   <template v-if="featureResults.data">
                     <template v-for="feature in featureResults.data.features" :key="feature.id">
                       <label class="form-check-label me-3 pointer">
-                        <input type="checkbox" class="form-check-input" :value="feature.id" />
+                        <input
+                          type="checkbox"
+                          class="form-check-input"
+                          :value="feature.id"
+                          v-model="featureIds"
+                        />
                         {{ feature.name }}
                       </label>
                     </template>
@@ -552,7 +648,12 @@ const showAllFacility = async () => {
                       :key="facility.id"
                     >
                       <label class="form-check-label me-3 pointer">
-                        <input type="checkbox" class="form-check-input" :value="facility.id" />
+                        <input
+                          type="checkbox"
+                          class="form-check-input"
+                          :value="facility.id"
+                          v-model="facilityIds"
+                        />
                         {{ facility.name }}
                       </label>
                     </template>
@@ -572,7 +673,32 @@ const showAllFacility = async () => {
             <button type="reset" class="btn text-secondary shadow-none" data-bs-dismiss="modal">
               Cancel
             </button>
-            <button type="submit" class="btn btn-primary text-white shadow-none">SAVE</button>
+            <template v-if="!isExistFeatureFacility">
+              <button
+                type="submit"
+                class="btn btn-primary text-white shadow-none"
+                v-if="featureFacilitySubmitBtn"
+              >
+                CREATE
+              </button>
+              <button class="btn btn-primary" type="button" disabled v-else>
+                <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                <span role="status"> Proccssing...</span>
+              </button>
+            </template>
+            <template v-else>
+              <button
+                type="submit"
+                class="btn btn-primary text-white shadow-none"
+                v-if="featureFacilitySubmitBtn"
+              >
+                UPDATE
+              </button>
+              <button class="btn btn-primary" type="button" disabled v-else>
+                <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                <span role="status"> Proccssing...</span>
+              </button>
+            </template>
           </div>
         </div>
       </form>
