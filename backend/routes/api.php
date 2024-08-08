@@ -128,3 +128,9 @@ Route::prefix("/admin/room/feature-facility")->middleware("auth:sanctum")->group
     Route::post("/create", [RoomFeatureFacilityController::class, "create"]);
     Route::put("/update", [RoomFeatureFacilityController::class, "update"]);
 });
+
+// visitior panel related routes
+use App\Http\Controllers\VisitiorPanel\FacilityController as VisitiorPanelFacilityController;
+
+// room facility routes for visitiors
+Route::get('/facility', [VisitiorPanelFacilityController::class, 'index']);
