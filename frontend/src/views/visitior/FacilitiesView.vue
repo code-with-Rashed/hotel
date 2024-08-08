@@ -1,5 +1,17 @@
 <script setup>
 import LayoutView from './layout/LayoutView.vue'
+import useFacilityApi from '@/composables/visitor/facilityApi'
+import { ref, onMounted } from 'vue'
+const { results, get } = useFacilityApi()
+
+// show all facility record
+const reloader = ref(true)
+const showFacilities = async () => {
+  reloader.value = false
+  await get()
+  reloader.value = true
+}
+onMounted(() => showFacilities())
 </script>
 <template>
   <LayoutView>
@@ -15,102 +27,28 @@ import LayoutView from './layout/LayoutView.vue'
       </div>
       <div class="container">
         <div class="row">
-          <div class="col-lg-4 col-md-6 mb-5 px-4">
-            <div class="bg-white shadow p-4 rounded border-4 border-top border-dark pop">
-              <div class="d-flex align-items-center mb-2">
-                <img
-                  src="http://localhost/hotel/images/facilities/IMG51592.svg"
-                  alt="facilities"
-                  width="40px"
-                />
-                <h5 class="m-0 ms-3">wifi</h5>
+          <template v-if="reloader">
+            <template v-if="results.data">
+              <template v-for="facility in results.data.facilities" :key="facility.id">
+                <div class="col-lg-4 col-md-6 mb-5 px-4">
+                  <div class="bg-white shadow p-4 rounded border-4 border-top border-dark pop">
+                    <div class="d-flex align-items-center mb-2">
+                      <img :src="facility.image" alt="facility image" width="40px" />
+                      <h5 class="m-0 ms-3">{{ facility.name }}</h5>
+                    </div>
+                    <p>{{ facility.description }}</p>
+                  </div>
+                </div>
+              </template>
+            </template>
+          </template>
+          <template v-else>
+            <div class="col-12 mb-5 px-4 text-center">
+              <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
               </div>
-              <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur minus dicta
-                error. Minus repudiandae optio voluptas.
-              </p>
             </div>
-          </div>
-          <div class="col-lg-4 col-md-6 mb-5 px-4">
-            <div class="bg-white shadow p-4 rounded border-4 border-top border-dark pop">
-              <div class="d-flex align-items-center mb-2">
-                <img
-                  src="http://localhost/hotel/images/facilities/IMG96089.svg"
-                  alt="facilities"
-                  width="40px"
-                />
-                <h5 class="m-0 ms-3">Telivision</h5>
-              </div>
-              <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur minus dicta
-                error. Minus repudiandae optio voluptas.
-              </p>
-            </div>
-          </div>
-          <div class="col-lg-4 col-md-6 mb-5 px-4">
-            <div class="bg-white shadow p-4 rounded border-4 border-top border-dark pop">
-              <div class="d-flex align-items-center mb-2">
-                <img
-                  src="http://localhost/hotel/images/facilities/IMG87388.svg"
-                  alt="facilities"
-                  width="40px"
-                />
-                <h5 class="m-0 ms-3">Ac</h5>
-              </div>
-              <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur minus dicta
-                error. Minus repudiandae optio voluptas.
-              </p>
-            </div>
-          </div>
-          <div class="col-lg-4 col-md-6 mb-5 px-4">
-            <div class="bg-white shadow p-4 rounded border-4 border-top border-dark pop">
-              <div class="d-flex align-items-center mb-2">
-                <img
-                  src="http://localhost/hotel/images/facilities/IMG30732.svg"
-                  alt="facilities"
-                  width="40px"
-                />
-                <h5 class="m-0 ms-3">Cleaner</h5>
-              </div>
-              <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur minus dicta
-                error. Minus repudiandae optio voluptas.
-              </p>
-            </div>
-          </div>
-          <div class="col-lg-4 col-md-6 mb-5 px-4">
-            <div class="bg-white shadow p-4 rounded border-4 border-top border-dark pop">
-              <div class="d-flex align-items-center mb-2">
-                <img
-                  src="http://localhost/hotel/images/facilities/IMG77436.svg"
-                  alt="facilities"
-                  width="40px"
-                />
-                <h5 class="m-0 ms-3">Hitter</h5>
-              </div>
-              <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur minus dicta
-                error. Minus repudiandae optio voluptas.
-              </p>
-            </div>
-          </div>
-          <div class="col-lg-4 col-md-6 mb-5 px-4">
-            <div class="bg-white shadow p-4 rounded border-4 border-top border-dark pop">
-              <div class="d-flex align-items-center mb-2">
-                <img
-                  src="http://localhost/hotel/images/facilities/IMG81256.svg"
-                  alt="facilities"
-                  width="40px"
-                />
-                <h5 class="m-0 ms-3">Micro oven</h5>
-              </div>
-              <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur minus dicta
-                error. Minus repudiandae optio voluptas.
-              </p>
-            </div>
-          </div>
+          </template>
         </div>
       </div>
     </template>
