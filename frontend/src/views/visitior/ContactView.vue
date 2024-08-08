@@ -1,5 +1,46 @@
 <script setup>
 import LayoutView from './layout/LayoutView.vue'
+import { ref, reactive } from 'vue'
+import useContactApi from '@/composables/visitor/contactApi'
+import ToastMessage from '@/components/ToastMessage.vue'
+import { useToastMessageStore } from '@/stores/toastMessage'
+
+const storeToastMessage = useToastMessageStore()
+const { results, errors, post } = useContactApi()
+
+// post new contact request
+const postContactSubmitBtn = ref(true)
+const contact = reactive({
+  name: '',
+  email: '',
+  subject: '',
+  message: ''
+})
+const postContact = async () => {
+  postContactSubmitBtn.value = false
+  await post(contact)
+  postContactSubmitBtn.value = true
+  if (results.value.success) {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+    contact.name = ''
+    contact.email = ''
+    contact.subject = ''
+    contact.message = ''
+  } else {
+    let message = ''
+    message += '<strong>' + results.value.message + '</strong><br>'
+    if (results.value.message == 'validation error') {
+      results.value.data.forEach((element) => {
+        message += element + '<br>'
+      })
+    }
+    storeToastMessage.showToastMessage(results.value.success, message, 10000)
+  }
+  if (errors.value) {
+    storeToastMessage.showToastMessage(false, errors.value.message)
+  }
+}
+//--------------------
 </script>
 <template>
   <LayoutView>
@@ -88,51 +129,57 @@ import LayoutView from './layout/LayoutView.vue'
           <div class="col-lg-6 col-md-6 mb-5 px-4">
             <div class="bg-white shadow p-4 rounded">
               <h5 class="fw-bold">Send a message</h5>
-              <form action="/hotel/contact.php" method="POST" autocomplete="off">
-                <input type="hidden" name="CSRF_TOKEN" value="5a007fe00f3c437481a31ceec01915eb" />
+              <form @submit.prevent="postContact" autocomplete="off">
                 <div class="mt-3">
                   <label class="form-label">Name</label>
                   <input
                     type="text"
-                    maxlength="30"
+                    maxlength="40"
                     class="form-control shadow-none"
-                    name="name"
-                    required=""
+                    required
+                    v-model.trim="contact.name"
                   />
                 </div>
                 <div class="mt-3">
                   <label class="form-label">Email</label>
                   <input
                     type="email"
-                    maxlength="50"
+                    maxlength="60"
                     class="form-control shadow-none"
-                    name="email"
-                    required=""
+                    required
+                    v-model.trim="contact.email"
                   />
                 </div>
                 <div class="mt-3">
                   <label class="form-label">Subject</label>
                   <input
                     type="text"
-                    maxlength="100"
+                    maxlength="150"
                     class="form-control shadow-none"
                     name="subject"
-                    required=""
+                    required
+                    v-model.trim="contact.subject"
                   />
                 </div>
                 <div class="mt-3">
                   <label class="form-label">Message</label>
                   <textarea
-                    maxlength="250"
-                    rows="5"
+                    maxlength="255"
+                    rows="8"
                     style="resize: none"
                     class="form-control shadow-none"
-                    name="message"
-                    required=""
+                    required
+                    v-model.trim="contact.message"
                   ></textarea>
                 </div>
                 <div class="mt-3">
-                  <button type="submit" class="btn custom-bg text-white" name="send">SEND</button>
+                  <button type="submit" class="btn btn-primary" v-if="postContactSubmitBtn">
+                    SEND
+                  </button>
+                  <button class="btn btn-primary" type="button" disabled v-else>
+                    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                    <span role="status"> Proccssing...</span>
+                  </button>
                 </div>
               </form>
             </div>
@@ -141,4 +188,5 @@ import LayoutView from './layout/LayoutView.vue'
       </div>
     </template>
   </LayoutView>
+  <ToastMessage />
 </template>
