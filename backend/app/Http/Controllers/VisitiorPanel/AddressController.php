@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\VisitiorPanel;
 
 use App\Http\Controllers\BaseController;
-use app\Models\Information;
+use App\Models\Information;
 
 class AddressController extends BaseController
 {
