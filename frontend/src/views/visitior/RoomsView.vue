@@ -1,5 +1,21 @@
 <script setup>
 import LayoutView from './layout/LayoutView.vue'
+import { ref, onMounted } from 'vue'
+import useFacilityApi from '@/composables/visitor/facilityApi'
+const { results: facilityResults, get: getFacility } = useFacilityApi()
+
+// show all facility record
+const facilityReloader = ref(true)
+const showFacilities = async () => {
+  facilityReloader.value = false
+  await getFacility()
+  facilityReloader.value = true
+}
+// -------------------------
+
+onMounted(() => {
+  showFacilities()
+})
 </script>
 <template>
   <LayoutView>
@@ -67,85 +83,45 @@ import LayoutView from './layout/LayoutView.vue'
                       value=""
                     />
                   </div>
+                  <!-- facility listing start -->
                   <div class="bg-light rounded p-3 border mb-3">
                     <div class="d-flex justify-content-between align-items-center">
                       <h5 class="mb-3 fs-5">FACILITIES</h5>
-                      <button
-                        type="button"
-                        class="btn btn-sm shadow-none btn-warning d-none"
-                        onclick="reset_facilities()"
-                        id="reset_facilities_btn"
-                      >
+                      <button type="button" class="btn btn-sm shadow-none btn-warning">
                         Reset
                       </button>
                     </div>
-                    <div class="mb-2">
-                      <input
-                        type="checkbox"
-                        id="f-4"
-                        class="form-check-input me-1"
-                        value="4"
-                        name="selected_facility"
-                        onclick="facility()"
-                      />
-                      <label class="form-check-label" for="f-4">wifi</label>
-                    </div>
-                    <div class="mb-2">
-                      <input
-                        type="checkbox"
-                        id="f-5"
-                        class="form-check-input me-1"
-                        value="5"
-                        name="selected_facility"
-                        onclick="facility()"
-                      />
-                      <label class="form-check-label" for="f-5">Telivision</label>
-                    </div>
-                    <div class="mb-2">
-                      <input
-                        type="checkbox"
-                        id="f-6"
-                        class="form-check-input me-1"
-                        value="6"
-                        name="selected_facility"
-                        onclick="facility()"
-                      />
-                      <label class="form-check-label" for="f-6">Ac</label>
-                    </div>
-                    <div class="mb-2">
-                      <input
-                        type="checkbox"
-                        id="f-7"
-                        class="form-check-input me-1"
-                        value="7"
-                        name="selected_facility"
-                        onclick="facility()"
-                      />
-                      <label class="form-check-label" for="f-7">Cleaner</label>
-                    </div>
-                    <div class="mb-2">
-                      <input
-                        type="checkbox"
-                        id="f-8"
-                        class="form-check-input me-1"
-                        value="8"
-                        name="selected_facility"
-                        onclick="facility()"
-                      />
-                      <label class="form-check-label" for="f-8">Hitter</label>
-                    </div>
-                    <div class="mb-2">
-                      <input
-                        type="checkbox"
-                        id="f-9"
-                        class="form-check-input me-1"
-                        value="9"
-                        name="selected_facility"
-                        onclick="facility()"
-                      />
-                      <label class="form-check-label" for="f-9">Micro oven</label>
-                    </div>
+                    <template v-if="facilityReloader">
+                      <template v-if="facilityResults.data">
+                        <template
+                          v-for="facility in facilityResults.data.facilities"
+                          :key="facility.id"
+                        >
+                          <div class="mb-2">
+                            <input
+                              type="checkbox"
+                              :id="`f-${facility.id}`"
+                              class="form-check-input me-1"
+                              :value="facility.id"
+                            />
+                            <label
+                              class="form-check-label text-capitalize ms-1"
+                              :for="`f-${facility.id}`"
+                              >{{ facility.name }}</label
+                            >
+                          </div>
+                        </template>
+                      </template>
+                    </template>
+                    <template v-else>
+                      <div class="text-center mx-3">
+                        <div class="spinner-border" role="status">
+                          <span class="visually-hidden">Loading...</span>
+                        </div>
+                      </div>
+                    </template>
                   </div>
+                  <!-- facility listing end -->
                   <div class="bg-light rounded p-3 border mb-3">
                     <div class="d-flex justify-content-between align-items-center">
                       <h5 class="mb-3 fs-5">GUESTS</h5>
