@@ -3,11 +3,22 @@ import LayoutView from './layout/LayoutView.vue'
 import { ref, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import { urlBasename } from '@/helpers/urlBasename'
+import useCarouselApi from '@/composables/visitor/carouselApi'
 import useFacilityApi from '@/composables/visitor/facilityApi'
 import useAddressApi from '@/composables/visitor/addressApi'
 
+const { results: carouselResults, get: getCarousel } = useCarouselApi()
 const { results: facilityResults, get: getFacility } = useFacilityApi()
 const { results: addressResults, get: getAddress } = useAddressApi()
+
+// show all carousel image record
+const carouselReloader = ref(true)
+const showCarousel = async () => {
+  carouselReloader.value = false
+  await getCarousel()
+  carouselReloader.value = true
+}
+// -------------------------
 
 // show all facility record
 const facilityReloader = ref(true)
@@ -30,6 +41,7 @@ const showAddress = async () => {
 // ------------------------
 
 onMounted(() => {
+  showCarousel()
   showFacilities()
   showAddress()
 })
@@ -37,51 +49,30 @@ onMounted(() => {
 <template>
   <LayoutView>
     <template #page>
+      <!-- Carousel start -->
       <div class="container-fluid px-lg-4 mt-4">
         <div id="carouselHome" class="carousel slide" data-bs-ride="carousel">
           <div class="carousel-inner">
-            <div class="carousel-item">
-              <img
-                class="d-block w-100 img-fluid"
-                src="http://localhost/hotel/images/carousel/IMG96524.png"
-                alt="Carousel image"
-              />
-            </div>
-            <div class="carousel-item">
-              <img
-                class="d-block w-100 img-fluid"
-                src="http://localhost/hotel/images/carousel/IMG45894.png"
-                alt="Carousel image"
-              />
-            </div>
-            <div class="carousel-item active carousel-item-start">
-              <img
-                class="d-block w-100 img-fluid"
-                src="http://localhost/hotel/images/carousel/IMG43122.png"
-                alt="Carousel image"
-              />
-            </div>
-            <div class="carousel-item carousel-item-next carousel-item-start">
-              <img
-                class="d-block w-100 img-fluid"
-                src="http://localhost/hotel/images/carousel/IMG60733.png"
-                alt="Carousel image"
-              />
-            </div>
-            <div class="carousel-item">
-              <img
-                class="d-block w-100 img-fluid"
-                src="http://localhost/hotel/images/carousel/IMG46968.png"
-                alt="Carousel image"
-              />
-            </div>
-            <div class="carousel-item">
-              <img
-                class="d-block w-100 img-fluid"
-                src="http://localhost/hotel/images/carousel/IMG48604.png"
-                alt="Carousel image"
-              />
-            </div>
+            <template v-if="carouselReloader">
+              <template v-if="carouselResults.data">
+                <template v-for="(carousel, i) in carouselResults.data.carousel" :key="carousel.id">
+                  <div class="carousel-item" :class="{ active: !i }">
+                    <img
+                      class="d-block w-100 img-fluid"
+                      :src="carousel.image"
+                      alt="Carousel image"
+                    />
+                  </div>
+                </template>
+              </template>
+            </template>
+            <template v-else>
+              <div class="text-center mx-5">
+                <div class="spinner-border" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </div>
+            </template>
           </div>
           <button
             type="button"
@@ -103,6 +94,7 @@ onMounted(() => {
           </button>
         </div>
       </div>
+      <!-- Carousel end -->
 
       <div class="container availability-form">
         <div class="row">
@@ -435,7 +427,8 @@ onMounted(() => {
                 <RouterLink
                   :to="{ name: 'facilities-page' }"
                   class="btn btn-sm fw-bold btn-outline-dark shadow-none rounded-0"
-                  >More Facilities <i class="bi bi-chevron-double-right"></i
+                >
+                  More Facilities <i class="bi bi-chevron-double-right"></i
                 ></RouterLink>
               </div>
             </template>
