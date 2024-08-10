@@ -1,5 +1,22 @@
 <script setup>
 import LayoutView from './layout/LayoutView.vue'
+import { ref, onMounted } from 'vue'
+import { RouterLink } from 'vue-router'
+import useFacilityApi from '@/composables/visitor/facilityApi'
+const { results: facilityResults, get: getFacility } = useFacilityApi()
+
+// show all facility record
+const facilityReloader = ref(true)
+const showFacilities = async () => {
+  facilityReloader.value = false
+  await getFacility()
+  facilityReloader.value = true
+}
+// -------------------------
+
+onMounted(() => {
+  showFacilities()
+})
 </script>
 <template>
   <LayoutView>
@@ -384,58 +401,39 @@ import LayoutView from './layout/LayoutView.vue'
         </div>
       </div>
 
+      <!-- show facility start -->
       <h2 class="text-center h-fonts mt-5 mb-4 pt-4 fw-bold">OUR FACILITIES</h2>
       <div class="container">
         <div class="row justify-content-evenly px-lg-0 px-md-0 px-5">
-          <div class="col-lg-2 col-md-2 text-center rounded shadow bg-white py-4 my-3">
-            <img
-              src="http://localhost/hotel/images/facilities/IMG81256.svg"
-              alt="facilities img"
-              width="50px"
-            />
-            <h5 class="mt-3">Micro oven</h5>
-          </div>
-          <div class="col-lg-2 col-md-2 text-center rounded shadow bg-white py-4 my-3">
-            <img
-              src="http://localhost/hotel/images/facilities/IMG77436.svg"
-              alt="facilities img"
-              width="50px"
-            />
-            <h5 class="mt-3">Hitter</h5>
-          </div>
-          <div class="col-lg-2 col-md-2 text-center rounded shadow bg-white py-4 my-3">
-            <img
-              src="http://localhost/hotel/images/facilities/IMG30732.svg"
-              alt="facilities img"
-              width="50px"
-            />
-            <h5 class="mt-3">Cleaner</h5>
-          </div>
-          <div class="col-lg-2 col-md-2 text-center rounded shadow bg-white py-4 my-3">
-            <img
-              src="http://localhost/hotel/images/facilities/IMG87388.svg"
-              alt="facilities img"
-              width="50px"
-            />
-            <h5 class="mt-3">Ac</h5>
-          </div>
-          <div class="col-lg-2 col-md-2 text-center rounded shadow bg-white py-4 my-3">
-            <img
-              src="http://localhost/hotel/images/facilities/IMG96089.svg"
-              alt="facilities img"
-              width="50px"
-            />
-            <h5 class="mt-3">Telivision</h5>
-          </div>
-          <div class="col-md-12 text-center mt-4 my-3">
-            <a
-              href="facilities.php"
-              class="btn btn-sm fw-bold btn-outline-dark shadow-none rounded-0"
-              >More Facilities &gt;&gt;&gt;
-            </a>
-          </div>
+          <template v-if="facilityReloader">
+            <template v-if="facilityResults.data">
+              <template v-for="(facility, i) in facilityResults.data.facilities" :key="facility.id">
+                <template v-if="i < 5">
+                  <div class="col-lg-2 col-md-2 text-center rounded shadow bg-white py-4 my-3">
+                    <img :src="facility.image" alt="facilities img" width="50px" />
+                    <h5 class="mt-3">{{ facility.name }}</h5>
+                  </div>
+                </template>
+              </template>
+              <div class="col-md-12 text-center mt-4 my-3">
+                <RouterLink
+                  :to="{ name: 'facilities-page' }"
+                  class="btn btn-sm fw-bold btn-outline-dark shadow-none rounded-0"
+                  >More Facilities <i class="bi bi-chevron-double-right"></i
+                ></RouterLink>
+              </div>
+            </template>
+          </template>
+          <template v-else>
+            <div class="col-12 text-center">
+              <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          </template>
         </div>
       </div>
+      <!-- show facility end -->
 
       <h2 class="text-center h-fonts mt-5 mb-4 pt-4 fw-bold">REACH US</h2>
       <div class="container">
