@@ -133,6 +133,7 @@ Route::prefix("/admin/room/feature-facility")->middleware("auth:sanctum")->group
 use App\Http\Controllers\VisitiorPanel\FacilityController as VisitiorPanelFacilityController;
 use App\Http\Controllers\VisitiorPanel\ContactController as VisitiorPanelContactController;
 use App\Http\Controllers\VisitiorPanel\AddressController;
+use App\Http\Controllers\VisitiorPanel\CarouselController as VisitiorPanelCarouselController;
 
 // room facility routes for visitiors
 Route::get('/facility', [VisitiorPanelFacilityController::class, 'index']);
@@ -142,3 +143,6 @@ Route::post('/contact', [VisitiorPanelContactController::class, 'create']);
 
 // Company address routes for visitiors
 Route::get('/address', [AddressController::class, 'index']);
+
+// Carousel routes for visitiors
+Route::get('/carousel', [VisitiorPanelCarouselController::class, 'index']);
