@@ -1,5 +1,21 @@
 <script setup>
 import { RouterLink } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { urlBasename } from '@/helpers/urlBasename'
+import useAddressApi from '@/composables/visitor/addressApi'
+const { results: addressResults, get } = useAddressApi()
+
+// show social links
+const socials = ref(null)
+const reloader = ref(true)
+const showSocialLinks = async () => {
+  reloader.value = false
+  await get()
+  reloader.value = true
+  socials.value = addressResults.value.data.company_information.social
+}
+
+onMounted(() => showSocialLinks())
 </script>
 <template>
   <!-- Footer Start -->
@@ -24,43 +40,40 @@ import { RouterLink } from 'vue-router'
           <RouterLink
             :to="{ name: 'rooms-page' }"
             class="d-block text-dark text-decoration-none mb-2"
-            >Rooms</RouterLink
-          >
+            >Rooms
+          </RouterLink>
           <RouterLink
             :to="{ name: 'contact-page' }"
             class="d-block text-dark text-decoration-none mb-2"
-            >Contact us</RouterLink
-          >
+            >Contact us
+          </RouterLink>
           <RouterLink :to="{ name: 'about-page' }" class="d-block text-dark text-decoration-none"
             >About us</RouterLink
           >
         </div>
         <div class="col-md-4 p-4">
           <h3 class="h-fonts fw-bold fs-3 mb-3">Fllow us</h3>
-          <a
-            href="https://twitter.com"
-            target="_blank"
-            class="d-inline-block text-dark text-decoration-none mb-2"
-          >
-            <i class="bi bi-twitter me-1"></i> Twitter
-          </a>
-          <br />
-          <a
-            href="https://facebook.com"
-            target="_blank"
-            class="d-inline-block text-dark text-decoration-none mb-2"
-          >
-            <i class="bi bi-facebook me-1"></i> Facebook
-          </a>
-          <br />
-          <a
-            href="https://instagram.com"
-            target="_blank"
-            class="d-inline-block text-dark text-decoration-none mb-2"
-          >
-            <i class="bi bi-instagram me-1"></i> Instagram
-          </a>
-          <br />
+          <template v-if="reloader">
+            <template v-if="socials">
+              <template v-for="(social, i) in socials" :key="i">
+                <a
+                  :href="social"
+                  target="_blank"
+                  class="d-block text-dark text-decoration-none mb-2"
+                >
+                  <i :class="'bi-' + urlBasename(social, 'globe')"></i>
+                  <span class="text-capitalize ms-1">{{ urlBasename(social, 'social') }}</span>
+                </a>
+              </template>
+            </template>
+          </template>
+          <template v-else>
+            <div class="text-center">
+              <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          </template>
         </div>
       </div>
     </div>
