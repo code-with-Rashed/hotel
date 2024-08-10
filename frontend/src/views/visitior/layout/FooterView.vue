@@ -1,3 +1,6 @@
+<script setup>
+import { RouterLink } from 'vue-router'
+</script>
 <template>
   <!-- Footer Start -->
   <footer>
@@ -13,17 +16,24 @@
         </div>
         <div class="col-md-4 p-4">
           <h3 class="h-fonts fw-bold fs-3 mb-3">Links</h3>
-          <a href="index.php" class="d-inline-block text-dark text-decoration-none mb-2">Home</a
-          ><br />
-          <a href="rooms.php" class="d-inline-block text-dark text-decoration-none mb-2">Rooms</a
-          ><br />
-          <a href="facilities.php" class="d-inline-block text-dark text-decoration-none mb-2"
-            >Facilities</a
-          ><br />
-          <a href="contact.php" class="d-inline-block text-dark text-decoration-none mb-2"
-            >Contact us</a
-          ><br />
-          <a href="about.php" class="d-inline-block text-dark text-decoration-none mb-2">About</a>
+          <RouterLink
+            :to="{ name: 'home-page' }"
+            class="d-block text-dark text-decoration-none mb-2"
+            >Home</RouterLink
+          >
+          <RouterLink
+            :to="{ name: 'rooms-page' }"
+            class="d-block text-dark text-decoration-none mb-2"
+            >Rooms</RouterLink
+          >
+          <RouterLink
+            :to="{ name: 'contact-page' }"
+            class="d-block text-dark text-decoration-none mb-2"
+            >Contact us</RouterLink
+          >
+          <RouterLink :to="{ name: 'about-page' }" class="d-block text-dark text-decoration-none"
+            >About us</RouterLink
+          >
         </div>
         <div class="col-md-4 p-4">
           <h3 class="h-fonts fw-bold fs-3 mb-3">Fllow us</h3>
