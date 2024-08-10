@@ -2,8 +2,12 @@
 import LayoutView from './layout/LayoutView.vue'
 import { ref, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
+import { urlBasename } from '@/helpers/urlBasename'
 import useFacilityApi from '@/composables/visitor/facilityApi'
+import useAddressApi from '@/composables/visitor/addressApi'
+
 const { results: facilityResults, get: getFacility } = useFacilityApi()
+const { results: addressResults, get: getAddress } = useAddressApi()
 
 // show all facility record
 const facilityReloader = ref(true)
@@ -14,8 +18,20 @@ const showFacilities = async () => {
 }
 // -------------------------
 
+// show address information
+const address = ref(null)
+const addressReloader = ref(true)
+const showAddress = async () => {
+  addressReloader.value = false
+  await getAddress()
+  addressReloader.value = true
+  address.value = addressResults.value.data.company_information
+}
+// ------------------------
+
 onMounted(() => {
   showFacilities()
+  showAddress()
 })
 </script>
 <template>
@@ -435,61 +451,67 @@ onMounted(() => {
       </div>
       <!-- show facility end -->
 
-      <h2 class="text-center h-fonts mt-5 mb-4 pt-4 fw-bold">REACH US</h2>
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-8 col-md-8 bg-white p-4 rounded mb-3 mb-lg-0">
-            <iframe
-              class="w-100"
-              height="320"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d387191.33750346623!2d-73.97968099999999!3d40.6974881!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c24fa5d33f083b:0xc80b8f06e177fe62!2sNew York, NY, USA!5e0!3m2!1sen!2sbd!4v171"
-              loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade"
-            ></iframe>
-          </div>
-          <div class="col-lg-4 col-md-4">
-            <div class="bg-white p-4 mb-4 rounded">
-              <h5 class="mb-2">Call us</h5>
-              <div class="mb-2">
-                <a
-                  href="tel: +01860491387"
-                  class="d-inline-block mb-2 text-decoration-none text-dark"
-                >
-                  <i class="bi bi-telephone-fill"></i> +01860491387
-                </a>
+      <!-- address section start -->
+      <section>
+        <h2 class="text-center h-fonts mt-5 mb-4 pt-4 fw-bold">REACH US</h2>
+        <div class="container">
+          <div class="row">
+            <template v-if="addressReloader">
+              <template v-if="address">
+                <div class="col-lg-8 col-md-8 bg-white p-4 rounded mb-3 mb-lg-0">
+                  <iframe
+                    class="w-100"
+                    height="320"
+                    :src="address.map"
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                  ></iframe>
+                </div>
+                <div class="col-lg-4 col-md-4">
+                  <div class="bg-white p-4 mb-4 rounded">
+                    <h5 class="mb-2">Call us</h5>
+                    <div class="mb-2" v-for="(phone, i) in address.phone" :key="i">
+                      <a
+                        :href="`tel: ${phone}`"
+                        class="d-inline-block mb-2 text-decoration-none text-dark"
+                      >
+                        <i class="bi bi-telephone-fill"></i> {{ phone }}
+                      </a>
+                    </div>
+                  </div>
+                  <div class="bg-white p-4 mb-4 rounded">
+                    <h5>Follow us</h5>
+                    <div class="flex">
+                      <a
+                        v-for="(social, i) in address.social"
+                        :key="i"
+                        :href="social"
+                        target="_blank"
+                        class="m-1 d-inline-block"
+                      >
+                        <span class="badge bg-light text-dark fs-6 p-2">
+                          <i :class="'bi-' + urlBasename(social, 'globe')"></i>
+                          <span class="text-capitalize ms-1">{{
+                            urlBasename(social, 'social')
+                          }}</span>
+                        </span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </template>
+            <template v-else>
+              <div class="col-12 text-center">
+                <div class="spinner-border" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
               </div>
-              <div class="mb-2">
-                <a
-                  href="tel: +01921083214"
-                  class="d-inline-block mb-2 text-decoration-none text-dark"
-                >
-                  <i class="bi bi-telephone-fill"></i> +01921083214
-                </a>
-              </div>
-            </div>
-            <div class="bg-white p-4 mb-4 rounded">
-              <h5>Follow us</h5>
-              <a href="https://twitter.com" target="_blank" class="d-inline-block mb-3">
-                <span class="badge bg-light text-dark fs-6 p-2">
-                  <i class="bi bi-twitter me-1"></i> Twitter
-                </span>
-              </a>
-              <br />
-              <a href="https://facebook.com" target="_blank" class="d-inline-block mb-3">
-                <span class="badge bg-light text-dark fs-6 p-2">
-                  <i class="bi bi-facebook me-1"></i> Facebook
-                </span>
-              </a>
-              <br />
-              <a href="https://instagram.com" target="_blank" class="d-inline-block">
-                <span class="badge bg-light text-dark fs-6 p-2">
-                  <i class="bi bi-instagram me-1"></i> Instagram
-                </span>
-              </a>
-            </div>
+            </template>
           </div>
         </div>
-      </div>
+      </section>
+      <!-- address section end -->
     </template>
   </LayoutView>
 </template>
