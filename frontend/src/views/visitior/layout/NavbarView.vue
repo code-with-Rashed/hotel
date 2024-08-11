@@ -103,3 +103,8 @@ import RegisterModal from '@/components/visitior/RegisterModal.vue'
   <LoginModal />
   <RegisterModal />
 </template>
+<style scoped>
+a.router-link-active {
+  color: rgb(2, 2, 2);
+}
+</style>
