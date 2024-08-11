@@ -1,5 +1,19 @@
 <script setup>
 import LayoutView from './layout/LayoutView.vue'
+import useTeamMemberApi from '@/composables/visitor/teamMemberApi'
+import { ref, onMounted } from 'vue'
+
+const { results, get } = useTeamMemberApi()
+
+// show team member records
+const reloader = ref(true)
+const showTeamMembers = async () => {
+  reloader.value = false
+  await get()
+  reloader.value = true
+}
+
+onMounted(() => showTeamMembers())
 </script>
 <template>
   <LayoutView>
@@ -78,60 +92,35 @@ import LayoutView from './layout/LayoutView.vue'
           </div>
         </div>
       </div>
-
+      <!-- show team profile start -->
       <h3 class="text-center fw-bold my-5 h-fonts">MANAGEMENT TEAM</h3>
       <div class="container">
         <div class="row">
-          <div class="col-lg-3 col-md-6 mb-4">
-            <div class="card shadow rounded border-0">
-              <img
-                class="card-img-top"
-                src="http://localhost/hotel/images/about/IMG26969.png"
-                alt="Card image cap"
-              />
-              <div class="card-body">
-                <h5 class="card-title text-center">Rashed alam</h5>
+          <template v-if="reloader">
+            <template v-if="results.data">
+              <template v-for="member in results.data.team" :key="member.id">
+                <div class="col-lg-3 col-md-6 mb-4">
+                  <div class="card shadow rounded border-0">
+                    <img class="card-img-top" :src="member.photo" alt="Card image cap" />
+                    <div class="card-body">
+                      <h5 class="card-title text-center">{{ member.name }}</h5>
+                      <p class="card-title text-center text-uppercase">{{ member.designation }}</p>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </template>
+          </template>
+          <template v-else>
+            <div class="col-12 px-4 text-center">
+              <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
               </div>
             </div>
-          </div>
-          <div class="col-lg-3 col-md-6 mb-4">
-            <div class="card shadow rounded border-0">
-              <img
-                class="card-img-top"
-                src="http://localhost/hotel/images/about/IMG89419.png"
-                alt="Card image cap"
-              />
-              <div class="card-body">
-                <h5 class="card-title text-center">Kethrin</h5>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-3 col-md-6 mb-4">
-            <div class="card shadow rounded border-0">
-              <img
-                class="card-img-top"
-                src="http://localhost/hotel/images/about/IMG14983.png"
-                alt="Card image cap"
-              />
-              <div class="card-body">
-                <h5 class="card-title text-center">Mujahid islam</h5>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-3 col-md-6 mb-4">
-            <div class="card shadow rounded border-0">
-              <img
-                class="card-img-top"
-                src="http://localhost/hotel/images/about/IMG55395.png"
-                alt="Card image cap"
-              />
-              <div class="card-body">
-                <h5 class="card-title text-center">Menila</h5>
-              </div>
-            </div>
-          </div>
+          </template>
         </div>
       </div>
+      <!-- show team profile end -->
     </template>
   </LayoutView>
 </template>
