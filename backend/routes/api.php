@@ -136,6 +136,7 @@ use App\Http\Controllers\VisitiorPanel\AddressController;
 use App\Http\Controllers\VisitiorPanel\CarouselController as VisitiorPanelCarouselController;
 use App\Http\Controllers\VisitiorPanel\TeamMemberController;
 use App\Http\Controllers\VisitiorPanel\SettingController as VisitiorPanelSettingController;
+use App\Http\Controllers\VisitiorPanel\LogoController as VisitiorPanelLogoController;
 
 // room facility routes for visitiors
 Route::get('/facility', [VisitiorPanelFacilityController::class, 'index']);
@@ -154,3 +155,6 @@ Route::get('/team-members', [TeamMemberController::class, 'index']);
 
 // Settings routes for visitior panel
 Route::get('/setting', [VisitiorPanelSettingController::class, 'index']);
+
+// Logo routes for visitior panel
+Route::get('/logo', [VisitiorPanelLogoController::class, 'index']);
