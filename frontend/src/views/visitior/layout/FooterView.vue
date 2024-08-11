@@ -2,8 +2,20 @@
 import { RouterLink } from 'vue-router'
 import { ref, onMounted } from 'vue'
 import { urlBasename } from '@/helpers/urlBasename'
+import useSettingApi from '@/composables/visitor/settingApi'
 import useAddressApi from '@/composables/visitor/addressApi'
+
+const { results: settingResults, get: getSetting } = useSettingApi()
 const { results: addressResults, get } = useAddressApi()
+
+// show site description
+const descriptionReloader = ref(true)
+const showDescription = async () => {
+  descriptionReloader.value = false
+  await getSetting()
+  descriptionReloader.value = true
+}
+// --------------------
 
 // show social links
 const socials = ref(null)
@@ -14,22 +26,35 @@ const showSocialLinks = async () => {
   reloader.value = true
   socials.value = addressResults.value.data.company_information.social
 }
+//-----------------
 
-onMounted(() => showSocialLinks())
+onMounted(() => {
+  showDescription()
+  showSocialLinks()
+})
 </script>
 <template>
   <!-- Footer Start -->
   <footer>
     <div class="container-fluid bg-white mt-5">
       <div class="row">
+        <!-- show site description start -->
         <div class="col-md-4 p-4">
           <h3 class="h-fonts fw-bold fs-3 mb-2">My Hotel</h3>
-          <p>
-            About Lorem ipsum, dolor sit amet consectetur adipisicing elit. Veritatis error
-            voluptatem minus saepe asperiores ab, ducimus tempore optio aut exercitationem? Lorem
-            ipsum dolor sit, amet consectetur adipisicing elit. Odit, voluptatibus
-          </p>
+          <template v-if="descriptionReloader">
+            <template v-if="settingResults.data">
+              <p class="fw-normal">{{ settingResults.data.setting.description }}</p>
+            </template>
+          </template>
+          <template v-else>
+            <div class="text-center">
+              <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          </template>
         </div>
+        <!-- show site description end -->
         <div class="col-md-4 p-4">
           <h3 class="h-fonts fw-bold fs-3 mb-3">Links</h3>
           <RouterLink
