@@ -134,6 +134,7 @@ use App\Http\Controllers\VisitiorPanel\FacilityController as VisitiorPanelFacili
 use App\Http\Controllers\VisitiorPanel\ContactController as VisitiorPanelContactController;
 use App\Http\Controllers\VisitiorPanel\AddressController;
 use App\Http\Controllers\VisitiorPanel\CarouselController as VisitiorPanelCarouselController;
+use App\Http\Controllers\VisitiorPanel\TeamMemberController;
 
 // room facility routes for visitiors
 Route::get('/facility', [VisitiorPanelFacilityController::class, 'index']);
@@ -146,3 +147,6 @@ Route::get('/address', [AddressController::class, 'index']);
 
 // Carousel routes for visitiors
 Route::get('/carousel', [VisitiorPanelCarouselController::class, 'index']);
+
+// Team member routes
+Route::get('/team-members', [TeamMemberController::class, 'index']);
