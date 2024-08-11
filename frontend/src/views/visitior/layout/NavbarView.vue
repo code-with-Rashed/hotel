@@ -2,6 +2,20 @@
 import { RouterLink } from 'vue-router'
 import LoginModal from '@/components/visitior/LoginModal.vue'
 import RegisterModal from '@/components/visitior/RegisterModal.vue'
+import { ref, onMounted } from 'vue'
+import useLogoApi from '@/composables/visitor/logoApi'
+
+const { results, get } = useLogoApi()
+
+// show site logo
+const reloader = ref(true)
+const showLogo = async () => {
+  reloader.value = false
+  await get()
+  reloader.value = true
+}
+// --------------------
+onMounted(() => showLogo())
 </script>
 <template>
   <!-- Navbar start -->
@@ -10,9 +24,20 @@ import RegisterModal from '@/components/visitior/RegisterModal.vue'
     class="navbar navbar-expand-lg bg-white navbar-light px-lg-3 py-lg-2 shadow-sm sticky-top"
   >
     <div class="container-fluid">
-      <RouterLink :to="{ name: 'home-page' }" class="navbar-brand me-5 fs-3 fw-bold h-fonts"
-        >My Hotel</RouterLink
-      >
+      <!-- show logo -->
+      <template v-if="reloader">
+        <template v-if="results.data">
+          <RouterLink :to="{ name: 'home-page' }" class="navbar-brand me-5">
+            <img :src="results.data.logo.logo" alt="logo" height="50" width="50" class="rounded" />
+          </RouterLink>
+        </template>
+      </template>
+      <template v-else>
+        <RouterLink :to="{ name: 'home-page' }" class="navbar-brand me-5 fs-3 fw-bold h-fonts">
+          Hotel
+        </RouterLink>
+      </template>
+      <!-- nav links -->
       <button
         class="navbar-toggler shadow-none"
         type="button"
