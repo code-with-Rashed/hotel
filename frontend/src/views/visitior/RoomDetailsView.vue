@@ -1,7 +1,7 @@
 <script setup>
 import LayoutView from './layout/LayoutView.vue'
 import { useRoute } from 'vue-router'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import useRoomApi from '@/composables/visitor/roomApi'
 
 const { params } = useRoute()
@@ -16,6 +16,22 @@ const showRoom = async () => {
   roomDetails.value = roomResults.value.data.room
   roomReloader.value = true
 }
+// -------------------------
+
+// first time carousel runner
+const firstTimeRunCarousel = () => {
+  setTimeout(() => {
+    document.getElementById('nextCarousel').click()
+  }, 2000)
+}
+
+watch(
+  roomDetails,
+  () => {
+    firstTimeRunCarousel()
+  },
+  { once: true }
+)
 // -------------------------
 
 onMounted(() => {
@@ -68,7 +84,11 @@ onMounted(() => {
                     data-bs-target="#carouselExampleInterval"
                     data-bs-slide="next"
                   >
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span
+                      class="carousel-control-next-icon"
+                      aria-hidden="true"
+                      id="nextCarousel"
+                    ></span>
                     <span class="visually-hidden">Next</span>
                   </button>
                 </div>

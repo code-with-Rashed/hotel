@@ -1,6 +1,6 @@
 <script setup>
 import LayoutView from './layout/LayoutView.vue'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import { urlBasename } from '@/helpers/urlBasename'
 import useCarouselApi from '@/composables/visitor/carouselApi'
@@ -18,6 +18,22 @@ const showCarousel = async () => {
   await getCarousel()
   carouselReloader.value = true
 }
+// -------------------------
+
+// first time carousel runner
+const firstTimeRunCarousel = () => {
+  setTimeout(() => {
+    document.getElementById('nextCarousel').click()
+  }, 3000)
+}
+
+watch(
+  carouselResults,
+  () => {
+    firstTimeRunCarousel()
+  },
+  { once: true }
+)
 // -------------------------
 
 // show all facility record
@@ -89,7 +105,7 @@ onMounted(() => {
             data-bs-target="#carouselHome"
             data-bs-slide="next"
           >
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="carousel-control-next-icon" aria-hidden="true" id="nextCarousel"></span>
             <span class="visually-hidden">Next</span>
           </button>
         </div>
