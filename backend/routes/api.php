@@ -162,3 +162,4 @@ Route::get('/logo', [VisitiorPanelLogoController::class, 'index']);
 
 // Rooms routes for visitior panel
 Route::get('/all/room', [VisitiorPanelRoomController::class, 'all_room']);
+Route::get('/room/{id}', [VisitiorPanelRoomController::class, 'room']);
