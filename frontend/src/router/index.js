@@ -113,6 +113,12 @@ const router = createRouter({
       meta: { title: 'Rooms' }
     },
     {
+      path: '/room/:id(\\d+)',
+      name: 'room-details',
+      component: () => import('../views/visitior/RoomDetailsView.vue'),
+      meta: { title: 'Room Details' }
+    },
+    {
       path: '/facilities',
       name: 'facilities-page',
       component: () => import('../views/visitior/FacilitiesView.vue'),

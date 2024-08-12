@@ -25,5 +25,24 @@ export default function useRoomApi() {
     }
   }
 
-  return { results, errors, allRoom }
+  // fetch single room related record
+  const room = async (id) => {
+    results.value = []
+    errors.value = null
+
+    try {
+      const request = await fetch(url + '/room/' + id, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json'
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+
+  return { results, errors, allRoom, room }
 }
