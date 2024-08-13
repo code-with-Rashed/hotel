@@ -11,6 +11,11 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     use HasFactory, Notifiable, HasApiTokens;
+    
+    public function getPhotoAttribute($photo)
+    {
+        return asset('storage') . "/" . $photo;
+    }
 
     /**
      * The attributes that should be hidden for serialization.
