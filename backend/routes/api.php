@@ -163,3 +163,10 @@ Route::get('/logo', [VisitiorPanelLogoController::class, 'index']);
 // Rooms routes for visitior panel
 Route::get('/all/room', [VisitiorPanelRoomController::class, 'all_room']);
 Route::get('/room/{id}', [VisitiorPanelRoomController::class, 'room']);
+
+
+// Routes for users
+use App\Http\Controllers\UsersPanel\UserController;
+
+Route::post('/register', [UserController::class, 'register']);
+Route::post('/login', [UserController::class, 'login']);
