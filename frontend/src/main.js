@@ -7,6 +7,7 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import App from './App.vue'
 import router from './router'
 import { useAdminCredentialsStore } from '@/stores/adminCredentials'
+import { useUserCredentialsStore } from '@/stores/userCredentials'
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -25,6 +26,14 @@ router.beforeEach((to) => {
       return { name: 'login' }
     } else if (isAdminAuthenticate && to.name == 'login') {
       return { name: 'dashboard' }
+    }
+  }
+
+  // routes protection for user panel
+  if (to.meta.isUserPanelRoutes) {
+    const { isUserAuthenticate } = useUserCredentialsStore()
+    if (!isUserAuthenticate) {
+      return { name: 'home-page' }
     }
   }
 })

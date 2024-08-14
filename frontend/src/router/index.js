@@ -138,6 +138,7 @@ const router = createRouter({
     },
     {
       path: '/user',
+      meta: { isUserPanelRoutes: true },
       children: [
         {
           path: 'profile',
