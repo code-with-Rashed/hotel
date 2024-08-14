@@ -35,5 +35,26 @@ export default function useUserApi() {
       errors.value = error
     }
   }
-  return { results, errors, post }
+
+  // login user
+  const login = async (loginInfo) => {
+    results.value = []
+    errors.value = null
+    try {
+      const request = await fetch(url + '/login', {
+        method: 'POST',
+        body: JSON.stringify(loginInfo),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+
+  return { results, errors, post, login }
 }
