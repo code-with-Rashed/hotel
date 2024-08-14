@@ -170,4 +170,4 @@ use App\Http\Controllers\UsersPanel\UserController;
 
 Route::post('/user/register', [UserController::class, 'register']);
 Route::post('/user/login', [UserController::class, 'login']);
-Route::get('/user/logout', [UserController::class, 'logout'])->middleware("auth:sanctum");
+Route::delete('/user/logout', [UserController::class, 'logout'])->middleware("auth:sanctum");
