@@ -8,6 +8,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class UserController extends BaseController
 {
@@ -63,5 +64,13 @@ class UserController extends BaseController
             'token_type' => 'Bearer'
         ];
         return $this->send_response(message: "Authentication successfull .", results: $results);
+    }
+
+    // logout user
+    public function logout(Request $request)
+    {
+        $id = explode('|', $request->bearerToken())[0];
+        PersonalAccessToken::where('id', $id)->delete();
+        return $this->send_response(message: "You have been successfully logged out .");
     }
 }
