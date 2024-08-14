@@ -4,8 +4,10 @@ import LoginModal from '@/components/visitior/LoginModal.vue'
 import RegisterModal from '@/components/visitior/RegisterModal.vue'
 import { ref, onMounted } from 'vue'
 import useLogoApi from '@/composables/visitor/logoApi'
+import { useUserCredentialsStore } from '@/stores/userCredentials'
 
 const { results, get } = useLogoApi()
+const storeAdminCredentials = useUserCredentialsStore()
 
 // show site logo
 const reloader = ref(true)
@@ -71,56 +73,60 @@ onMounted(() => showLogo())
             <RouterLink :to="{ name: 'about-page' }" class="nav-link">About</RouterLink>
           </li>
         </ul>
-        <div class="d-flex">
-          <!-- Button trigger Login & registered -->
-          <button
-            type="button"
-            class="btn btn-dark me-lg-3 me-2 shadow-none"
-            data-bs-toggle="modal"
-            data-bs-target="#loginModal"
-          >
-            Login
-          </button>
-          <button
-            type="button"
-            class="btn btn-dark shadow-none"
-            data-bs-toggle="modal"
-            data-bs-target="#registerModal"
-          >
-            Register
-          </button>
-        </div>
-        <div class="d-flex d-none">
-          <div class="btn-group">
+        <template v-if="storeAdminCredentials.isUserAuthenticate">
+          <div class="d-flex">
+            <div class="btn-group">
+              <button
+                type="button"
+                class="btn btn-outline-dark shadow-none dropdown-toggle"
+                data-bs-toggle="dropdown"
+                data-bs-display="static"
+                area-expanded="false"
+                aria-expanded="false"
+              >
+                <img
+                  :src="storeAdminCredentials.user.photo"
+                  alt="profile"
+                  width="30px"
+                  class="rounded-circle"
+                />
+                {{ storeAdminCredentials.user.name }}
+              </button>
+              <ul class="dropdown-menu dropdown-menu-lg-end">
+                <li>
+                  <RouterLink :to="{ name: 'user-profile-page' }" class="dropdown-item"
+                    >Profile</RouterLink
+                  >
+                </li>
+                <RouterLink :to="{ name: 'user-bookings-page' }" class="dropdown-item"
+                  >My Bookings</RouterLink
+                >
+                <RouterLink to="/logout" class="dropdown-item">Logout</RouterLink>
+              </ul>
+            </div>
+          </div>
+        </template>
+        <template v-else>
+          <div class="d-flex">
+            <!-- Button trigger Login & registered -->
             <button
               type="button"
-              class="btn btn-outline-dark shadow-none dropdown-toggle"
-              data-bs-toggle="dropdown"
-              data-bs-display="static"
-              area-expanded="false"
-              aria-expanded="false"
+              class="btn btn-dark me-lg-3 me-2 shadow-none"
+              data-bs-toggle="modal"
+              data-bs-target="#loginModal"
             >
-              <img
-                src="http://localhost/hotel/images/profile/IMG38857.png"
-                alt="profile"
-                width="30px"
-                class="rounded-circle"
-              />
-              Rashed islam
+              Login
             </button>
-            <ul class="dropdown-menu dropdown-menu-lg-end">
-              <li>
-                <RouterLink :to="{ name: 'user-profile-page' }" class="dropdown-item"
-                  >Profile</RouterLink
-                >
-              </li>
-              <RouterLink :to="{ name: 'user-bookings-page' }" class="dropdown-item"
-                >My Bookings</RouterLink
-              >
-              <RouterLink to="/logout" class="dropdown-item">Logout</RouterLink>
-            </ul>
+            <button
+              type="button"
+              class="btn btn-dark shadow-none"
+              data-bs-toggle="modal"
+              data-bs-target="#registerModal"
+            >
+              Register
+            </button>
           </div>
-        </div>
+        </template>
       </div>
     </div>
   </nav>
