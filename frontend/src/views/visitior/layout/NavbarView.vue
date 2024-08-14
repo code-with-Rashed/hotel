@@ -7,7 +7,7 @@ import useLogoApi from '@/composables/visitor/logoApi'
 import { useUserCredentialsStore } from '@/stores/userCredentials'
 
 const { results, get } = useLogoApi()
-const storeAdminCredentials = useUserCredentialsStore()
+const storeUserCredentials = useUserCredentialsStore()
 
 // show site logo
 const reloader = ref(true)
@@ -73,7 +73,7 @@ onMounted(() => showLogo())
             <RouterLink :to="{ name: 'about-page' }" class="nav-link">About</RouterLink>
           </li>
         </ul>
-        <template v-if="storeAdminCredentials.isUserAuthenticate">
+        <template v-if="storeUserCredentials.isUserAuthenticate">
           <div class="d-flex">
             <div class="btn-group">
               <button
@@ -85,12 +85,12 @@ onMounted(() => showLogo())
                 aria-expanded="false"
               >
                 <img
-                  :src="storeAdminCredentials.user.photo"
+                  :src="storeUserCredentials.user.photo"
                   alt="profile"
                   width="30px"
                   class="rounded-circle"
                 />
-                {{ storeAdminCredentials.user.name }}
+                {{ storeUserCredentials.user.name }}
               </button>
               <ul class="dropdown-menu dropdown-menu-lg-end">
                 <li>
