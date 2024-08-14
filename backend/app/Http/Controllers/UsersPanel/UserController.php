@@ -47,7 +47,7 @@ class UserController extends BaseController
     {
         $validation = Validator::make($request->all(), [
             "email" => "required|email|max:70",
-            "password" => "required|confirmed"
+            "password" => "required"
         ]);
         if ($validation->fails()) {
             return $this->send_error(message: "validation error", errors: $validation->errors()->all());
