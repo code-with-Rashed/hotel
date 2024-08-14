@@ -56,5 +56,23 @@ export default function useUserApi() {
     }
   }
 
-  return { results, errors, post, login }
+  // lougout user
+  const logout = async (token) => {
+    results.value = []
+    errors.value = null
+    try {
+      const request = await fetch(url + '/logout', {
+        method: 'DELETE',
+        headers: {
+          Accept: 'application/json',
+          Authorization: token
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+  return { results, errors, post, login, logout }
 }

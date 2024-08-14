@@ -3,11 +3,32 @@ import { RouterLink } from 'vue-router'
 import LoginModal from '@/components/visitior/LoginModal.vue'
 import RegisterModal from '@/components/visitior/RegisterModal.vue'
 import { ref, onMounted } from 'vue'
+import ToastMessage from '@/components/ToastMessage.vue'
+import { useToastMessageStore } from '@/stores/toastMessage'
 import useLogoApi from '@/composables/visitor/logoApi'
 import { useUserCredentialsStore } from '@/stores/userCredentials'
+import useUserApi from '@/composables/users/userApi'
 
 const { results, get } = useLogoApi()
+const { results: userResults, errors: userErrors, logout } = useUserApi()
 const storeUserCredentials = useUserCredentialsStore()
+const storeToastMessage = useToastMessageStore()
+
+// logout user
+const userLogout = async () => {
+  const authorizationToken = `${storeUserCredentials.tokenType} ${storeUserCredentials.userAccessToken}`
+  await logout(authorizationToken)
+  if (userResults.value.success) {
+    storeUserCredentials.destroyUserCredentials()
+    storeToastMessage.showToastMessage(userResults.value.success, userResults.value.message)
+  } else {
+    storeToastMessage.showToastMessage(false, userResults.value.message)
+  }
+  if (userErrors.value) {
+    storeToastMessage.showToastMessage(false, userErrors.value.message)
+  }
+}
+//--------------
 
 // show site logo
 const reloader = ref(true)
@@ -101,7 +122,7 @@ onMounted(() => showLogo())
                 <RouterLink :to="{ name: 'user-bookings-page' }" class="dropdown-item"
                   >My Bookings</RouterLink
                 >
-                <RouterLink to="/logout" class="dropdown-item">Logout</RouterLink>
+                <a href="javascript:void(0)" @click="userLogout" class="dropdown-item">Logout</a>
               </ul>
             </div>
           </div>
@@ -133,6 +154,7 @@ onMounted(() => showLogo())
   <!-- Navbar end -->
   <LoginModal />
   <RegisterModal />
+  <ToastMessage />
 </template>
 <style scoped>
 a.router-link-active {
