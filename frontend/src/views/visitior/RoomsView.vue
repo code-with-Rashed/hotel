@@ -10,13 +10,13 @@ import { useUserCredentialsStore } from '@/stores/userCredentials'
 
 const router = useRouter()
 const storeToastMessage = useToastMessageStore()
-const { isUserAuthenticate } = useUserCredentialsStore()
+const storeUserCredentials = useUserCredentialsStore()
 const { results: facilityResults, get: getFacility } = useFacilityApi()
 const { results: roomResults, allRoom } = useRoomApi()
 
 // if any user is logedin ? then access specific routes
 const userStatus = (roomId) => {
-  if (isUserAuthenticate) {
+  if (storeUserCredentials.isUserAuthenticate) {
     router.push({ name: 'confirm-booking', params: { id: roomId } })
   } else {
     storeToastMessage.showToastMessage(true, "Please Login you'r account.", 3000)
