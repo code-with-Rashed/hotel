@@ -1,11 +1,28 @@
 <script setup>
 import LayoutView from './layout/LayoutView.vue'
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import useFacilityApi from '@/composables/visitor/facilityApi'
 import useRoomApi from '@/composables/visitor/roomApi'
+import ToastMessage from '@/components/ToastMessage.vue'
+import { useToastMessageStore } from '@/stores/toastMessage'
+import { useUserCredentialsStore } from '@/stores/userCredentials'
 
+const router = useRouter()
+const storeToastMessage = useToastMessageStore()
+const { isUserAuthenticate } = useUserCredentialsStore()
 const { results: facilityResults, get: getFacility } = useFacilityApi()
 const { results: roomResults, allRoom } = useRoomApi()
+
+// if any user is logedin ? then access specific routes
+const userStatus = (roomId) => {
+  if (isUserAuthenticate) {
+    router.push({ name: 'confirm-booking', params: { id: roomId } })
+  } else {
+    storeToastMessage.showToastMessage(true, "Please Login you'r account.", 3000)
+  }
+}
+// -------------------------------
 
 // show all facility record
 const facilityReloader = ref(true)
@@ -226,11 +243,13 @@ onMounted(() => {
                             ><strong>&#2547;</strong> {{ room.price }} Per Night</span
                           >
                         </h6>
-                        <RouterLink
-                          :to="{ name: '' }"
+                        <button
+                          type="button"
                           class="btn btn-primary shadow-none w-100 mb-2"
-                          >Book Now</RouterLink
+                          @click="userStatus(room.id)"
                         >
+                          Book Now
+                        </button>
                         <RouterLink
                           :to="{ name: 'room-details', params: { id: room.id } }"
                           class="btn btn-outline-dark shadow-none w-100"
@@ -255,4 +274,5 @@ onMounted(() => {
       </div>
     </template>
   </LayoutView>
+  <ToastMessage />
 </template>

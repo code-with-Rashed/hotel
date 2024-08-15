@@ -1,11 +1,27 @@
 <script setup>
 import LayoutView from './layout/LayoutView.vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ref, onMounted, watch } from 'vue'
 import useRoomApi from '@/composables/visitor/roomApi'
+import ToastMessage from '@/components/ToastMessage.vue'
+import { useToastMessageStore } from '@/stores/toastMessage'
+import { useUserCredentialsStore } from '@/stores/userCredentials'
 
 const { params } = useRoute()
+const router = useRouter()
 const { results: roomResults, room } = useRoomApi()
+const storeToastMessage = useToastMessageStore()
+const { isUserAuthenticate } = useUserCredentialsStore()
+
+// if any user is logedin ? then access specific routes
+const userStatus = (roomId) => {
+  if (isUserAuthenticate) {
+    router.push({ name: 'confirm-booking', params: { id: roomId } })
+  } else {
+    storeToastMessage.showToastMessage(true, "Please Login you'r account.", 3000)
+  }
+}
+// -------------------------------
 
 // show single room related records
 const roomDetails = ref(null)
@@ -134,6 +150,12 @@ onMounted(() => {
                         >{{ roomDetails.area }} Squarefit</span
                       >
                     </div>
+                    <button
+                      class="btn w-100 btn-primary shadow-none mb-1"
+                      @click="userStatus(roomDetails.id)"
+                    >
+                      Book Now
+                    </button>
                   </div>
                 </div>
               </div>
@@ -158,4 +180,5 @@ onMounted(() => {
       </div>
     </template>
   </LayoutView>
+  <ToastMessage />
 </template>
