@@ -119,6 +119,12 @@ const router = createRouter({
       meta: { title: 'Room Details' }
     },
     {
+      path: '/confirm/booking/room/:id(\\d+)',
+      name: 'confirm-booking',
+      component: () => import('../views/visitior/ConfirmBookingView.vue'),
+      meta: { title: 'Confirm Booking Room', isConfirmBookingRoomRoutes: true }
+    },
+    {
       path: '/facilities',
       name: 'facilities-page',
       component: () => import('../views/visitior/FacilitiesView.vue'),

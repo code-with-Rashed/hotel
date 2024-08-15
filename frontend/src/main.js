@@ -29,11 +29,18 @@ router.beforeEach((to) => {
     }
   }
 
+  const { isUserAuthenticate } = useUserCredentialsStore()
   // routes protection for user panel
   if (to.meta.isUserPanelRoutes) {
-    const { isUserAuthenticate } = useUserCredentialsStore()
     if (!isUserAuthenticate) {
       return { name: 'home-page' }
+    }
+  }
+
+  // routes protection for confirm booking page
+  if (to.meta.isConfirmBookingRoomRoutes) {
+    if (!isUserAuthenticate) {
+      return { name: 'rooms-page' }
     }
   }
 })
