@@ -171,3 +171,6 @@ use App\Http\Controllers\UsersPanel\UserController;
 Route::post('/user/register', [UserController::class, 'register']);
 Route::post('/user/login', [UserController::class, 'login']);
 Route::delete('/user/logout', [UserController::class, 'logout'])->middleware("auth:sanctum");
+Route::prefix('/user/profile')->middleware('auth:sanctum')->group(function(){
+Route::put('/update/{id}',[UserController::class,'profile_update']);
+});

@@ -73,4 +73,31 @@ class UserController extends BaseController
         PersonalAccessToken::where('id', $id)->delete();
         return $this->send_response(message: "You have been successfully logged out .");
     }
+
+    // update user profile
+    public function profile_update(Request $request, $id)
+    {
+        $validation = Validator::make($request->all(), [
+            "name" => "required|string|max:50",
+            "email" => "required|email|max:70|unique:users,email,$id",
+            "number" => "required|max:15",
+            "pincode" => "required",
+            "address" => "required",
+            "dob" => "required|date"
+        ]);
+        if ($validation->fails()) {
+            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+        }
+
+        $user = User::find($id);
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->number = $request->number;
+        $user->pincode = $request->pincode;
+        $user->dob = Carbon::createFromFormat('Y-m-d', $request->dob);
+        $user->address = $request->address;
+        $user->save();
+
+        return $this->send_response(message: "Profile successfully Updated s.", status_code: 200);
+    }
 }
