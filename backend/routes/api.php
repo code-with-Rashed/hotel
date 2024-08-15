@@ -174,4 +174,5 @@ Route::delete('/user/logout', [UserController::class, 'logout'])->middleware("au
 Route::prefix('/user/profile')->middleware('auth:sanctum')->group(function () {
     Route::put('/update/{id}', [UserController::class, 'profile_update']);
     Route::put('/update/photo/{id}', [UserController::class, 'update_photo']);
+    Route::put('/update/password/{id}', [UserController::class, 'update_password']);
 });

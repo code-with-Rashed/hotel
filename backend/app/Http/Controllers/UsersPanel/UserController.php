@@ -121,4 +121,27 @@ class UserController extends BaseController
         $user->save();
         return $this->send_response(message: "Profile photo successfully Updated.", results: ['photo' => $user->photo], status_code: 200);
     }
+
+    // update user profile password
+    public function update_password(Request $request, $id)
+    {
+        $validation = Validator::make($request->all(), [
+            'old_password' => 'required',
+            'password' => 'required|confirmed',
+        ]);
+        if ($validation->fails()) {
+            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+        }
+
+        $user = User::find($id);
+
+        if (!Hash::check($request->old_password, $user->password)) {
+            return $this->send_error(message: "Invalid Old Password !");
+        }
+
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return $this->send_response(message: "Password successfully updated !");
+    }
 }
