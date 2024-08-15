@@ -98,6 +98,6 @@ class UserController extends BaseController
         $user->address = $request->address;
         $user->save();
 
-        return $this->send_response(message: "Profile successfully Updated s.", status_code: 200);
+        return $this->send_response(message: "Profile successfully Updated.", status_code: 200);
     }
 }
