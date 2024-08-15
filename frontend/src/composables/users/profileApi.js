@@ -54,5 +54,27 @@ export default function useProfileApi() {
       errors.value = error
     }
   }
-  return { results, errors, updateProfile, updateProfileImage }
+
+  // update user profile password
+  const updatePassword = async (userPassword, id) => {
+    results.value = []
+    errors.value = null
+    try {
+      const request = await fetch(url + '/update/password/' + id, {
+        method: 'PUT',
+        body: JSON.stringify(userPassword),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: token
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+
+  return { results, errors, updateProfile, updateProfileImage, updatePassword }
 }

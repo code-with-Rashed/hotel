@@ -7,7 +7,7 @@ import { useUserCredentialsStore } from '@/stores/userCredentials'
 import useProfileApi from '@/composables/users/profileApi'
 
 const storeUserCredentials = useUserCredentialsStore()
-const { results, errors, updateProfile, updateProfileImage } = useProfileApi()
+const { results, errors, updateProfile, updateProfileImage, updatePassword } = useProfileApi()
 const storeToastMessage = useToastMessageStore()
 
 const userInfo = reactive({
@@ -85,6 +85,41 @@ const changeProfileImage = async () => {
   }
 }
 // -------------------
+
+// update user password
+const userPassword = reactive({
+  old_password: '',
+  password: '',
+  password_confirmation: ''
+})
+
+const changePasswordBtn = ref(true)
+const changePassword = async () => {
+  changePasswordBtn.value = false
+  await updatePassword(userPassword, userInfo.id)
+  changePasswordBtn.value = true
+  if (results.value.success) {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+    // clear user password form data
+    for (const key in userPassword) {
+      userPassword[key] = ''
+    }
+  } else {
+    // show validation error
+    let message = ''
+    message += '<strong>' + results.value.message + '</strong><br>'
+    if (results.value.message == 'validation error') {
+      results.value.data.forEach((element) => {
+        message += element + '<br>'
+      })
+    }
+    storeToastMessage.showToastMessage(results.value.success, message, 15000)
+  }
+  if (errors.value) {
+    storeToastMessage.showToastMessage(false, errors.value.message)
+  }
+}
+//------------------------
 </script>
 <template>
   <LayoutView>
@@ -225,32 +260,53 @@ const changeProfileImage = async () => {
               </form>
             </div>
           </div>
+          <!-- update user password -->
           <div class="col-md-6 px-3 mb-2">
             <div class="card border-0 shadow-sm p-3">
               <h5>Update Password</h5>
-              <form id="password-form">
+              <form @submit.prevent="changePassword">
                 <div class="row p-2">
-                  <div class="col-md-12 my-3 ps-0">
-                    <label class="form-label">Password</label>
+                  <div class="col-md-12 my-2 ps-0">
+                    <label class="form-label">Old Password</label>
                     <input
                       type="password"
-                      name="password"
                       class="form-control shadow-none"
                       required
+                      maxlength="50"
+                      v-model.trim="userPassword.old_password"
                     />
                   </div>
-                  <div class="col-md-12 my-3 ps-0">
+                  <div class="col-md-12 mb-2 ps-0">
+                    <label class="form-label">New Password</label>
+                    <input
+                      type="password"
+                      class="form-control shadow-none"
+                      required
+                      maxlength="50"
+                      v-model.trim="userPassword.password"
+                    />
+                  </div>
+                  <div class="col-md-12 mb-3 ps-0">
                     <label class="form-label">Confirm Password</label>
                     <input
                       type="password"
-                      name="confirm-password"
                       class="form-control shadow-none"
                       required
+                      maxlength="50"
+                      v-model.trim="userPassword.password_confirmation"
                     />
                   </div>
                 </div>
-                <button type="submit" class="btn custom-bg text-white shadow-none">
+                <button
+                  type="submit"
+                  class="btn btn-primary text-white shadow-none"
+                  v-if="changePasswordBtn"
+                >
                   Change Password
+                </button>
+                <button class="btn btn-primary" type="button" disabled v-else>
+                  <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                  <span role="status"> Proccssing...</span>
                 </button>
               </form>
             </div>
