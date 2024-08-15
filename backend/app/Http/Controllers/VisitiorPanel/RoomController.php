@@ -22,4 +22,13 @@ class RoomController extends BaseController
         $results["room"] = Room::with(['features:name', 'facilities:name', 'images:image,room_id'])->find($id);
         return $this->send_response(message: "Room details.", results: $results);
     }
+
+    // response confirm room related data
+    public function confirm_room($id)
+    {
+        $results["room"] = Room::with(['images' => function ($query) {
+            $query->select('image', 'room_id')->where('thumbnail', 1);
+        }])->select('id', 'name', 'price')->find($id);
+        return $this->send_response(message: "Room details.", results: $results);
+    }
 }
