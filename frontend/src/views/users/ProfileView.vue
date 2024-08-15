@@ -7,7 +7,7 @@ import { useUserCredentialsStore } from '@/stores/userCredentials'
 import useProfileApi from '@/composables/users/profileApi'
 
 const storeUserCredentials = useUserCredentialsStore()
-const { results, errors, updateProfile } = useProfileApi()
+const { results, errors, updateProfile, updateProfileImage } = useProfileApi()
 const storeToastMessage = useToastMessageStore()
 
 const userInfo = reactive({
@@ -48,6 +48,43 @@ const profileUpdate = async () => {
     storeToastMessage.showToastMessage(false, errors.value.message)
   }
 }
+//--------------------------
+
+// handle user profile photo
+const userPhoto = ref()
+const showUserPhoto = ref()
+const selectUserPhoto = (event) => {
+  userPhoto.value = event.target.files[0]
+  showUserPhoto.value = URL.createObjectURL(userPhoto.value)
+}
+showUserPhoto.value = storeUserCredentials.user.photo
+//------------------------
+
+// update user profile image
+const changeProfileImageBtn = ref(true)
+const changeProfileImage = async () => {
+  changeProfileImageBtn.value = false
+  await updateProfileImage(userPhoto, userInfo.id)
+  changeProfileImageBtn.value = true
+
+  if (results.value.success) {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+    storeUserCredentials.user.photo = results.value.data.photo
+  } else {
+    let message = ''
+    message += '<strong>' + results.value.message + '</strong><br>'
+    if (results.value.message == 'validation error') {
+      results.value.data.forEach((element) => {
+        message += element + '<br>'
+      })
+    }
+    storeToastMessage.showToastMessage(results.value.success, message, 10000)
+  }
+  if (errors.value) {
+    storeToastMessage.showToastMessage(false, errors.value.message)
+  }
+}
+// -------------------
 </script>
 <template>
   <LayoutView>
@@ -149,14 +186,15 @@ const profileUpdate = async () => {
             </div>
           </div>
         </div>
+        <!-- update profile photo -->
         <div class="row mt-3">
           <div class="col-md-6 px-3 mb-2">
             <div class="card border-0 shadow-sm p-3">
               <h5>Update Profile Picture</h5>
-              <form id="profile-picture">
+              <form @submit.prevent="changeProfileImage">
                 <div class="row p-2">
                   <img
-                    src="http://localhost/hotel/images/profile/IMG38857.png"
+                    :src="showUserPhoto"
                     alt="profile"
                     class="rounded-circle mx-auto"
                     style="width: 200px"
@@ -166,14 +204,23 @@ const profileUpdate = async () => {
                     <input
                       type="file"
                       name="profile"
-                      accept=".jpeg,.png,.webp,.jpg"
+                      accept="accept/*"
                       class="form-control shadow-none"
                       required
+                      @change="selectUserPhoto"
                     />
                   </div>
                 </div>
-                <button type="submit" class="btn custom-bg text-white shadow-none">
+                <button
+                  type="submit"
+                  class="btn btn-primary text-white shadow-none"
+                  v-if="changeProfileImageBtn"
+                >
                   Change Profile Image
+                </button>
+                <button class="btn btn-primary" type="button" disabled v-else>
+                  <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                  <span role="status"> Proccssing...</span>
                 </button>
               </form>
             </div>

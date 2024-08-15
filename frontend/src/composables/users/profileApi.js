@@ -30,5 +30,29 @@ export default function useProfileApi() {
       errors.value = error
     }
   }
-  return { results, errors, updateProfile }
+
+  // update user profile image
+  const updateProfileImage = async (userPhoto, id) => {
+    results.value = []
+    errors.value = null
+
+    try {
+      const formData = new FormData()
+      formData.append('photo', userPhoto.value)
+      const request = await fetch(url + '/update/photo/' + id, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          Accept: 'application/json',
+          Authorization: token,
+          'X-HTTP-Method-Override': 'PUT'
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+  return { results, errors, updateProfile, updateProfileImage }
 }
