@@ -100,4 +100,25 @@ class UserController extends BaseController
 
         return $this->send_response(message: "Profile successfully Updated.", status_code: 200);
     }
+
+    public function update_photo(Request $request, $id)
+    {
+        $validation = Validator::make($request->all(), [
+            "photo" => "required|image|mimes:png,jpg,jpeg,webp|max:2048",
+        ]);
+        if ($validation->fails()) {
+            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+        }
+        $user = User::find($id);
+        // remove old user photo
+        $old_path = public_path('storage/') . $user->getRawOriginal('photo');
+        if (file_exists($old_path)) {
+            @unlink($old_path);
+        }
+        //---------------------
+        $photo_path = $request->photo->store('image/user_photo', 'public'); // upload user profile photo
+        $user->photo = $photo_path;
+        $user->save();
+        return $this->send_response(message: "Profile photo successfully Updated.", results: ['photo' => $user->photo], status_code: 200);
+    }
 }
