@@ -78,10 +78,20 @@ const updateStatus = async (id) => {
 }
 //------------------------------
 
+// change message status
+const status = (id) => {
+  const statusBtn = document.getElementById('status-' + id)
+  statusBtn.classList.remove('bg-warning')
+  statusBtn.classList.add('bg-primary')
+  statusBtn.classList.add('text-white')
+  statusBtn.innerHTML = 'Read'
+}
+
 // send contact message id to child (CotactModal) component for view details
 const viewContactId = ref(0)
 const viewContact = (id) => {
   viewContactId.value = id
+  status(id) // the message mark as read
 }
 //------------------------------------
 
@@ -160,6 +170,7 @@ const deleteContact = (id) => {
                               >Readed</span
                             >
                             <span
+                              :id="`status-${contact.id}`"
                               @click="updateStatus(contact.id)"
                               class="btn fw-bold btn-sm bg-warning shadow-none"
                               v-else
