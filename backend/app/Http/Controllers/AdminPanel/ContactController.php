@@ -41,7 +41,12 @@ class ContactController extends BaseController
     // show single contact message
     public function show($id)
     {
-        $results["contact"] = Contact::find($id);
+        $contact = Contact::find($id);
+        if (!$contact->status) {
+            $contact->status = 1; // The message mark as read
+            $contact->save();
+        }
+        $results["contact"] = $contact;
         return $this->send_response(message: "View contact message .", results: $results);
     }
 
