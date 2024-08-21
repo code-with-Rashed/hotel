@@ -6,6 +6,7 @@ import { useToastMessageStore } from '@/stores/toastMessage'
 import { hideBsModal } from '@/helpers/hideBsModal'
 
 const props = defineProps({
+  instruction: String,
   editTeamMemberId: Number,
   deleteTeamMemberId: Number
 })
@@ -15,9 +16,11 @@ const storeToastMessage = useToastMessageStore()
 
 // handle team member image
 const memberImage = ref()
+const tempMemberImage = ref()
 const showMemberImage = ref()
 const selectMemberImage = (event) => {
   memberImage.value = event.target.files[0]
+  tempMemberImage.value = URL.createObjectURL(memberImage.value)
   showMemberImage.value = URL.createObjectURL(memberImage.value)
 }
 //------------------------
@@ -39,7 +42,7 @@ const postTeamMemberRecord = async () => {
     teamMemberData.name = ''
     teamMemberData.designation = ''
     memberImage.value = null
-    showMemberImage.value = null
+    tempMemberImage.value = null
   } else {
     let message = ''
     message += '<strong>' + results.value.message + '</strong><br>'
@@ -56,14 +59,11 @@ const postTeamMemberRecord = async () => {
 }
 //-------------------
 
-// handle update & delete instruction for team member record
-const currentEditTeamMemberId = ref()
-watch(props, (foundedIds) => {
-  if (foundedIds.editTeamMemberId && foundedIds.editTeamMemberId != currentEditTeamMemberId.value) {
-    getTeamMember(foundedIds.editTeamMemberId)
+// handle props instruction
+watch(props, (propsValues) => {
+  if (propsValues.instruction == 'show') {
+    getTeamMember(propsValues.editTeamMemberId)
   }
-  currentEditTeamMemberId.value = foundedIds.editTeamMemberId
-  currentDeleteTeamMemberId.value = foundedIds.deleteTeamMemberId
 })
 //----------------
 
@@ -93,16 +93,12 @@ const editTeamMemberRecord = reactive({
 const updateTeamMemberSubmitBtn = ref(true)
 const updateTeamMemberRecord = async () => {
   updateTeamMemberSubmitBtn.value = false
-  await put(currentEditTeamMemberId.value, editTeamMemberRecord, memberImage)
+  await put(props.editTeamMemberId, editTeamMemberRecord, memberImage)
   updateTeamMemberSubmitBtn.value = true
 
   if (results.value.success) {
     storeToastMessage.showToastMessage(results.value.success, results.value.message)
     hideBsModal('editTeamMemberModal')
-    editTeamMemberRecord.name = ''
-    editTeamMemberRecord.designation = ''
-    memberImage.value = null
-    showMemberImage.value = null
   } else {
     let message = ''
     message += '<strong>' + results.value.message + '</strong><br>'
@@ -120,12 +116,10 @@ const updateTeamMemberRecord = async () => {
 // --------------------------
 
 // delete team member record
-const currentDeleteTeamMemberId = ref()
 const deleteTeamMemberSubmitBtn = ref(true)
-
 const deleteTeamMemberRecord = async () => {
   deleteTeamMemberSubmitBtn.value = false
-  await destroy(currentDeleteTeamMemberId.value)
+  await destroy(props.deleteTeamMemberId)
   deleteTeamMemberSubmitBtn.value = true
   if (results.value.success) {
     storeToastMessage.showToastMessage(results.value.success, results.value.message)
@@ -198,8 +192,8 @@ const deleteTeamMemberRecord = async () => {
                 @change="selectMemberImage"
               />
             </div>
-            <div class="mb-3" v-if="showMemberImage">
-              <img :src="showMemberImage" alt="preview image" class="img-fluid" />
+            <div class="mb-3" v-if="tempMemberImage">
+              <img :src="tempMemberImage" alt="preview image" class="img-fluid" />
             </div>
           </div>
           <div class="modal-footer">
@@ -240,7 +234,7 @@ const deleteTeamMemberRecord = async () => {
           <div class="modal-header">
             <h5 class="modal-title" id="staticBackdropLabel">Updet Team Member Record</h5>
             <button
-              type="reset"
+              type="button"
               class="btn-close shadow-none"
               data-bs-dismiss="modal"
               aria-label="Close"
@@ -289,7 +283,7 @@ const deleteTeamMemberRecord = async () => {
             </div>
           </div>
           <div class="modal-footer">
-            <button type="reset" class="btn text-secondary shadow-none" data-bs-dismiss="modal">
+            <button type="button" class="btn text-secondary shadow-none" data-bs-dismiss="modal">
               Cancel
             </button>
             <button

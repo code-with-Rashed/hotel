@@ -9,16 +9,21 @@ import useFacilityApi from '@/composables/admin/facilityApi'
 const storeToastMessage = useToastMessageStore()
 const { results, errors, get } = useFacilityApi()
 
+// send instruction props
+const instruction = ref('')
+
 // send facility id to child (FacilityModal) component for editing by facility record
 const editFacilityId = ref(0)
 const editFacility = (id) => {
   editFacilityId.value = id
+  instruction.value = 'show'
 }
 
 // send facility id to child (FacilityModal) component for deleting by facility record
 const deleteFacilityId = ref(0)
 const deleteFacility = (id) => {
   deleteFacilityId.value = id
+  instruction.value = 'delete'
 }
 
 // get all facility record
@@ -116,6 +121,10 @@ onMounted(() => facilityRecord())
       </div>
     </template>
   </LayoutView>
-  <FacilitiesModal :editFacilityId="editFacilityId" :deleteFacilityId="deleteFacilityId" />
+  <FacilitiesModal
+    :editFacilityId="editFacilityId"
+    :deleteFacilityId="deleteFacilityId"
+    :instruction="instruction"
+  />
   <ToastMessage />
 </template>

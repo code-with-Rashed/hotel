@@ -9,16 +9,21 @@ import useTeamApi from '@/composables/admin/teamApi'
 const storeToastMessage = useToastMessageStore()
 const { results, errors, get } = useTeamApi()
 
+// send instruction props
+const instruction = ref('')
+
 // send team member id to child (TeamModal) component for editing by team profile record
 const editTeamMemberId = ref(0)
 const editTeamMember = (id) => {
   editTeamMemberId.value = id
+  instruction.value = 'show'
 }
 
 // send team member id to child (TeamModal) component for deleting by team profile record
 const deleteTeamMemberId = ref(0)
 const deleteTeamMember = (id) => {
   deleteTeamMemberId.value = id
+  instruction.value = 'delete'
 }
 
 // get all team member record
@@ -115,6 +120,10 @@ onMounted(() => teamRecord())
       </div>
     </template>
   </LayoutView>
-  <TeamModal :editTeamMemberId="editTeamMemberId" :deleteTeamMemberId="deleteTeamMemberId" />
+  <TeamModal
+    :editTeamMemberId="editTeamMemberId"
+    :deleteTeamMemberId="deleteTeamMemberId"
+    :instruction="instruction"
+  />
   <ToastMessage />
 </template>

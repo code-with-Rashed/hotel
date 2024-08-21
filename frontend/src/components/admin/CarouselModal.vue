@@ -6,6 +6,7 @@ import { useToastMessageStore } from '@/stores/toastMessage'
 import { hideBsModal } from '@/helpers/hideBsModal'
 
 const props = defineProps({
+  instruction: String,
   editCarouselId: Number,
   deleteCarouselId: Number
 })
@@ -15,9 +16,11 @@ const storeToastMessage = useToastMessageStore()
 
 // handle carousel image
 const carouselImage = ref()
+const tempCarouselImage = ref()
 const showCarouselImage = ref()
 const selectCarouselImage = (event) => {
   carouselImage.value = event.target.files[0]
+  tempCarouselImage.value = URL.createObjectURL(carouselImage.value)
   showCarouselImage.value = URL.createObjectURL(carouselImage.value)
 }
 //------------------------
@@ -33,7 +36,7 @@ const postCarouselRecord = async () => {
     storeToastMessage.showToastMessage(results.value.success, results.value.message)
     hideBsModal('addCarouselModal')
     carouselImage.value = null
-    showCarouselImage.value = null
+    tempCarouselImage.value = null
   } else {
     let message = ''
     message += '<strong>' + results.value.message + '</strong><br>'
@@ -50,14 +53,11 @@ const postCarouselRecord = async () => {
 }
 //-------------------
 
-// handle update & delete instruction for carousel image record
-const currentEditCarouselId = ref()
-watch(props, (foundedIds) => {
-  if (foundedIds.editCarouselId && foundedIds.editCarouselId != currentEditCarouselId.value) {
-    getCarouselRecord(foundedIds.editCarouselId)
+// handle props instruction
+watch(props, (propsValues) => {
+  if (propsValues.instruction == 'show') {
+    getCarouselRecord(propsValues.editCarouselId)
   }
-  currentEditCarouselId.value = foundedIds.editCarouselId
-  currentDeleteCarouselId.value = foundedIds.deleteCarouselId
 })
 //----------------
 
@@ -78,10 +78,9 @@ const getCarouselRecord = async (id) => {
 
 // update carousel record
 const updateCarouselSubmitBtn = ref(true)
-
 const updateCarouselRecord = async () => {
   updateCarouselSubmitBtn.value = false
-  await put(currentEditCarouselId.value, carouselImage)
+  await put(props.editCarouselId, carouselImage)
   updateCarouselSubmitBtn.value = true
 
   if (results.value.success) {
@@ -106,12 +105,10 @@ const updateCarouselRecord = async () => {
 //--------------------------
 
 // delete facility record
-const currentDeleteCarouselId = ref()
 const deleteCarouselSubmitBtn = ref(true)
-
 const deleteCarouselRecord = async () => {
   deleteCarouselSubmitBtn.value = false
-  await destroy(currentDeleteCarouselId.value)
+  await destroy(props.deleteCarouselId)
   deleteCarouselSubmitBtn.value = true
   if (results.value.success) {
     storeToastMessage.showToastMessage(results.value.success, results.value.message)
@@ -162,8 +159,8 @@ const deleteCarouselRecord = async () => {
                 @change="selectCarouselImage"
               />
             </div>
-            <div class="mb-3" v-if="showCarouselImage">
-              <img :src="showCarouselImage" alt="preview image" class="img-fluid" />
+            <div class="mb-3" v-if="tempCarouselImage">
+              <img :src="tempCarouselImage" alt="preview image" class="img-fluid" />
             </div>
           </div>
           <div class="modal-footer">

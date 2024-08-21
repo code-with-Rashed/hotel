@@ -9,14 +9,21 @@ import FeaturesModal from '@/components/admin/FeaturesModal.vue'
 const { results, errors, get } = useFeaturesApi()
 const storeToastMessage = useToastMessageStore()
 
-const editFeatureId = ref(0)
-const deleteFeatureId = ref(0)
+// send instruction props
+const instruction = ref('')
 
+// send feature id to child (FeatureModal) component for editing by feature record
+const editFeatureId = ref(0)
 const editFeature = (id) => {
   editFeatureId.value = id
+  instruction.value = 'show'
 }
+
+// send feature id to child (FeatureModal) component for deleting by feature record
+const deleteFeatureId = ref(0)
 const deleteFeature = (id) => {
   deleteFeatureId.value = id
+  instruction.value = 'delete'
 }
 
 // get all feature record
@@ -113,6 +120,10 @@ onMounted(() => featureRecord())
       </div>
     </template>
   </LayoutView>
-  <FeaturesModal :editFeatureId="editFeatureId" :deleteFeatureId="deleteFeatureId" />
+  <FeaturesModal
+    :editFeatureId="editFeatureId"
+    :deleteFeatureId="deleteFeatureId"
+    :instruction="instruction"
+  />
   <ToastMessage />
 </template>

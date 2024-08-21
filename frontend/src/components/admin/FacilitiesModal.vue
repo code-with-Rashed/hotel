@@ -6,6 +6,7 @@ import { useToastMessageStore } from '@/stores/toastMessage'
 import { hideBsModal } from '@/helpers/hideBsModal'
 
 const props = defineProps({
+  instruction: String,
   editFacilityId: Number,
   deleteFacilityId: Number
 })
@@ -15,9 +16,11 @@ const storeToastMessage = useToastMessageStore()
 
 // handle facility image
 const facilityImage = ref()
+const tempFacilityImage = ref()
 const showFacilityImage = ref()
 const selectFacilityImage = (event) => {
   facilityImage.value = event.target.files[0]
+  tempFacilityImage.value = URL.createObjectURL(facilityImage.value)
   showFacilityImage.value = URL.createObjectURL(facilityImage.value)
 }
 //------------------------
@@ -39,7 +42,7 @@ const postFacilityRecord = async () => {
     facilityData.name = ''
     facilityData.description = ''
     facilityImage.value = null
-    showFacilityImage.value = null
+    tempFacilityImage.value = null
   } else {
     let message = ''
     message += '<strong>' + results.value.message + '</strong><br>'
@@ -56,14 +59,11 @@ const postFacilityRecord = async () => {
 }
 //-------------------
 
-// handle update & delete instruction for facility record
-const currentEditFacilityId = ref()
-watch(props, (foundedIds) => {
-  if (foundedIds.editFacilityId && foundedIds.editFacilityId != currentEditFacilityId.value) {
-    getFacilityRecord(foundedIds.editFacilityId)
+// handle props instruction
+watch(props, (propsValues) => {
+  if (propsValues.instruction == 'show') {
+    getFacilityRecord(propsValues.editFacilityId)
   }
-  currentEditFacilityId.value = foundedIds.editFacilityId
-  currentDeleteFacilityId.value = foundedIds.deleteFacilityId
 })
 //----------------
 
@@ -93,16 +93,12 @@ const editFacilityRecord = reactive({
 
 const updateFacilityRecord = async () => {
   updateFacilitySubmitBtn.value = false
-  await put(currentEditFacilityId.value, editFacilityRecord, facilityImage)
+  await put(props.editFacilityId, editFacilityRecord, facilityImage)
   updateFacilitySubmitBtn.value = true
 
   if (results.value.success) {
     storeToastMessage.showToastMessage(results.value.success, results.value.message)
     hideBsModal('editFacilityRecord')
-    editFacilityRecord.name = ''
-    editFacilityRecord.description = ''
-    facilityImage.value = null
-    showFacilityImage.value = null
   } else {
     let message = ''
     message += '<strong>' + results.value.message + '</strong><br>'
@@ -119,12 +115,10 @@ const updateFacilityRecord = async () => {
 }
 
 // delete facility record
-const currentDeleteFacilityId = ref()
 const deleteFacilitySubmitBtn = ref(true)
-
 const deleteFacilityRecord = async () => {
   deleteFacilitySubmitBtn.value = false
-  await destroy(currentDeleteFacilityId.value)
+  await destroy(props.deleteFacilityId)
   deleteFacilitySubmitBtn.value = true
   if (results.value.success) {
     storeToastMessage.showToastMessage(results.value.success, results.value.message)
@@ -150,12 +144,6 @@ const deleteFacilityRecord = async () => {
   >
     <div class="modal-dialog">
       <form @submit.prevent="postFacilityRecord">
-        <input
-          type="hidden"
-          name="CSRF_TOKEN"
-          id="CSRF_TOKEN"
-          value="d43f70ba414fabe4d0d1182f06f26a11"
-        />
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="staticBackdropLabel">Add New Facility</h5>
@@ -179,8 +167,8 @@ const deleteFacilityRecord = async () => {
                 @change="selectFacilityImage"
               />
             </div>
-            <div class="mb-3" v-if="showFacilityImage">
-              <img :src="showFacilityImage" alt="preview image" class="img-fluid" />
+            <div class="mb-3" v-if="tempFacilityImage">
+              <img :src="tempFacilityImage" alt="preview image" class="img-fluid" />
             </div>
             <div class="mb-3">
               <label class="form-label fw-bold">Facility Name</label>
@@ -201,6 +189,7 @@ const deleteFacilityRecord = async () => {
                 class="form-control shadow-none"
                 rows="5"
                 maxlength="250"
+                required
                 v-model.trim="facilityData.description"
               ></textarea>
             </div>
@@ -242,7 +231,7 @@ const deleteFacilityRecord = async () => {
           <div class="modal-header">
             <h5 class="modal-title" id="staticBackdropLabel">Edit Facility Record</h5>
             <button
-              type="reset"
+              type="button"
               class="btn-close shadow-none"
               data-bs-dismiss="modal"
               aria-label="Close"
@@ -284,12 +273,13 @@ const deleteFacilityRecord = async () => {
                 class="form-control shadow-none"
                 rows="5"
                 maxlength="250"
+                required
                 v-model.trim="editFacilityRecord.description"
               ></textarea>
             </div>
           </div>
           <div class="modal-footer">
-            <button type="reset" class="btn text-secondary shadow-none" data-bs-dismiss="modal">
+            <button type="button" class="btn text-secondary shadow-none" data-bs-dismiss="modal">
               Cancel
             </button>
             <button

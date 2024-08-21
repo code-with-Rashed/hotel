@@ -9,16 +9,21 @@ import useCarouselApi from '@/composables/admin/carouselApi'
 const storeToastMessage = useToastMessageStore()
 const { results, errors, get } = useCarouselApi()
 
+// send instruction props
+const instruction = ref('')
+
 // send carousel id to child (CarouselModal) component for editing by carousel record
 const editCarouselId = ref(0)
 const editCarousel = (id) => {
   editCarouselId.value = id
+  instruction.value = 'show'
 }
 
 // send carousel id to child (CarouselModal) component for deleting by carousel record
 const deleteCarouselId = ref(0)
 const deleteCarousel = (id) => {
   deleteCarouselId.value = id
+  instruction.value = 'delete'
 }
 
 // get all carousel image record
@@ -112,6 +117,10 @@ onMounted(() => carouselRecord())
       </div>
     </template>
   </LayoutView>
-  <CarouselModal :editCarousel-id="editCarouselId" :deleteCarousel-id="deleteCarouselId" />
+  <CarouselModal
+    :editCarousel-id="editCarouselId"
+    :deleteCarousel-id="deleteCarouselId"
+    :instruction="instruction"
+  />
   <ToastMessage />
 </template>

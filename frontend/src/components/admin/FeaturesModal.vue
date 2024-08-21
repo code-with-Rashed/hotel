@@ -6,6 +6,7 @@ import { useToastMessageStore } from '@/stores/toastMessage'
 import { hideBsModal } from '@/helpers/hideBsModal'
 
 const props = defineProps({
+  instruction: String,
   editFeatureId: Number,
   deleteFeatureId: Number
 })
@@ -44,21 +45,14 @@ const addNewFeature = async () => {
 }
 //--------------------
 
-// update feature record
-const currentEditFeatureId = ref()
-const currentDeleteFeatureId = ref()
-const editFeature = reactive({
-  name: ''
-})
-
-watch(props, (foundedIds) => {
-  if (foundedIds.editFeatureId && foundedIds.editFeatureId != currentEditFeatureId.value) {
-    getFeatureRecord(foundedIds.editFeatureId)
+// handle props instruction
+watch(props, (propsValues) => {
+  if (propsValues.instruction == 'show') {
+    getFeatureRecord(propsValues.editFeatureId)
   }
-  currentEditFeatureId.value = foundedIds.editFeatureId
-  currentDeleteFeatureId.value = foundedIds.deleteFeatureId
 })
 
+// get & show feature record
 const getFeatureRecord = async (id) => {
   await show(id)
   if (results.value.success) {
@@ -71,17 +65,20 @@ const getFeatureRecord = async (id) => {
     storeToastMessage.showToastMessage(false, errors.value.message)
   }
 }
+//----------------------
 
+// update feature record
+const editFeature = reactive({
+  name: ''
+})
 const updateFeatureRecord = async () => {
   editFeatureSubmitBtn.value = false
-  await put(currentEditFeatureId.value, editFeature)
+  await put(props.editFeatureId, editFeature)
   editFeatureSubmitBtn.value = true
 
   if (results.value.success) {
     storeToastMessage.showToastMessage(results.value.success, results.value.message)
     hideBsModal('editFeatureModal')
-    editFeature.id = ''
-    editFeature.name = ''
   } else {
     let message = ''
     message += '<strong>' + results.value.message + '</strong><br>'
@@ -101,7 +98,7 @@ const updateFeatureRecord = async () => {
 // delete feature record
 const deleteFeatureRecord = async () => {
   deleteFeatureSubmitBtn.value = false
-  await destroy(currentDeleteFeatureId.value)
+  await destroy(props.deleteFeatureId)
   deleteFeatureSubmitBtn.value = true
 
   if (results.value.success) {
@@ -192,7 +189,7 @@ const deleteFeatureRecord = async () => {
           <div class="modal-header">
             <h5 class="modal-title" id="staticBackdropLabel">Update Feature Record</h5>
             <button
-              type="reset"
+              type="button"
               class="btn-close shadow-none"
               data-bs-dismiss="modal"
               aria-label="Close"
@@ -213,7 +210,7 @@ const deleteFeatureRecord = async () => {
             </div>
           </div>
           <div class="modal-footer">
-            <button type="reset" class="btn text-secondary shadow-none" data-bs-dismiss="modal">
+            <button type="button" class="btn text-secondary shadow-none" data-bs-dismiss="modal">
               Cancel
             </button>
             <button
