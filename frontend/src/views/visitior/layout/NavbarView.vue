@@ -1,5 +1,5 @@
 <script setup>
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import LoginModal from '@/components/visitior/LoginModal.vue'
 import RegisterModal from '@/components/visitior/RegisterModal.vue'
 import { ref, onMounted } from 'vue'
@@ -9,6 +9,7 @@ import useLogoApi from '@/composables/visitor/logoApi'
 import { useUserCredentialsStore } from '@/stores/userCredentials'
 import useUserApi from '@/composables/users/userApi'
 
+const router = useRouter()
 const { results, get } = useLogoApi()
 const { results: userResults, errors: userErrors, logout } = useUserApi()
 const storeUserCredentials = useUserCredentialsStore()
@@ -21,6 +22,11 @@ const userLogout = async () => {
   if (userResults.value.success) {
     storeUserCredentials.destroyUserCredentials()
     storeToastMessage.showToastMessage(userResults.value.success, userResults.value.message)
+
+    // if user need logout from user panel . then redirect to home page .
+    if (router.currentRoute.value.meta.isUserPanelRoutes) {
+      router.push({ name: 'home-page' })
+    }
   } else {
     storeToastMessage.showToastMessage(false, userResults.value.message)
   }
