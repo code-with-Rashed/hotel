@@ -7,12 +7,14 @@ import useRoomApi from '@/composables/visitor/roomApi'
 import ToastMessage from '@/components/ToastMessage.vue'
 import { useToastMessageStore } from '@/stores/toastMessage'
 import { useUserCredentialsStore } from '@/stores/userCredentials'
+import { useShutdownStore } from '@/stores/shutdown'
 
 const router = useRouter()
 const storeToastMessage = useToastMessageStore()
 const storeUserCredentials = useUserCredentialsStore()
 const { results: facilityResults, get: getFacility } = useFacilityApi()
 const { results: roomResults, allRoom } = useRoomApi()
+const storeShutdown = useShutdownStore()
 
 // if any user is logedin ? then access specific routes
 const userStatus = (roomId) => {
@@ -247,6 +249,7 @@ onMounted(() => {
                           type="button"
                           class="btn btn-primary shadow-none w-100 mb-2"
                           @click="userStatus(room.id)"
+                          v-if="!storeShutdown.shutdown"
                         >
                           Book Now
                         </button>

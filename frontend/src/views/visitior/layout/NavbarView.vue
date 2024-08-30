@@ -8,13 +8,22 @@ import { useToastMessageStore } from '@/stores/toastMessage'
 import useLogoApi from '@/composables/visitor/logoApi'
 import { useUserCredentialsStore } from '@/stores/userCredentials'
 import useUserApi from '@/composables/users/userApi'
+import useSettingApi from '@/composables/visitor/settingApi'
+import { useShutdownStore } from '@/stores/shutdown'
 
 const router = useRouter()
 const { results, get } = useLogoApi()
 const { results: userResults, errors: userErrors, logout } = useUserApi()
+const { results: settingResults, get: getSetting } = useSettingApi()
 const storeUserCredentials = useUserCredentialsStore()
 const storeToastMessage = useToastMessageStore()
+const storeShutdown = useShutdownStore()
 
+// check shutdown status
+const shutdownStatus = async () => {
+  await getSetting()
+  storeShutdown.shutdown = settingResults.value.data.setting.shutdown
+}
 // logout user
 const userLogout = async () => {
   const authorizationToken = `${storeUserCredentials.tokenType} ${storeUserCredentials.userAccessToken}`
@@ -44,9 +53,16 @@ const showLogo = async () => {
   reloader.value = true
 }
 // --------------------
-onMounted(() => showLogo())
+onMounted(() => {
+  shutdownStatus()
+  showLogo()
+})
 </script>
 <template>
+  <!-- if the site is shutdown. then show this message -->
+  <div class="text-center bg-warning f-bold p-2" v-show="storeShutdown.shutdown">
+    Bookings are temporarily closed
+  </div>
   <!-- Navbar start -->
   <nav
     id="nav-bar"
