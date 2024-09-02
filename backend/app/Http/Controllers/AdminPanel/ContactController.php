@@ -12,7 +12,7 @@ class ContactController extends BaseController
     // show contact details
     public function index()
     {
-        $results["contacts"] = Contact::all();
+        $results["contacts"] = Contact::orderBy('status', 'desc')->paginate(5);
         return $this->send_response(message: "Contacts Data .", results: $results);
     }
 
