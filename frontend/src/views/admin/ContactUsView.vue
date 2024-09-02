@@ -1,13 +1,16 @@
 <script setup>
 import LayoutView from './layout/LayoutView.vue'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { useToastMessageStore } from '@/stores/toastMessage'
 import ToastMessage from '@/components/ToastMessage.vue'
 import useContactApi from '@/composables/admin/contactApi'
 import ContactModal from '@/components/admin/ContactModal.vue'
 import { hideBsModal } from '@/helpers/hideBsModal'
 import { dateFormatter } from '@/helpers/dateTime'
+import { urlSplit } from '@/helpers/urlSplit'
 
+const route = useRoute()
 const storeToastMessage = useToastMessageStore()
 const { results, errors, get, deleteAll, updateAllStatus, update } = useContactApi()
 
@@ -15,7 +18,7 @@ const { results, errors, get, deleteAll, updateAllStatus, update } = useContactA
 const reloader = ref(true)
 const contactRecord = async () => {
   reloader.value = false
-  await get()
+  await get(route.query.page)
   reloader.value = true
   if (results.value.success) {
     storeToastMessage.showToastMessage(results.value.success, results.value.message)
@@ -81,10 +84,12 @@ const updateStatus = async (id) => {
 // change message status
 const status = (id) => {
   const statusBtn = document.getElementById('status-' + id)
-  statusBtn.classList.remove('bg-warning')
-  statusBtn.classList.add('bg-primary')
-  statusBtn.classList.add('text-white')
-  statusBtn.innerHTML = 'Read'
+  if (statusBtn) {
+    statusBtn.classList.remove('bg-warning')
+    statusBtn.classList.add('bg-primary')
+    statusBtn.classList.add('text-white')
+    statusBtn.innerHTML = 'Readed'
+  }
 }
 
 // send contact message id to child (CotactModal) component for view details
@@ -101,6 +106,10 @@ const deleteContact = (id) => {
   deleteContactId.value = id
 }
 //------------------------------------
+
+// page switching for pagination
+watch(route, () => contactRecord())
+//------------------------------
 </script>
 <template>
   <LayoutView>
@@ -156,7 +165,7 @@ const deleteContact = (id) => {
                 <tbody>
                   <template v-if="reloader">
                     <template v-if="results.data">
-                      <template v-for="contact in results.data.contacts" :key="contact.id">
+                      <template v-for="contact in results.data.contacts.data" :key="contact.id">
                         <tr>
                           <td>{{ contact.id }}</td>
                           <td>{{ contact.name }}</td>
@@ -215,14 +224,44 @@ const deleteContact = (id) => {
                   </template>
                 </tbody>
               </table>
-              <ul class="pagination mt-2" id="pagination">
-                <li class="page-item disabled">
-                  <a href="?page=0" class="page-link" type="button">Previous</a>
-                </li>
-                <li class="page-item">
-                  <a href="?page=2" class="page-link" type="button">Next</a>
-                </li>
-              </ul>
+              <!-- pagination template start -->
+              <template v-if="results.data">
+                <span>{{
+                  `Showing ${results.data.contacts.from} to ${results.data.contacts.to} of
+                  ${results.data.contacts.total} entries`
+                }}</span>
+                <ul class="pagination mt-2">
+                  <li class="page-item">
+                    <RouterLink
+                      :to="{
+                        query: {
+                          page: urlSplit(results.data.contacts.prev_page_url, '?page=')
+                            ? urlSplit(results.data.contacts.prev_page_url, '?page=').pop()
+                            : urlSplit(results.data.contacts.first_page_url, '?page=').pop()
+                        }
+                      }"
+                      class="page-link shadow-none"
+                      type="button"
+                      >Previous</RouterLink
+                    >
+                  </li>
+                  <li class="page-item">
+                    <RouterLink
+                      :to="{
+                        query: {
+                          page: urlSplit(results.data.contacts.next_page_url, '?page=')
+                            ? urlSplit(results.data.contacts.next_page_url, '?page=').pop()
+                            : urlSplit(results.data.contacts.last_page_url, '?page=').pop()
+                        }
+                      }"
+                      class="page-link shadow-none"
+                      type="button"
+                      >Next</RouterLink
+                    >
+                  </li>
+                </ul>
+              </template>
+              <!-- pagination template end -->
             </div>
           </div>
         </div>
