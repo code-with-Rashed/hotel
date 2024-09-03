@@ -11,11 +11,15 @@ export default function useRoomApi() {
   const errors = ref(null)
 
   // get all hotel room record
-  const get = async () => {
+  const get = async (pagenumber = null) => {
     results.value = []
     errors.value = null
+    let finalurl = url
+    if (pagenumber) {
+      finalurl = finalurl + '?page=' + pagenumber
+    }
     try {
-      const request = await fetch(url, {
+      const request = await fetch(finalurl, {
         method: 'GET',
         headers: {
           Accept: 'application/json',

@@ -1,11 +1,14 @@
 <script setup>
 import LayoutView from './layout/LayoutView.vue'
 import RoomModal from '../../components/admin/RoomModal.vue'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import useRoomApi from '@/composables/admin/roomApi'
 import ToastMessage from '@/components/ToastMessage.vue'
 import { useToastMessageStore } from '@/stores/toastMessage'
+import { urlSplit } from '@/helpers/urlSplit'
 
+const route = useRoute()
 const { results, errors, get, roomStatus } = useRoomApi()
 const storeToastMessage = useToastMessageStore()
 
@@ -61,7 +64,7 @@ const deleteRoom = (id) => {
 const reloader = ref(true)
 const roomRecord = async () => {
   reloader.value = false
-  await get()
+  await get(route.query.page)
   reloader.value = true
   if (results.value.success) {
     storeToastMessage.showToastMessage(results.value.success, results.value.message)
@@ -73,6 +76,11 @@ const roomRecord = async () => {
   }
 }
 onMounted(() => roomRecord())
+//--------------------------
+
+// page switching for pagination
+watch(route, () => roomRecord())
+//------------------------------
 </script>
 <template>
   <LayoutView>
@@ -116,7 +124,7 @@ onMounted(() => roomRecord())
                   <tbody id="room-data">
                     <template v-if="reloader">
                       <template v-if="results.data">
-                        <template v-for="room in results.data.rooms" :key="room.id">
+                        <template v-for="room in results.data.rooms.data" :key="room.id">
                           <tr>
                             <td>{{ room.id }}</td>
                             <td>{{ room.name }}</td>
@@ -205,14 +213,44 @@ onMounted(() => roomRecord())
                   </tbody>
                 </table>
                 <!-- pagination start -->
-                <ul class="pagination mt-2" id="pagination">
-                  <li class="page-item">
-                    <a class="page-link" type="button">Previous</a>
-                  </li>
-                  <li class="page-item">
-                    <a class="page-link" type="button">Next</a>
-                  </li>
-                </ul>
+                <!-- pagination template start -->
+                <template v-if="results.data">
+                  <span>{{
+                    `Showing ${results.data.rooms.from} to ${results.data.rooms.to} of
+                  ${results.data.rooms.total} entries`
+                  }}</span>
+                  <ul class="pagination mt-2">
+                    <li class="page-item">
+                      <RouterLink
+                        :to="{
+                          query: {
+                            page: urlSplit(results.data.rooms.prev_page_url, '?page=')
+                              ? urlSplit(results.data.rooms.prev_page_url, '?page=').pop()
+                              : urlSplit(results.data.rooms.first_page_url, '?page=').pop()
+                          }
+                        }"
+                        class="page-link shadow-none"
+                        type="button"
+                        >Previous</RouterLink
+                      >
+                    </li>
+                    <li class="page-item">
+                      <RouterLink
+                        :to="{
+                          query: {
+                            page: urlSplit(results.data.rooms.next_page_url, '?page=')
+                              ? urlSplit(results.data.rooms.next_page_url, '?page=').pop()
+                              : urlSplit(results.data.rooms.last_page_url, '?page=').pop()
+                          }
+                        }"
+                        class="page-link shadow-none"
+                        type="button"
+                        >Next</RouterLink
+                      >
+                    </li>
+                  </ul>
+                </template>
+                <!-- pagination template end -->
                 <!-- pagination end -->
               </div>
             </div>
