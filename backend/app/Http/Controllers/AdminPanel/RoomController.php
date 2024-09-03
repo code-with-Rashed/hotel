@@ -12,7 +12,7 @@ class RoomController extends BaseController
     // show all rooms
     public function index()
     {
-        $results["rooms"] = Room::all();
+        $results["rooms"] = Room::orderBy('status', 'desc')->paginate(2);
         return $this->send_response(message: "Rooms data .", results: $results);
     }
 
