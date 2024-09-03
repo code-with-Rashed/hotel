@@ -12,7 +12,7 @@ class RoomController extends BaseController
     {
         $results["rooms"] = Room::with(['features:name', 'facilities:name', 'images' => function ($query) {
             $query->select('image', 'room_id')->where('thumbnail', 1);
-        }])->where('status', 0)->get();
+        }])->where('status', 0)->paginate(2);
         return $this->send_response(message: "Room details.", results: $results);
     }
 
