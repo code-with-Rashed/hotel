@@ -7,12 +7,15 @@ export default function useRoomApi() {
   const errors = ref(null)
 
   // fetch all room related record
-  const allRoom = async () => {
+  const allRoom = async (pagenumber = null) => {
     results.value = []
     errors.value = null
-
+    let finalurl = url + '/all/room'
+    if (pagenumber) {
+      finalurl = finalurl + '?page=' + pagenumber
+    }
     try {
-      const request = await fetch(url + '/all/room', {
+      const request = await fetch(finalurl, {
         method: 'GET',
         headers: {
           Accept: 'application/json'

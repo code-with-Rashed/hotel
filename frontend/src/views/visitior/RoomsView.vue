@@ -1,15 +1,17 @@
 <script setup>
 import LayoutView from './layout/LayoutView.vue'
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import useFacilityApi from '@/composables/visitor/facilityApi'
 import useRoomApi from '@/composables/visitor/roomApi'
 import ToastMessage from '@/components/ToastMessage.vue'
 import { useToastMessageStore } from '@/stores/toastMessage'
 import { useUserCredentialsStore } from '@/stores/userCredentials'
 import { useShutdownStore } from '@/stores/shutdown'
+import { urlSplit } from '@/helpers/urlSplit'
 
 const router = useRouter()
+const route = useRoute()
 const storeToastMessage = useToastMessageStore()
 const storeUserCredentials = useUserCredentialsStore()
 const { results: facilityResults, get: getFacility } = useFacilityApi()
@@ -39,10 +41,14 @@ const showFacilities = async () => {
 const roomReloader = ref(true)
 const showRooms = async () => {
   roomReloader.value = false
-  await allRoom()
+  await allRoom(route.query.page)
   roomReloader.value = true
 }
 // -------------------------
+
+// page switching for pagination
+watch(route, () => showRooms())
+//------------------------------
 
 onMounted(() => {
   showRooms()
@@ -197,7 +203,7 @@ onMounted(() => {
           <div class="col-lg-9 col-md-12 px-4" id="show-rooms">
             <template v-if="roomReloader">
               <template v-if="roomResults.data">
-                <template v-for="room in roomResults.data.rooms" :key="room.id">
+                <template v-for="room in roomResults.data.rooms.data" :key="room.id">
                   <div class="card mb-4 border-0 shadow">
                     <div class="row g-0 align-items-center p-3">
                       <div class="col-md-5 mb-lg-0 mb-md-0 mb-3">
@@ -271,6 +277,46 @@ onMounted(() => {
                 </div>
               </div>
             </template>
+            <!-- pagination template start -->
+            <template v-if="roomResults.data">
+              <div class="mt-4">
+                {{
+                  `Showing ${roomResults.data.rooms.from} to ${roomResults.data.rooms.to} of
+                  ${roomResults.data.rooms.total} entries`
+                }}
+              </div>
+              <ul class="pagination mt-2">
+                <li class="page-item">
+                  <RouterLink
+                    :to="{
+                      query: {
+                        page: urlSplit(roomResults.data.rooms.prev_page_url, '?page=')
+                          ? urlSplit(roomResults.data.rooms.prev_page_url, '?page=').pop()
+                          : urlSplit(roomResults.data.rooms.first_page_url, '?page=').pop()
+                      }
+                    }"
+                    class="page-link shadow-none"
+                    type="button"
+                    >Previous</RouterLink
+                  >
+                </li>
+                <li class="page-item">
+                  <RouterLink
+                    :to="{
+                      query: {
+                        page: urlSplit(roomResults.data.rooms.next_page_url, '?page=')
+                          ? urlSplit(roomResults.data.rooms.next_page_url, '?page=').pop()
+                          : urlSplit(roomResults.data.rooms.last_page_url, '?page=').pop()
+                      }
+                    }"
+                    class="page-link shadow-none"
+                    type="button"
+                    >Next</RouterLink
+                  >
+                </li>
+              </ul>
+            </template>
+            <!-- pagination template end -->
           </div>
           <!-- End Rooms -->
         </div>
