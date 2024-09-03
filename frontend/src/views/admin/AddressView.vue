@@ -36,28 +36,32 @@ onMounted(() => addressRecord())
         <h3>Address Management</h3>
         <div class="card mb-4 border-0 shadow-sm">
           <div class="card-body">
-            <div class="d-flex align-items-center justify-content-between mb-4">
-              <h5 class="card-title m-0">Contact Details</h5>
-              <button
-                type="button"
-                class="btn btn-sm btn-primary"
-                @click="addressRecord"
-                title="Reload carousel image record list ."
-              >
-                Reload
-                <span class="badge text-bg-secondary"> <i class="bi bi-arrow-repeat"></i> </span>
-              </button>
-              <!-- Button trigger modal -->
-              <button
-                type="button"
-                class="btn btn-dark btn-sm shadow-none"
-                data-bs-toggle="modal"
-                data-bs-target="#addressModal"
-              >
-                <i class="bi bi-pencil-square"></i> Edit
-              </button>
-            </div>
             <div class="row">
+              <h5 class="card-title col-md-4 mb-2">Contact Details</h5>
+              <div class="col-md-4 mb-2 text-md-center">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-primary"
+                  @click="addressRecord"
+                  title="Reload carousel image record list ."
+                >
+                  Reload
+                  <span class="badge text-bg-secondary"> <i class="bi bi-arrow-repeat"></i> </span>
+                </button>
+              </div>
+              <div class="col-md-4 mb-2 text-md-end">
+                <button
+                  type="button"
+                  class="btn btn-dark btn-sm shadow-none"
+                  data-bs-toggle="modal"
+                  data-bs-target="#addressModal"
+                >
+                  <i class="bi bi-pencil-square"></i> Edit
+                </button>
+              </div>
+            </div>
+            <hr />
+            <div class="row mt-4">
               <template v-if="reloader">
                 <template v-if="address">
                   <div class="col-md-6">

@@ -50,29 +50,33 @@ onMounted(() => facilityRecord())
         <h3>Facility Management</h3>
         <div class="card mb-4 border-0 shadow-sm">
           <div class="card-body">
-            <div class="d-flex align-items-center justify-content-between mb-3">
-              <h5 class="card-title m-0">Facilities</h5>
-              <button
-                type="button"
-                class="btn btn-sm btn-primary"
-                @click="facilityRecord"
-                title="Reload facility record list ."
-              >
-                Reload
-                <span class="badge text-bg-secondary"> <i class="bi bi-arrow-repeat"></i> </span>
-              </button>
-              <!-- Button trigger modal -->
-              <button
-                type="button"
-                class="btn btn-dark btn-sm shadow-none"
-                data-bs-toggle="modal"
-                data-bs-target="#addFacilityRecord"
-              >
-                <i class="bi bi-plus-square"></i>
-                Add Facility
-              </button>
+            <div class="row">
+              <h5 class="col-md-4 card-title mb-2">Facilities</h5>
+              <div class="col-md-4 mb-2 text-md-center">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-primary"
+                  @click="facilityRecord"
+                  title="Reload facility record list ."
+                >
+                  Reload
+                  <span class="badge text-bg-secondary"> <i class="bi bi-arrow-repeat"></i> </span>
+                </button>
+              </div>
+              <div class="col-md-4 mb-2 text-md-end">
+                <button
+                  type="button"
+                  class="btn btn-dark btn-sm shadow-none"
+                  data-bs-toggle="modal"
+                  data-bs-target="#addFacilityRecord"
+                >
+                  <i class="bi bi-plus-square"></i>
+                  Add Facility
+                </button>
+              </div>
             </div>
-            <div class="row mt-5" id="facilitie-data">
+            <hr />
+            <div class="row mt-3" id="facilitie-data">
               <template v-if="reloader">
                 <template v-if="results.data">
                   <template v-for="facility in results.data.facilities" :key="facility.id">

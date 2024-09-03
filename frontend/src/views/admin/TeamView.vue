@@ -51,29 +51,33 @@ onMounted(() => teamRecord())
         <!-- Team Settings -->
         <div class="card mb-4 border-0 shadow-sm">
           <div class="card-body">
-            <div class="d-flex align-items-center justify-content-between mb-3">
-              <h5 class="card-title m-0">Team Management</h5>
-              <button
-                type="button"
-                class="btn btn-sm btn-primary"
-                @click="teamRecord"
-                title="Reload team profile record list ."
-              >
-                Reload
-                <span class="badge text-bg-secondary"> <i class="bi bi-arrow-repeat"></i> </span>
-              </button>
-              <!-- Button trigger modal -->
-              <button
-                type="button"
-                class="btn btn-dark btn-sm shadow-none"
-                data-bs-toggle="modal"
-                data-bs-target="#addTeamMemberModal"
-              >
-                <i class="bi bi-plus-square"></i>
-                Add
-              </button>
+            <div class="row">
+              <h5 class="card-title col-md-4 mb-2">Team Management</h5>
+              <div class="col-md-4 mb-2 text-md-center">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-primary"
+                  @click="teamRecord"
+                  title="Reload team profile record list ."
+                >
+                  Reload
+                  <span class="badge text-bg-secondary"> <i class="bi bi-arrow-repeat"></i> </span>
+                </button>
+              </div>
+              <div class="col-md-4 mb-2 text-md-end">
+                <button
+                  type="button"
+                  class="btn btn-dark btn-sm shadow-none"
+                  data-bs-toggle="modal"
+                  data-bs-target="#addTeamMemberModal"
+                >
+                  <i class="bi bi-plus-square"></i>
+                  Add
+                </button>
+              </div>
             </div>
-            <div class="row" id="team-data">
+            <hr />
+            <div class="row mt-3">
               <template v-if="reloader">
                 <template v-if="results.data">
                   <template v-for="team in results.data.team" :key="team.id">

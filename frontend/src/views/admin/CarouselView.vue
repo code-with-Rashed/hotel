@@ -50,29 +50,33 @@ onMounted(() => carouselRecord())
         <h3>Carousel Management</h3>
         <div class="card mb-4 border-0 shadow-sm">
           <div class="card-body">
-            <div class="d-flex align-items-center justify-content-between mb-3">
-              <h5 class="card-title m-0">Carousel Images</h5>
-              <button
-                type="button"
-                class="btn btn-sm btn-primary"
-                @click="carouselRecord"
-                title="Reload carousel image record list ."
-              >
-                Reload
-                <span class="badge text-bg-secondary"> <i class="bi bi-arrow-repeat"></i> </span>
-              </button>
-              <!-- Button trigger modal -->
-              <button
-                type="button"
-                class="btn btn-dark btn-sm shadow-none"
-                data-bs-toggle="modal"
-                data-bs-target="#addCarouselModal"
-              >
-                <i class="bi bi-plus-square"></i>
-                Add
-              </button>
-            </div>
             <div class="row">
+              <h5 class="col-md-4 card-title mb-2">Carousel Images</h5>
+              <div class="col-md-4 text-md-center mb-2">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-primary"
+                  @click="carouselRecord"
+                  title="Reload carousel image record list ."
+                >
+                  Reload
+                  <span class="badge text-bg-secondary"> <i class="bi bi-arrow-repeat"></i> </span>
+                </button>
+              </div>
+              <div class="col-md-4 text-md-end mb-2">
+                <button
+                  type="button"
+                  class="btn btn-dark btn-sm shadow-none"
+                  data-bs-toggle="modal"
+                  data-bs-target="#addCarouselModal"
+                >
+                  <i class="bi bi-plus-square"></i>
+                  Add
+                </button>
+              </div>
+            </div>
+            <hr />
+            <div class="row mt-3">
               <template v-if="reloader">
                 <template v-if="results.data">
                   <template v-for="carousel in results.data.carousel" :key="carousel.id">
