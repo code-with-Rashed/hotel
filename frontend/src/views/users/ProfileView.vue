@@ -139,7 +139,7 @@ const changePassword = async () => {
         <!-- update profile -->
         <div class="row">
           <div class="col-md-12 px-3 mb-2">
-            <div class="card border-0 shadow-sm p-3">
+            <div class="card border-primary shadow-sm p-3">
               <h5>Update Profile Details</h5>
               <form @submit.prevent="profileUpdate">
                 <div class="row p-2">
@@ -222,9 +222,9 @@ const changePassword = async () => {
           </div>
         </div>
         <!-- update profile photo -->
-        <div class="row mt-3">
-          <div class="col-md-6 px-3 mb-2">
-            <div class="card border-0 shadow-sm p-3">
+        <div class="row">
+          <div class="col-md-6 px-3 my-3">
+            <div class="card border-info shadow-sm p-3">
               <h5>Update Profile Picture</h5>
               <form @submit.prevent="changeProfileImage">
                 <div class="row p-2">
@@ -261,8 +261,8 @@ const changePassword = async () => {
             </div>
           </div>
           <!-- update user password -->
-          <div class="col-md-6 px-3 mb-2">
-            <div class="card border-0 shadow-sm p-3">
+          <div class="col-md-6 px-3 my-3">
+            <div class="card border-danger shadow-sm p-3">
               <h5>Update Password</h5>
               <form @submit.prevent="changePassword">
                 <div class="row p-2">
