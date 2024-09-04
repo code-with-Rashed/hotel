@@ -227,7 +227,7 @@ watch(route, () => contactRecord())
               <!-- pagination template start -->
               <template v-if="results.data">
                 <span>{{
-                  `Showing ${results.data.contacts.from} to ${results.data.contacts.to} of
+                  `Showing ${results.data.contacts.from ?? 0} to ${results.data.contacts.to ?? 0} of
                   ${results.data.contacts.total} entries`
                 }}</span>
                 <ul class="pagination mt-2">

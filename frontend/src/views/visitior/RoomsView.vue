@@ -281,7 +281,7 @@ onMounted(() => {
             <template v-if="roomResults.data">
               <div class="mt-4">
                 {{
-                  `Showing ${roomResults.data.rooms.from} to ${roomResults.data.rooms.to} of
+                  `Showing ${roomResults.data.rooms.from ?? 0} to ${roomResults.data.rooms.to ?? 0} of
                   ${roomResults.data.rooms.total} entries`
                 }}
               </div>

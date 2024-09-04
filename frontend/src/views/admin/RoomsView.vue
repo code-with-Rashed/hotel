@@ -212,11 +212,10 @@ watch(route, () => roomRecord())
                     </template>
                   </tbody>
                 </table>
-                <!-- pagination start -->
                 <!-- pagination template start -->
                 <template v-if="results.data">
                   <span>{{
-                    `Showing ${results.data.rooms.from} to ${results.data.rooms.to} of
+                    `Showing ${results.data.rooms.from ?? 0} to ${results.data.rooms.to ?? 0} of
                   ${results.data.rooms.total} entries`
                   }}</span>
                   <ul class="pagination mt-2">
@@ -251,7 +250,6 @@ watch(route, () => roomRecord())
                   </ul>
                 </template>
                 <!-- pagination template end -->
-                <!-- pagination end -->
               </div>
             </div>
           </div>
