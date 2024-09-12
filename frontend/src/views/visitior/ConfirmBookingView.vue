@@ -3,24 +3,103 @@ import LayoutView from './layout/LayoutView.vue'
 import { useRoute } from 'vue-router'
 import { ref, onMounted, reactive } from 'vue'
 import useRoomApi from '@/composables/visitor/roomApi'
+import useBookingInformationApi from '@/composables/visitor/bookingInformation'
 import { useUserCredentialsStore } from '@/stores/userCredentials'
+import ToastMessage from '@/components/ToastMessage.vue'
+import { useToastMessageStore } from '@/stores/toastMessage'
 
-const { results: results, confirmRoom } = useRoomApi()
+const { results, confirmRoom } = useRoomApi()
+const { results: bookingInfoResult, checkBookingInfo } = useBookingInformationApi()
 const storeUserCredentials = useUserCredentialsStore()
 const { params } = useRoute()
+const storeToastMessage = useToastMessageStore()
 
+// set logedin user info
 const userInfo = reactive({
   name: '',
   email: '',
   number: '',
-  pincode: '',
-  address: '',
-  check_in: '',
-  check_out: ''
+  address: ''
 })
 for (const key in userInfo) {
   userInfo[key] = storeUserCredentials.user[key]
 }
+//---------------------
+
+// handle date wise message & booking summary
+const dateValidationMessage = ref('Provide Check-in & Check-out date !')
+const bookingSummary = ref()
+// ------------------
+
+// payment button status
+const active = ref(false)
+// ----------------------------
+
+// booking information
+const bookingInfo = reactive({
+  checkin: '',
+  checkout: '',
+  total_day: '',
+  room_id: params.id,
+  room_name: '',
+  price: '',
+  total_pay: ''
+})
+//--------------------
+
+// compare checkin & checkout date
+const compareDate = () => {
+  active.value = false // payment button is in-active now
+  bookingSummary.value = '' // remove booking summary message. if user is compare date.
+
+  const today = new Date()
+  const format = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`
+
+  if (bookingInfo.checkin != '' && bookingInfo.checkout != '') {
+    if (bookingInfo.checkin == bookingInfo.checkout) {
+      dateValidationMessage.value = 'You cannot Check-out of same day !'
+    } else if (new Date(bookingInfo.checkin) < new Date(format)) {
+      dateValidationMessage.value = "Check-in date is earlier than Today's date !"
+    } else if (bookingInfo.checkout < bookingInfo.checkin) {
+      dateValidationMessage.value = 'Check-out date is earlier than Check-in date !'
+    } else {
+      dateValidationMessage.value = ''
+      bookingInfo.total_day =
+        new Date(bookingInfo.checkout).getDate() - new Date(bookingInfo.checkin).getDate()
+      prepareBookingInfo()
+    }
+  }
+}
+// -------------------------------
+
+// prepare booking information
+const prepareBookingInfo = async () => {
+  bookingInfo.room_name = roomDetails.value.name
+  bookingInfo.price = roomDetails.value.price
+  bookingInfo.total_pay = Number(bookingInfo.price) * Number(bookingInfo.total_day)
+  checkBookingInformation()
+}
+// ----------------------------------------
+
+// check booking info is valid & room is available
+const reloader = ref(true)
+const checkBookingInformation = async () => {
+  reloader.value = false
+  await checkBookingInfo(bookingInfo)
+  reloader.value = true
+  if (bookingInfoResult.value.success) {
+    bookingSummary.value = `No. of Days : ${bookingInfo.total_day}<br>Total Amount to Pay : ${bookingInfo.total_pay} <strong class="fs-5">&#2547;</strong>` // display booking summary
+    active.value = true // active payment button
+  } else if (!bookingInfoResult.value.success) {
+    let message = ''
+    message += '<strong>' + bookingInfoResult.value.message + '</strong><br>'
+    bookingInfoResult.value.data.forEach((element) => {
+      message += element + '<br>'
+    })
+    storeToastMessage.showToastMessage(bookingInfoResult.value.success, message, 10000)
+  }
+}
+// -----------------------------------------------
 
 // show single room related records
 const roomDetails = ref(null)
@@ -95,16 +174,6 @@ onMounted(() => {
                       />
                     </div>
                     <div class="col-md-6">
-                      <label class="form-label">Email</label>
-                      <input
-                        type="email"
-                        readonly
-                        class="form-control shadow-none mb-3"
-                        required
-                        v-model.trim="userInfo.email"
-                      />
-                    </div>
-                    <div class="col-md-6">
                       <label class="form-label">Phone Number</label>
                       <input
                         type="number"
@@ -114,14 +183,14 @@ onMounted(() => {
                         v-model.trim="userInfo.number"
                       />
                     </div>
-                    <div class="col-md-6">
-                      <label class="form-label">Pincode</label>
+                    <div class="col-12">
+                      <label class="form-label">Email</label>
                       <input
-                        type="text"
+                        type="email"
+                        readonly
                         class="form-control shadow-none mb-3"
-                        maxlength="20"
                         required
-                        v-model.trim="userInfo.pincode"
+                        v-model.trim="userInfo.email"
                       />
                     </div>
                     <div class="col-12">
@@ -140,7 +209,8 @@ onMounted(() => {
                         type="date"
                         class="form-control shadow-none"
                         required
-                        v-model="userInfo.check_in"
+                        v-model="bookingInfo.checkin"
+                        @change="compareDate"
                       />
                     </div>
                     <div class="col-md-6 mb-4">
@@ -149,17 +219,33 @@ onMounted(() => {
                         type="date"
                         class="form-control shadow-none"
                         required
-                        v-model="userInfo.check_out"
+                        v-model="bookingInfo.checkout"
+                        @change="compareDate"
                       />
                     </div>
                     <div class="col-12">
-                      <h6 class="text-danger mb-3" id="date_info">
-                        Provide Check-in &amp; Check-out date !
-                      </h6>
+                      <div class="text-danger mb-3" v-if="dateValidationMessage">
+                        {{ dateValidationMessage }}
+                      </div>
+                      <template v-if="reloader">
+                        <div
+                          class="text-primary mb-3"
+                          v-if="bookingSummary"
+                          v-html="bookingSummary"
+                        ></div>
+                      </template>
+                      <template v-else>
+                        <div class="text-center mb-3">
+                          <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                          </div>
+                        </div>
+                      </template>
                       <button
-                        type="submit"
-                        class="btn w-100 btn-primary text-white shadow-none"
-                        disabled
+                        type="button"
+                        class="btn w-100 shadow-none"
+                        :disabled="!active"
+                        :class="{ 'btn-primary': active, 'btn-secondary': !active }"
                       >
                         Payment
                       </button>
@@ -173,4 +259,5 @@ onMounted(() => {
       </div>
     </template>
   </LayoutView>
+  <ToastMessage />
 </template>
