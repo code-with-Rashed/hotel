@@ -133,6 +133,7 @@ Route::prefix("/admin/room/feature-facility")->middleware("auth:sanctum")->group
 use App\Http\Controllers\VisitiorPanel\FacilityController as VisitiorPanelFacilityController;
 use App\Http\Controllers\VisitiorPanel\ContactController as VisitiorPanelContactController;
 use App\Http\Controllers\VisitiorPanel\AddressController;
+use App\Http\Controllers\VisitiorPanel\BookingInformationController;
 use App\Http\Controllers\VisitiorPanel\CarouselController as VisitiorPanelCarouselController;
 use App\Http\Controllers\VisitiorPanel\TeamMemberController;
 use App\Http\Controllers\VisitiorPanel\SettingController as VisitiorPanelSettingController;
@@ -165,6 +166,8 @@ Route::get('/all/room', [VisitiorPanelRoomController::class, 'all_room']);
 Route::get('/room/{id}', [VisitiorPanelRoomController::class, 'room']);
 Route::get('/confirm/room/{id}', [VisitiorPanelRoomController::class, 'confirm_room']);
 
+// Room booking information routes
+Route::post('/check/booking/information', [BookingInformationController::class, 'check_booking_information']);
 
 // Routes for users
 use App\Http\Controllers\UsersPanel\UserController;
