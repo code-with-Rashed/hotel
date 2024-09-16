@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8647748ebd31850870d91f6f23f1ee85",
+    "content-hash": "afe072b1a9354098f1d79d1da1221455",
     "packages": [
         {
             "name": "brick/math",
@@ -3170,6 +3170,142 @@
                 }
             ],
             "time": "2024-04-27T21:32:50+00:00"
+        },
+        {
+            "name": "raziul/sslcommerz-laravel",
+            "version": "v1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/iRaziul/sslcommerz-laravel.git",
+                "reference": "1c623724cfb7b9e1a6a45f40f9f4867a4ae805a0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/iRaziul/sslcommerz-laravel/zipball/1c623724cfb7b9e1a6a45f40f9f4867a4ae805a0",
+                "reference": "1c623724cfb7b9e1a6a45f40f9f4867a4ae805a0",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/contracts": "^10.0||^11.0",
+                "php": "^8.2",
+                "spatie/laravel-package-tools": "^1.16"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.14",
+                "nunomaduro/collision": "^8.1.1||^7.10.0",
+                "orchestra/testbench": "^9.0.0||^8.22.0",
+                "pestphp/pest": "^2.34",
+                "pestphp/pest-plugin-arch": "^2.7",
+                "pestphp/pest-plugin-laravel": "^2.3"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Raziul\\Sslcommerz\\SslcommerzServiceProvider"
+                    ],
+                    "aliases": {
+                        "Sslcommerz": "Raziul\\Sslcommerz\\Facades\\Sslcommerz"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Raziul\\Sslcommerz\\": "src/",
+                    "Raziul\\Sslcommerz\\Database\\Factories\\": "database/factories/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Raziul Islam",
+                    "email": "raziul.dev@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "SSLCommerz Laravel is a super easy package to integrate SSLCommerz on Laravel websites.",
+            "homepage": "https://github.com/iraziul/sslcommerz-laravel",
+            "keywords": [
+                "laravel",
+                "laravel-sslcommerz",
+                "sslcommerz",
+                "sslcommerz-laravel",
+                "sslcommerz-payment-gateway"
+            ],
+            "support": {
+                "issues": "https://github.com/iRaziul/sslcommerz-laravel/issues",
+                "source": "https://github.com/iRaziul/sslcommerz-laravel/tree/v1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/raziul",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-09-02T07:44:05+00:00"
+        },
+        {
+            "name": "spatie/laravel-package-tools",
+            "version": "1.16.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/laravel-package-tools.git",
+                "reference": "c7413972cf22ffdff97b68499c22baa04eddb6a2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/laravel-package-tools/zipball/c7413972cf22ffdff97b68499c22baa04eddb6a2",
+                "reference": "c7413972cf22ffdff97b68499c22baa04eddb6a2",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/contracts": "^9.28|^10.0|^11.0",
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.5",
+                "orchestra/testbench": "^7.7|^8.0",
+                "pestphp/pest": "^1.22",
+                "phpunit/phpunit": "^9.5.24",
+                "spatie/pest-plugin-test-time": "^1.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\LaravelPackageTools\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Tools for creating Laravel packages",
+            "homepage": "https://github.com/spatie/laravel-package-tools",
+            "keywords": [
+                "laravel-package-tools",
+                "spatie"
+            ],
+            "support": {
+                "issues": "https://github.com/spatie/laravel-package-tools/issues",
+                "source": "https://github.com/spatie/laravel-package-tools/tree/1.16.5"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-08-27T18:56:10+00:00"
         },
         {
             "name": "symfony/clock",
