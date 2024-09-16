@@ -43,4 +43,11 @@ router.beforeEach((to) => {
       return { name: 'rooms-page' }
     }
   }
+
+  // routes protection for booking status page
+  if (to.meta.isBookingStatusPage) {
+    if (!isUserAuthenticate) {
+      return { name: 'home-page' }
+    }
+  }
 })

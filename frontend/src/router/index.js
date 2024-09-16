@@ -143,6 +143,12 @@ const router = createRouter({
       meta: { title: 'About Us' }
     },
     {
+      path: '/booking/status',
+      name: 'booking-status',
+      component: () => import('../views/visitior/BookingStatus.vue'),
+      meta: { title: 'Booking Status', isBookingStatusPage: true }
+    },
+    {
       path: '/user',
       meta: { isUserPanelRoutes: true },
       children: [
