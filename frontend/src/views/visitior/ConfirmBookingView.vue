@@ -13,9 +13,10 @@ const { results: bookingInfoResult, checkBookingInfo } = useBookingInformationAp
 const storeUserCredentials = useUserCredentialsStore()
 const { params } = useRoute()
 const storeToastMessage = useToastMessageStore()
-
+const action = ref(import.meta.env.VITE_API_URL + '/sslcommerz/pay') // this url handle order submit & payment getway
 // set logedin user info
 const userInfo = reactive({
+  id: '',
   name: '',
   email: '',
   number: '',
@@ -161,7 +162,23 @@ onMounted(() => {
             <div class="card mb-4 border-0 shadow-sm p-2">
               <div class="card-body">
                 <h6 class="mb-3">Booking Details</h6>
-                <form>
+                <form :action="action" method="POST">
+                  <!-- posteble data start -->
+                  <input
+                    type="hidden"
+                    :name="name"
+                    v-for="(value, name, index) in userInfo"
+                    :value="value"
+                    :key="index"
+                  />
+                  <input
+                    type="hidden"
+                    :name="name"
+                    v-for="(value, name, index) in bookingInfo"
+                    :value="value"
+                    :key="index"
+                  />
+                  <!-- posteble data end-->
                   <div class="row">
                     <div class="col-md-6">
                       <label class="form-label">Name</label>
@@ -242,7 +259,7 @@ onMounted(() => {
                         </div>
                       </template>
                       <button
-                        type="button"
+                        type="submit"
                         class="btn w-100 shadow-none"
                         :disabled="!active"
                         :class="{ 'btn-primary': active, 'btn-secondary': !active }"
