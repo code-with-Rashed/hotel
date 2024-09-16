@@ -171,6 +171,7 @@ Route::post('/check/booking/information', [BookingInformationController::class, 
 
 // Routes for users
 use App\Http\Controllers\UsersPanel\UserController;
+use App\Http\Controllers\UsersPanel\MyBookingsController;
 
 Route::post('/user/register', [UserController::class, 'register']);
 Route::post('/user/login', [UserController::class, 'login']);
@@ -180,3 +181,6 @@ Route::prefix('/user/profile')->middleware('auth:sanctum')->group(function () {
     Route::put('/update/photo/{id}', [UserController::class, 'update_photo']);
     Route::put('/update/password/{id}', [UserController::class, 'update_password']);
 });
+
+// booking records information routes for users
+Route::get('/my-booking-records/{user_id}', [MyBookingsController::class, 'index'])->middleware("auth:sanctum");
