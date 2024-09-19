@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AdminPanel\AdminController;
+use App\Http\Controllers\AdminPanel\BookingsController;
 use App\Http\Controllers\AdminPanel\CarouselController;
 use App\Http\Controllers\AdminPanel\ContactController;
 use App\Http\Controllers\AdminPanel\FacilityController;
@@ -27,6 +28,12 @@ Route::prefix('/admin/profile')->group(function () {
     });
 });
 //---------------------
+
+// Routes for booking record
+Route::prefix("/admin")->middleware("auth:sanctum")->group(function () {
+    Route::get("/all/bookings/{search?}", [BookingsController::class, "all_bookings"]);
+});
+//--------------------------
 
 // Room feature routes
 Route::prefix("/admin/feature")->middleware("auth:sanctum")->group(function () {
