@@ -191,3 +191,4 @@ Route::prefix('/user/profile')->middleware('auth:sanctum')->group(function () {
 
 // booking records information routes for users
 Route::get('/my-booking-records/{user_id}', [MyBookingsController::class, 'index'])->middleware("auth:sanctum");
+Route::put('/cancel-my-booking', [MyBookingsController::class, 'cancel'])->middleware("auth:sanctum");
