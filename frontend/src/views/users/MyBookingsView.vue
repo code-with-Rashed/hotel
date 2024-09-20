@@ -3,8 +3,11 @@ import LayoutView from '../visitior/layout/LayoutView.vue'
 import useMyBookingsApi from '@/composables/users/myBookings'
 import { onMounted, ref } from 'vue'
 import { dateFormatter } from '@/helpers/dateTime'
+import ToastMessage from '@/components/ToastMessage.vue'
+import { useToastMessageStore } from '@/stores/toastMessage'
 
-const { results, get } = useMyBookingsApi()
+const { results, get, put } = useMyBookingsApi()
+const storeToastMessage = useToastMessageStore()
 
 // show all order list
 const reloader = ref(true)
@@ -27,6 +30,19 @@ const printInvoice = () => {
   window.print()
 }
 //-------------
+
+// cancel booking
+const cancelBookingId = ref(null)
+const assignCancelId = (id) => {
+  cancelBookingId.value = id
+}
+const cancelNow = async () => {
+  await put(cancelBookingId.value)
+  if (results.value.success) {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+  }
+  await show()
+}
 </script>
 <template>
   <LayoutView>
@@ -121,7 +137,12 @@ const printInvoice = () => {
                           </template>
                         </template>
                         <template v-else>
-                          <button class="btn btn-danger btn-sm shadow-none me-1">
+                          <button
+                            class="btn btn-danger btn-sm shadow-none me-1"
+                            @click="assignCancelId(booking.id)"
+                            data-bs-toggle="modal"
+                            data-bs-target="#cancelBookingModal"
+                          >
                             Cancel my Booking
                           </button>
                         </template>
@@ -170,6 +191,7 @@ const printInvoice = () => {
       </div>
     </template>
   </LayoutView>
+  <ToastMessage />
 
   <!-- Booking Details Modal Start -->
   <div
@@ -262,4 +284,30 @@ const printInvoice = () => {
     </div>
   </div>
   <!-- Booking Details Modal End -->
+
+  <!-- Cancel Booking Warning Modal Start -->
+  <div class="modal fade" id="cancelBookingModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <strong>Are You Sure You Wan't to Cancel this booking ?</strong>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @click="cancelNow">
+            Yes
+          </button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Cancel Booking Warning Modal End -->
 </template>

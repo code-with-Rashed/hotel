@@ -30,5 +30,26 @@ export default function useMyBookingsApi() {
     }
   }
 
-  return { results, errors, get }
+  // send request for cancel booking 
+  const put = async (order_id) => {
+    results.value = []
+    errors.value = null
+    try {
+      const request = await fetch(url + '/cancel-my-booking', {
+        method: 'PUT',
+        body: JSON.stringify({ user_id, order_id }),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: token
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+
+  return { results, errors, get, put }
 }
