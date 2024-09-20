@@ -47,6 +47,19 @@ const status = (status) => {
 // page switching for pagination
 watch(route, () => showAllBookings())
 //------------------------------
+
+// show booking details for print/download
+const bookingDetails = ref(null)
+const assignBookingDetails = (index) => {
+  bookingDetails.value = results.value.data.new_bookings.data[index]
+  console.log(bookingDetails.value)
+}
+// ---------------------------------------
+// Print booking Invoice
+const printInvoice = () => {
+  window.print()
+}
+//-------------
 </script>
 <template>
   <LayoutView>
@@ -86,7 +99,10 @@ watch(route, () => showAllBookings())
                 <tbody>
                   <template v-if="reloader">
                     <template v-if="results.data">
-                      <template v-for="booking in results.data.new_bookings.data" :key="booking.id">
+                      <template
+                        v-for="(booking, index) in results.data.new_bookings.data"
+                        :key="booking.id"
+                      >
                         <tr>
                           <td>{{ booking.id }}</td>
                           <td>
@@ -123,6 +139,9 @@ watch(route, () => showAllBookings())
                             <span
                               class="btn text-white fw-bold btn-sm bg-primary shadow-none"
                               title="Download Invoice"
+                              data-bs-toggle="modal"
+                              data-bs-target="#bookingDetailsModal"
+                              @click="assignBookingDetails(index)"
                               ><i class="bi bi-file-earmark-arrow-down fw-bold"></i> Invoice</span
                             >
                           </td>
@@ -185,4 +204,94 @@ watch(route, () => showAllBookings())
       </div>
     </template>
   </LayoutView>
+  <!-- Booking Details Modal Start -->
+  <div
+    class="modal fade"
+    id="bookingDetailsModal"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
+    aria-labelledby="staticBackdropLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-md">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5 d-print-none" id="staticBackdropLabel">Booking Details</h1>
+          <h1 class="modal-title fs-5 d-none d-print-block" id="staticBackdropLabel">
+            Invoice Details
+          </h1>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <div v-if="bookingDetails">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item"><strong>Order ID : </strong>{{ bookingDetails.id }}</li>
+              <li class="list-group-item">
+                <strong>Transection ID : </strong>{{ bookingDetails.tran_id }}
+              </li>
+              <li class="list-group-item">
+                <strong>Booking Status : </strong>{{ bookingDetails.booking_status.toUpperCase() }}
+              </li>
+              <li class="list-group-item">
+                <strong>Transection Status : </strong>{{ bookingDetails.tran_status.toUpperCase() }}
+              </li>
+              <li class="list-group-item">
+                <strong>Arrival Status : </strong
+                >{{ bookingDetails.arrival ? 'arrived' : 'not arrived' }}
+              </li>
+              <li class="list-group-item">
+                <strong>Room Name : </strong>{{ bookingDetails.room_name }}
+              </li>
+              <li class="list-group-item">
+                <strong>Room No : </strong>{{ bookingDetails.room_no ?? 'not assign' }}
+              </li>
+              <li class="list-group-item">
+                <strong>Checkin : </strong>{{ dateFormatter(bookingDetails.checkin) }}
+              </li>
+              <li class="list-group-item">
+                <strong>Checkin : </strong>{{ dateFormatter(bookingDetails.checkout) }}
+              </li>
+              <li class="list-group-item">
+                <strong>Order Date : </strong>{{ dateFormatter(bookingDetails.created_at) }}
+              </li>
+              <li class="list-group-item">
+                <strong>Cost : </strong>{{ bookingDetails.price }} {{ bookingDetails.currency }} per
+                night.
+              </li>
+              <li class="list-group-item">
+                <strong>Total Cost : </strong>{{ bookingDetails.total_pay }}
+                {{ bookingDetails.currency }}
+              </li>
+              <li class="list-group-item">
+                <strong>User Name : </strong>{{ bookingDetails.user_name }}
+              </li>
+              <li class="list-group-item">
+                <strong>User Email : </strong>{{ bookingDetails.email }}
+              </li>
+              <li class="list-group-item">
+                <strong>User Phone : </strong>{{ bookingDetails.phone }}
+              </li>
+            </ul>
+          </div>
+          <div class="d-print-none">
+            <hr />
+            <button
+              type="button"
+              class="btn btn-primary btn-sm text-center m-auto d-block py-2"
+              @click="printInvoice()"
+            >
+              <i class="bi bi-printer"></i>
+              Print Invoice
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Booking Details Modal End -->
 </template>
