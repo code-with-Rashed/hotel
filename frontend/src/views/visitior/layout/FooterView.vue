@@ -35,7 +35,7 @@ onMounted(() => {
 </script>
 <template>
   <!-- Footer Start -->
-  <footer>
+  <footer class="d-print-none">
     <div class="container-fluid bg-white mt-5">
       <div class="row">
         <!-- show site description start -->

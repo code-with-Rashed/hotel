@@ -60,13 +60,13 @@ onMounted(() => {
 </script>
 <template>
   <!-- if the site is shutdown. then show this message -->
-  <div class="text-center bg-warning f-bold p-2" v-show="storeShutdown.shutdown">
+  <div class="text-center bg-warning f-bold p-2 d-print-none" v-show="storeShutdown.shutdown">
     Bookings are temporarily closed
   </div>
   <!-- Navbar start -->
   <nav
     id="nav-bar"
-    class="navbar navbar-expand-lg bg-white navbar-light px-lg-3 py-lg-2 shadow-sm sticky-top"
+    class="navbar navbar-expand-lg bg-white navbar-light px-lg-3 py-lg-2 shadow-sm sticky-top d-print-none"
   >
     <div class="container-fluid">
       <!-- show logo -->
