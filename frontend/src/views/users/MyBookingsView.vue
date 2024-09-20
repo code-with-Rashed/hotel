@@ -2,7 +2,7 @@
 import LayoutView from '../visitior/layout/LayoutView.vue'
 import useMyBookingsApi from '@/composables/users/myBookings'
 import { onMounted, ref } from 'vue'
-import { dateFormatter } from '@/helpers/dateTime'
+import { dateFormatter, timeFormatter } from '@/helpers/dateTime'
 import ToastMessage from '@/components/ToastMessage.vue'
 import { useToastMessageStore } from '@/stores/toastMessage'
 
@@ -103,7 +103,8 @@ const cancelNow = async () => {
                       {{ booking.booking_details.total_pay }} <br />
                       <strong>Paid Amount : </strong><span class="fs-5">&#2547;</span>
                       {{ booking.amount }} <br />
-                      <strong>Order Date : </strong>{{ dateFormatter(booking.created_at) }}
+                      <strong>Order Date : </strong>{{ dateFormatter(booking.created_at) }} |
+                      {{ timeFormatter(booking.created_at) }}
                     </div>
                     <div class="mt-3">
                       <div>
@@ -254,7 +255,8 @@ const cancelNow = async () => {
                 <strong>Checkin : </strong>{{ dateFormatter(bookingDetails.checkout) }}
               </li>
               <li class="list-group-item">
-                <strong>Order Date : </strong>{{ dateFormatter(bookingDetails.created_at) }}
+                <strong>Order Date : </strong>{{ dateFormatter(bookingDetails.created_at) }} |
+                {{ timeFormatter(bookingDetails.created_at) }}
               </li>
               <li class="list-group-item">
                 <strong>Cost : </strong>{{ bookingDetails.booking_details.price }}

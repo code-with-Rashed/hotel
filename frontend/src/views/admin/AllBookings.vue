@@ -1,7 +1,7 @@
 <script setup>
 import LayoutView from './layout/LayoutView.vue'
 import useBookingsApi from '@/composables/admin/bookingsApi'
-import { dateFormatter } from '@/helpers/dateTime'
+import { dateFormatter, timeFormatter } from '@/helpers/dateTime'
 import { urlSplit } from '@/helpers/urlSplit'
 import { onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
@@ -52,7 +52,6 @@ watch(route, () => showAllBookings())
 const bookingDetails = ref(null)
 const assignBookingDetails = (index) => {
   bookingDetails.value = results.value.data.new_bookings.data[index]
-  console.log(bookingDetails.value)
 }
 // ---------------------------------------
 // Print booking Invoice
@@ -126,7 +125,8 @@ const printInvoice = () => {
                             <br />
                             <b>Paid : </b>&#2547; {{ booking.amount }}
                             <br />
-                            <b>Order Date : </b> {{ dateFormatter(booking.created_at) }}
+                            <b>Order Date : </b> {{ dateFormatter(booking.created_at) }} |
+                            {{ timeFormatter(booking.created_at) }}
                           </td>
                           <td>
                             <span
@@ -257,7 +257,8 @@ const printInvoice = () => {
                 <strong>Checkin : </strong>{{ dateFormatter(bookingDetails.checkout) }}
               </li>
               <li class="list-group-item">
-                <strong>Order Date : </strong>{{ dateFormatter(bookingDetails.created_at) }}
+                <strong>Order Date : </strong>{{ dateFormatter(bookingDetails.created_at) }} |
+                {{ timeFormatter(bookingDetails.created_at) }}
               </li>
               <li class="list-group-item">
                 <strong>Cost : </strong>{{ bookingDetails.price }} {{ bookingDetails.currency }} per
