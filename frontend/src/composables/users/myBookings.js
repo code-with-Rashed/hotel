@@ -30,7 +30,7 @@ export default function useMyBookingsApi() {
     }
   }
 
-  // send request for cancel booking 
+  // send request for cancel booking
   const put = async (order_id) => {
     results.value = []
     errors.value = null

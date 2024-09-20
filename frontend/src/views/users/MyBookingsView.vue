@@ -119,6 +119,7 @@ const cancelNow = async () => {
                               data-bs-target="#bookingDetailsModal"
                               @click="assignBookingDetails(index)"
                             >
+                              <i class="bi bi-file-earmark-arrow-down fw-bold"></i>
                               Download PDF
                             </button>
                           </template>
@@ -129,9 +130,11 @@ const cancelNow = async () => {
                               data-bs-target="#bookingDetailsModal"
                               @click="assignBookingDetails(index)"
                             >
+                              <i class="bi bi-file-earmark-arrow-down fw-bold"></i>
                               Download PDF
                             </button>
                             <button class="btn btn-primary btn-sm shadow-none me-1">
+                              <i class="bi bi-stars fw-bold"></i>
                               Rate & Review
                             </button>
                           </template>
@@ -143,6 +146,7 @@ const cancelNow = async () => {
                             data-bs-toggle="modal"
                             data-bs-target="#cancelBookingModal"
                           >
+                            <i class="bi bi-x-octagon fw-bold"></i>
                             Cancel my Booking
                           </button>
                         </template>
@@ -155,11 +159,13 @@ const cancelNow = async () => {
                             data-bs-target="#bookingDetailsModal"
                             @click="assignBookingDetails(index)"
                           >
+                            <i class="bi bi-file-earmark-arrow-down fw-bold"></i>
                             Download PDF
                           </button>
                         </template>
                         <template v-else>
                           <button class="btn btn-danger btn-sm shadow-none me-1">
+                            <i class="bi bi-cash-coin fw-bold"></i>
                             Refund in Proccess
                           </button>
                         </template>
@@ -171,6 +177,7 @@ const cancelNow = async () => {
                           data-bs-target="#bookingDetailsModal"
                           @click="assignBookingDetails(index)"
                         >
+                          <i class="bi bi-file-earmark-arrow-down fw-bold"></i>
                           Download PDF
                         </button>
                       </template>
