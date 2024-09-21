@@ -108,5 +108,32 @@ export default function useBookingsApi() {
       errors.value = error
     }
   }
-  return { results, errors, getAllBookings, getNewBookings, getRefundBookings, roomAssign }
+
+  // send request for cancel booking
+  const cancelBooking = async (id) => {
+    results.value = []
+    errors.value = null
+    try {
+      const request = await fetch(url + '/cancel-booking/' + id, {
+        method: 'PUT',
+        headers: {
+          Accept: 'application/json',
+          Authorization: token
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+  return {
+    results,
+    errors,
+    getAllBookings,
+    getNewBookings,
+    getRefundBookings,
+    roomAssign,
+    cancelBooking
+  }
 }
