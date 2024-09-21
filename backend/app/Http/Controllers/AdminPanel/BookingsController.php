@@ -47,4 +47,21 @@ class BookingsController extends BaseController
             ->paginate(4);
         return $this->send_response('All booking record.', $all_bookings);
     }
+
+    // response refund booking records
+    public function refund_bookings($search = null)
+    {
+        $this->search = $search;
+        $refund_bookings["refund_bookings"] = BookingOrder::join("booking_details", "booking_orders.id", "booking_details.booking_order_id")
+            ->where([["booking_status", "=", "cancelled"], ["refund", "=", 0]])
+            ->where(function ($query) {
+                $query->where("tran_id", "like", "%$this->search%");
+                $query->orWhere("room_name", "like", "%$this->search%");
+                $query->orWhere("user_name", "like", "%$this->search%");
+                $query->orWhere("phone", "like", "%$this->search%");
+                $query->orWhere("email", "like", "%$this->search%");
+            })
+            ->paginate(4);
+        return $this->send_response('Refund booking records.', $refund_bookings);
+    }
 }
