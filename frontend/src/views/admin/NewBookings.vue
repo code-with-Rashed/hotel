@@ -3,11 +3,15 @@ import LayoutView from './layout/LayoutView.vue'
 import useBookingsApi from '@/composables/admin/bookingsApi'
 import { dateFormatter, timeFormatter } from '@/helpers/dateTime'
 import { urlSplit } from '@/helpers/urlSplit'
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { hideBsModal } from '@/helpers/hideBsModal'
+import ToastMessage from '@/components/ToastMessage.vue'
+import { useToastMessageStore } from '@/stores/toastMessage'
 
 const route = useRoute()
-const { results, getNewBookings } = useBookingsApi()
+const { results, errors, getNewBookings, roomAssign } = useBookingsApi()
+const storeToastMessage = useToastMessageStore()
 const search = ref(null)
 
 // get all new booking records
@@ -23,6 +27,39 @@ onMounted(() => showNewBookings())
 // page switching for pagination
 watch(route, () => showNewBookings())
 //------------------------------
+
+// assign room for user
+const assignRoom = reactive({
+  id: '',
+  room_no: ''
+})
+const setId = (id) => {
+  assignRoom.id = id
+}
+const assignRoomSubmitBtn = ref(true)
+const assignRoomNow = async () => {
+  assignRoomSubmitBtn.value = false
+  await roomAssign(assignRoom)
+  assignRoomSubmitBtn.value = true
+  if (results.value.success) {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+    hideBsModal('assign_room')
+    assignRoom.room_no = ''
+  } else {
+    let message = ''
+    message += '<strong>' + results.value.message + '</strong><br>'
+    if (results.value.message == 'validation error') {
+      results.value.data.forEach((element) => {
+        message += element + '<br>'
+      })
+    }
+    storeToastMessage.showToastMessage(results.value.success, message, 10000)
+  }
+  if (errors.value) {
+    storeToastMessage.showToastMessage(false, errors.value.message)
+  }
+  await showNewBookings()
+}
 </script>
 <template>
   <LayoutView>
@@ -100,6 +137,7 @@ watch(route, () => showNewBookings())
                               type="button"
                               data-bs-toggle="modal"
                               data-bs-target="#assign_room"
+                              @click="setId(booking.id)"
                             >
                               <i class="bi bi-check2-square"></i> Assign Room
                             </button>
@@ -168,6 +206,66 @@ watch(route, () => showNewBookings())
           </div>
         </div>
       </div>
+      <!-- Room Assign Modal start -->
+      <div
+        class="modal fade"
+        id="assign_room"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabindex="-1"
+        aria-labelledby="staticBackdropLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <form @submit.prevent="assignRoomNow">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Assign Room</h5>
+                <button
+                  type="reset"
+                  class="btn-close shadow-none"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body">
+                <div class="mb-3">
+                  <label class="form-label fw-bold" for="room_no">Room Number</label>
+                  <input
+                    type="text"
+                    id="room_no"
+                    class="form-control shadow-none"
+                    title="Assign Room Number"
+                    required
+                    v-model.trim="assignRoom.room_no"
+                  />
+                </div>
+                <span class="badge rounded-pill bg-light text-dark mb-3 text-wrap lh-base">
+                  Note : Assign Room Number only when user has been arrived !
+                </span>
+              </div>
+              <div class="modal-footer">
+                <button type="reset" class="btn text-secondary shadow-none" data-bs-dismiss="modal">
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  class="btn btn-primary text-white shadow-none"
+                  v-if="assignRoomSubmitBtn"
+                >
+                  ASSIGN
+                </button>
+                <button class="btn btn-primary" type="button" disabled v-else>
+                  <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                  <span role="status"> Proccssing...</span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <!-- Room Assign Modal end -->
     </template>
   </LayoutView>
+  <ToastMessage />
 </template>

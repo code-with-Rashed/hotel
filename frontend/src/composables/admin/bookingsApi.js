@@ -88,5 +88,25 @@ export default function useBookingsApi() {
     }
   }
 
-  return { results, errors, getAllBookings, getNewBookings, getRefundBookings }
+  // assign room for users
+  const roomAssign = async (data) => {
+    results.value = []
+    errors.value = null
+    try {
+      const request = await fetch(url + '/room/assign', {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: token
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+  return { results, errors, getAllBookings, getNewBookings, getRefundBookings, roomAssign }
 }
