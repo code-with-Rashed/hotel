@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\AdminPanel;
 
 use App\Http\Controllers\BaseController;
+use App\Models\BookingDetail;
 use App\Models\BookingOrder;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class BookingsController extends BaseController
 {
@@ -63,5 +66,29 @@ class BookingsController extends BaseController
             })
             ->paginate(4);
         return $this->send_response('Refund booking records.', $refund_bookings);
+    }
+
+    // room assign for users
+    public function room_assign(Request $request)
+    {
+        $validation = Validator::make($request->all(), [
+            "id" => "required|integer",
+            "room_no" => "required"
+        ]);
+        if ($validation->fails()) {
+            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+        }
+
+        // user is arrived
+        $booking_order = BookingOrder::find($request->id);
+        $booking_order->arrival = 1;
+        $booking_order->save();
+
+        // user room is assigned
+        $booking_details = BookingDetail::where("booking_order_id", $request->id)->first();
+        $booking_details->room_no = $request->room_no;
+        $booking_details->save();
+
+        return $this->send_response("Room successfully assigned for user.");
     }
 }

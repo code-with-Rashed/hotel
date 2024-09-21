@@ -34,6 +34,7 @@ Route::prefix("/admin")->middleware("auth:sanctum")->group(function () {
     Route::get("/all/bookings/{search?}", [BookingsController::class, "all_bookings"]);
     Route::get("/new/bookings/{search?}", [BookingsController::class, "new_bookings"]);
     Route::get("/refund/bookings/{search?}", [BookingsController::class, "refund_bookings"]);
+    Route::put("/room/assign", [BookingsController::class, "room_assign"]);
 });
 //--------------------------
 
