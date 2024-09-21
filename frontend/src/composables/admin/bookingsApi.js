@@ -36,5 +36,31 @@ export default function useBookingsApi() {
     }
   }
 
-  return { results, errors, getAllBookings }
+  // fetch all new booking record
+  const getNewBookings = async (search = null, pagenumber = null) => {
+    results.value = []
+    errors.value = null
+    let finalurl = url + '/new/bookings'
+    if (search) {
+      finalurl = finalurl + '/' + search
+    }
+    if (pagenumber) {
+      finalurl = finalurl + '?page=' + pagenumber
+    }
+    try {
+      const request = await fetch(finalurl, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          Authorization: token
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+
+  return { results, errors, getAllBookings, getNewBookings }
 }
