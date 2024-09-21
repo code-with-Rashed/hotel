@@ -32,6 +32,7 @@ Route::prefix('/admin/profile')->group(function () {
 // Routes for booking record
 Route::prefix("/admin")->middleware("auth:sanctum")->group(function () {
     Route::get("/all/bookings/{search?}", [BookingsController::class, "all_bookings"]);
+    Route::get("/new/bookings/{search?}", [BookingsController::class, "new_bookings"]);
 });
 //--------------------------
 
