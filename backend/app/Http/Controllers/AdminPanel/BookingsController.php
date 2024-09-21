@@ -91,4 +91,14 @@ class BookingsController extends BaseController
 
         return $this->send_response("Room successfully assigned for user.");
     }
+
+    // cancel booking order
+    public function cancel($order_id)
+    {
+        $booking_order = BookingOrder::find($order_id);
+        $booking_order->booking_status = "cancelled";
+        $booking_order->refund = 0;
+        $booking_order->save();
+        return $this->send_response('The booking is cancelled. Refund in Proccess.');
+    }
 }
