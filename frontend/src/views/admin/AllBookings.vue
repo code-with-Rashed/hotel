@@ -51,7 +51,7 @@ watch(route, () => showAllBookings())
 // show booking details for print/download
 const bookingDetails = ref(null)
 const assignBookingDetails = (index) => {
-  bookingDetails.value = results.value.data.new_bookings.data[index]
+  bookingDetails.value = results.value.data.all_bookings.data[index]
 }
 // ---------------------------------------
 // Print booking Invoice
@@ -99,7 +99,7 @@ const printInvoice = () => {
                   <template v-if="reloader">
                     <template v-if="results.data">
                       <template
-                        v-for="(booking, index) in results.data.new_bookings.data"
+                        v-for="(booking, index) in results.data.all_bookings.data"
                         :key="booking.id"
                       >
                         <tr>
@@ -163,17 +163,17 @@ const printInvoice = () => {
               <!-- pagination template start -->
               <template v-if="results.data">
                 <span>{{
-                  `Showing ${results.data.new_bookings.from ?? 0} to ${results.data.new_bookings.to ?? 0} of
-                  ${results.data.new_bookings.total} entries`
+                  `Showing ${results.data.all_bookings.from ?? 0} to ${results.data.all_bookings.to ?? 0} of
+                  ${results.data.all_bookings.total} entries`
                 }}</span>
                 <ul class="pagination mt-2">
                   <li class="page-item">
                     <RouterLink
                       :to="{
                         query: {
-                          page: urlSplit(results.data.new_bookings.prev_page_url, '?page=')
-                            ? urlSplit(results.data.new_bookings.prev_page_url, '?page=').pop()
-                            : urlSplit(results.data.new_bookings.first_page_url, '?page=').pop()
+                          page: urlSplit(results.data.all_bookings.prev_page_url, '?page=')
+                            ? urlSplit(results.data.all_bookings.prev_page_url, '?page=').pop()
+                            : urlSplit(results.data.all_bookings.first_page_url, '?page=').pop()
                         }
                       }"
                       class="page-link shadow-none"
@@ -185,9 +185,9 @@ const printInvoice = () => {
                     <RouterLink
                       :to="{
                         query: {
-                          page: urlSplit(results.data.new_bookings.next_page_url, '?page=')
-                            ? urlSplit(results.data.new_bookings.next_page_url, '?page=').pop()
-                            : urlSplit(results.data.new_bookings.last_page_url, '?page=').pop()
+                          page: urlSplit(results.data.all_bookings.next_page_url, '?page=')
+                            ? urlSplit(results.data.all_bookings.next_page_url, '?page=').pop()
+                            : urlSplit(results.data.all_bookings.last_page_url, '?page=').pop()
                         }
                       }"
                       class="page-link shadow-none"
