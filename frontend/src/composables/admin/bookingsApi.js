@@ -62,5 +62,31 @@ export default function useBookingsApi() {
     }
   }
 
-  return { results, errors, getAllBookings, getNewBookings }
+  // fetch all refund booking record
+  const getRefundBookings = async (search = null, pagenumber = null) => {
+    results.value = []
+    errors.value = null
+    let finalurl = url + '/refund/bookings'
+    if (search) {
+      finalurl = finalurl + '/' + search
+    }
+    if (pagenumber) {
+      finalurl = finalurl + '?page=' + pagenumber
+    }
+    try {
+      const request = await fetch(finalurl, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          Authorization: token
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+
+  return { results, errors, getAllBookings, getNewBookings, getRefundBookings }
 }
