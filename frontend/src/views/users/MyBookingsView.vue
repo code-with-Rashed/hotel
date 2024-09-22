@@ -1,12 +1,13 @@
 <script setup>
 import LayoutView from '../visitior/layout/LayoutView.vue'
 import useMyBookingsApi from '@/composables/users/myBookings'
-import { onMounted, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { dateFormatter, timeFormatter } from '@/helpers/dateTime'
 import ToastMessage from '@/components/ToastMessage.vue'
 import { useToastMessageStore } from '@/stores/toastMessage'
+import { hideBsModal } from '@/helpers/hideBsModal'
 
-const { results, get, put } = useMyBookingsApi()
+const { results, get, put, sendRatingReview } = useMyBookingsApi()
 const storeToastMessage = useToastMessageStore()
 
 // show all order list
@@ -41,6 +42,34 @@ const cancelNow = async () => {
   if (results.value.success) {
     storeToastMessage.showToastMessage(results.value.success, results.value.message)
   }
+  await show()
+}
+// -----------------------
+
+// handle rating & review
+const ratingReview = reactive({
+  booking_order_id: '',
+  room_id: '',
+  user_id: '',
+  star: '5',
+  message: ''
+})
+const assignRatingReviewRelation = (index) => {
+  ratingReview.booking_order_id = results.value.data[index].id
+  ratingReview.room_id = results.value.data[index].room_id
+  ratingReview.user_id = results.value.data[index].user_id
+}
+const sendFeedbackSubmitBtn = ref(true)
+const sendFeedbackNow = async () => {
+  sendFeedbackSubmitBtn.value = false
+  await sendRatingReview(ratingReview)
+  sendFeedbackSubmitBtn.value = true
+  if (results.value.success) {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+  }
+  ratingReview.star = '5'
+  ratingReview.message = ''
+  hideBsModal('ratingReview')
   await show()
 }
 </script>
@@ -134,7 +163,12 @@ const cancelNow = async () => {
                               <i class="bi bi-file-earmark-arrow-down fw-bold"></i>
                               Download PDF
                             </button>
-                            <button class="btn btn-primary btn-sm shadow-none me-1">
+                            <button
+                              class="btn btn-primary btn-sm shadow-none me-1"
+                              data-bs-toggle="modal"
+                              data-bs-target="#ratingReview"
+                              @click="assignRatingReviewRelation(index)"
+                            >
                               <i class="bi bi-stars fw-bold"></i>
                               Rate & Review
                             </button>
@@ -319,4 +353,71 @@ const cancelNow = async () => {
     </div>
   </div>
   <!-- Cancel Booking Warning Modal End -->
+
+  <!--  Rating & Review Modal Start -->
+  <div
+    class="modal fade"
+    id="ratingReview"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
+    tabindex="-1"
+    aria-labelledby="staticBackdropLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <form @submit.prevent="sendFeedbackNow">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">Rating & Review</h5>
+            <button
+              type="reset"
+              class="btn-close shadow-none"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label fw-bold">Feedback Label</label>
+              <select v-model="ratingReview.star" required class="form-control shadow-none">
+                <option value="5">Exelent</option>
+                <option value="4">Good</option>
+                <option value="3">Ok</option>
+                <option value="2">Poor</option>
+                <option value="1">Bad</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Feedback Message</label>
+              <textarea
+                name="message"
+                cols="1"
+                class="form-control shadow-none"
+                required
+                maxlength="255"
+                v-model="ratingReview.message"
+              ></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="reset" class="btn text-secondary shadow-none" data-bs-dismiss="modal">
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary text-white shadow-none"
+              v-if="sendFeedbackSubmitBtn"
+            >
+              SUBMIT
+            </button>
+            <button class="btn btn-primary" type="button" disabled v-else>
+              <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+              <span role="status"> Proccssing...</span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!--  Rating & Review Modal End -->
 </template>

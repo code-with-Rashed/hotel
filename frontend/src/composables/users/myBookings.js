@@ -51,5 +51,26 @@ export default function useMyBookingsApi() {
     }
   }
 
-  return { results, errors, get, put }
+  // send  Rating & Review
+  const sendRatingReview = async (data) => {
+    results.value = []
+    errors.value = null
+    try {
+      const request = await fetch(url + '/rating-review', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: token
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+
+  return { results, errors, get, put, sendRatingReview }
 }
