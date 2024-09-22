@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId("user_id")->constrained("users");
             $table->integer("star");
             $table->string("message");
+            $table->boolean("seen")->default(0);
             $table->timestamps();
         });
     }
