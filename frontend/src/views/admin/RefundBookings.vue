@@ -5,10 +5,13 @@ import { dateFormatter, timeFormatter } from '@/helpers/dateTime'
 import { urlSplit } from '@/helpers/urlSplit'
 import { onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import ToastMessage from '@/components/ToastMessage.vue'
+import { useToastMessageStore } from '@/stores/toastMessage'
 
 const route = useRoute()
-const { results, getRefundBookings } = useBookingsApi()
+const { results, errors, getRefundBookings, refundBooking } = useBookingsApi()
 const search = ref(null)
+const storeToastMessage = useToastMessageStore()
 
 // get all refund booking records
 const reloader = ref(true)
@@ -23,6 +26,29 @@ onMounted(() => showRefundBookings())
 // page switching for pagination
 watch(route, () => showRefundBookings())
 //------------------------------
+
+// set booking id
+const bookingId = ref(null)
+const setBookingId = (id) => {
+  bookingId.value = id
+}
+// -------------
+
+// request to refund
+const refundNow = async () => {
+  storeToastMessage.showToastMessage(true, 'Please Wait. Refund payment in proccess.')
+  await refundBooking(bookingId.value)
+  if (results.value.success) {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+  } else {
+    storeToastMessage.showToastMessage(results.value.success, results.value.message)
+  }
+  if (errors.value) {
+    storeToastMessage.showToastMessage(false, errors.value.message)
+  }
+  await showRefundBookings()
+}
+// -----------------------
 </script>
 <template>
   <LayoutView>
@@ -93,7 +119,8 @@ watch(route, () => showRefundBookings())
                               class="btn text-white fw-bold btn-sm btn-primary shadow-none"
                               type="button"
                               data-bs-toggle="modal"
-                              data-bs-target="#assign_room"
+                              data-bs-target="#refundBookingConfirmation"
+                              @click="setBookingId(booking.id)"
                             >
                               <i class="bi bi-cash-stack"></i> Refund
                             </button>
@@ -156,5 +183,31 @@ watch(route, () => showRefundBookings())
         </div>
       </div>
     </template>
+    <ToastMessage />
   </LayoutView>
+  <!-- Refund Booking Confirmation Start -->
+  <div class="modal fade" id="refundBookingConfirmation" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <strong>Are You Sure You Wan't to Refund this booking mony ?</strong>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @click="refundNow">
+            Yes
+          </button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Refund Booking Confirmation Modal End -->
 </template>

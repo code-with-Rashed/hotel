@@ -127,6 +127,26 @@ export default function useBookingsApi() {
       errors.value = error
     }
   }
+
+  // send request for refund booking
+  const refundBooking = async (id) => {
+    results.value = []
+    errors.value = null
+    try {
+      const request = await fetch(url + '/refund-booking/' + id, {
+        method: 'PUT',
+        headers: {
+          Accept: 'application/json',
+          Authorization: token
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+
   return {
     results,
     errors,
@@ -134,6 +154,7 @@ export default function useBookingsApi() {
     getNewBookings,
     getRefundBookings,
     roomAssign,
-    cancelBooking
+    cancelBooking,
+    refundBooking
   }
 }
