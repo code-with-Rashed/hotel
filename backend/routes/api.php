@@ -11,6 +11,7 @@ use App\Http\Controllers\AdminPanel\FaviconController;
 use App\Http\Controllers\AdminPanel\FeatureController;
 use App\Http\Controllers\AdminPanel\InformationController;
 use App\Http\Controllers\AdminPanel\LogoController;
+use App\Http\Controllers\AdminPanel\RatingReviewController;
 use App\Http\Controllers\AdminPanel\RoomController;
 use App\Http\Controllers\AdminPanel\RoomFeatureFacilityController;
 use App\Http\Controllers\AdminPanel\RoomImageController;
@@ -138,6 +139,13 @@ Route::prefix("/admin/room/feature-facility")->middleware("auth:sanctum")->group
     Route::get("/facilities-id/{room_id}", [RoomFeatureFacilityController::class, "get_room_facilities_id"]);
     Route::post("/create", [RoomFeatureFacilityController::class, "create"]);
     Route::put("/update", [RoomFeatureFacilityController::class, "update"]);
+});
+
+// Roome ratings & reviews routes for admin panel
+Route::prefix("/admin/room/ratings-reviews")->middleware("auth:sanctum")->group(function () {
+    Route::get("/", [RatingReviewController::class, "index"]);
+    Route::put("/status/{id}", [RatingReviewController::class, "status"]);
+    Route::delete("/delete/{id}", [RatingReviewController::class, "delete"]);
 });
 
 // visitior panel related routes
