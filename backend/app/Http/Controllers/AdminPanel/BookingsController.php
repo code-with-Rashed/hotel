@@ -7,6 +7,7 @@ use App\Models\BookingDetail;
 use App\Models\BookingOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use \Raziul\Sslcommerz\Facades\Sslcommerz;
 
 class BookingsController extends BaseController
 {
@@ -100,5 +101,22 @@ class BookingsController extends BaseController
         $booking_order->refund = 0;
         $booking_order->save();
         return $this->send_response('The booking is cancelled. Refund in Proccess.');
+    }
+
+    // refund booking payment
+    public function refund($booking_order_id)
+    {
+        $booking_order = BookingOrder::find($booking_order_id);
+        if (is_null($booking_order)) {
+            return $this->send_error("Data not found.");
+        }
+        $sslcommerz = Sslcommerz::refundPayment($booking_order->bank_tran_id, $booking_order->amount, "Booking Cancelled.");
+        if ($sslcommerz->success()) {
+            $booking_order->booking_status = "refunded";
+            $booking_order->refund = 1;
+            $booking_order->save();
+            return $this->send_response("Payment Successfully Refunded .");
+        }
+        return $this->send_error($sslcommerz->failedReason());
     }
 }
