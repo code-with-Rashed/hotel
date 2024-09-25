@@ -158,6 +158,7 @@ use App\Http\Controllers\VisitiorPanel\CarouselController as VisitiorPanelCarous
 use App\Http\Controllers\VisitiorPanel\TeamMemberController;
 use App\Http\Controllers\VisitiorPanel\SettingController as VisitiorPanelSettingController;
 use App\Http\Controllers\VisitiorPanel\LogoController as VisitiorPanelLogoController;
+use App\Http\Controllers\VisitiorPanel\RatingReviewController as VisitiorPanelRatingReviewController;
 use App\Http\Controllers\VisitiorPanel\RoomController as VisitiorPanelRoomController;
 
 // room facility routes for visitiors
@@ -188,6 +189,9 @@ Route::get('/confirm/room/{id}', [VisitiorPanelRoomController::class, 'confirm_r
 
 // Room booking information routes
 Route::post('/check/booking/information', [BookingInformationController::class, 'check_booking_information']);
+
+// Rating & Review for room
+Route::get('/rating-review/{room_id}', [VisitiorPanelRatingReviewController::class, 'index']);
 
 // Routes for users
 use App\Http\Controllers\UsersPanel\UserController;
