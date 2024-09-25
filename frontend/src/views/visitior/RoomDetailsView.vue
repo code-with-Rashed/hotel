@@ -3,14 +3,17 @@ import LayoutView from './layout/LayoutView.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ref, onMounted, watch } from 'vue'
 import useRoomApi from '@/composables/visitor/roomApi'
+import useRatingReviewApi from '@/composables/visitor/ratingReviewApi'
 import ToastMessage from '@/components/ToastMessage.vue'
 import { useToastMessageStore } from '@/stores/toastMessage'
 import { useUserCredentialsStore } from '@/stores/userCredentials'
 import { useShutdownStore } from '@/stores/shutdown'
+import { dateFormatter } from '@/helpers/dateTime'
 
 const { params } = useRoute()
 const router = useRouter()
 const { results: roomResults, room } = useRoomApi()
+const { results: ratingReviewResults, get: getRatingReview } = useRatingReviewApi()
 const storeToastMessage = useToastMessageStore()
 const storeUserCredentials = useUserCredentialsStore()
 const storeShutdown = useShutdownStore()
@@ -52,8 +55,15 @@ watch(
 )
 // -------------------------
 
+// show rating & review for room
+const showRatingReview = async () => {
+  await getRatingReview(params.id)
+}
+// -----------------------------
+
 onMounted(() => {
   showRoom()
+  showRatingReview()
 })
 </script>
 <template>
@@ -180,6 +190,63 @@ onMounted(() => {
             </div>
           </template>
         </div>
+        <!-- Render Rating & Review Start -->
+        <template v-if="ratingReviewResults.data && ratingReviewResults.data.rating_review.length">
+          <div class="row">
+            <div class="col-12 mt-4">
+              <h5>Ratings & Riviews</h5>
+              <div class="accordion" id="accordionPanelsStayOpenExample">
+                <template
+                  v-for="(ratingReview, i) in ratingReviewResults.data.rating_review"
+                  :key="ratingReview.id"
+                >
+                  <div class="accordion-item">
+                    <h2 class="accordion-header">
+                      <button
+                        class="accordion-button"
+                        :class="{ collapsed: i == 0 ? false : true }"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        :data-bs-target="`#panelsStayOpen-collapse-${i}`"
+                        aria-expanded="true"
+                        :aria-controls="`panelsStayOpen-collapse-${i}`"
+                      >
+                        <img
+                          :src="ratingReview.user.photo"
+                          alt="profile"
+                          width="36px"
+                          class="rounded-circle"
+                        /><strong class="text-dark ms-2">{{ ratingReview.user.name }}</strong>
+                      </button>
+                    </h2>
+                    <div
+                      :id="`panelsStayOpen-collapse-${i}`"
+                      class="accordion-collapse collapse"
+                      :class="{ show: i == 0 ? true : false }"
+                    >
+                      <div class="accordion-body">
+                        <span class="badge rounded-pill bg-light text-dark text-wrap"
+                          ><i class="bi bi-calendar3 me-1"></i
+                          >{{ dateFormatter(ratingReview.created_at) }}
+                        </span>
+                        <span class="badge rounded-pill bg-light text-dark text-wrap">
+                          <i class="text-primary fw-bold">Ratings : </i>
+                          <i
+                            class="bi bi-star-fill text-warning"
+                            v-for="s in ratingReview.star"
+                            :key="s"
+                          ></i>
+                        </span>
+                        <p class="m-3">{{ ratingReview.message }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </div>
+        </template>
+        <!-- Render Rating & Review End -->
       </div>
     </template>
   </LayoutView>
