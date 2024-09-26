@@ -245,7 +245,17 @@ onMounted(() => {
                           >
                         </div>
                       </div>
-                      <div class="col-md-2 mt-lg-0 mt-md-0 mt-4 text-center">
+                      <div class="col-md-2 mt-lg-0 mt-md-0 mt-2 text-center">
+                        <span
+                          class="mb-2 badge rounded-pill bg-light text-dark text-wrap"
+                          title="Average Ratings."
+                        >
+                          <i
+                            class="bi bi-star-fill text-warning"
+                            v-for="s in Math.ceil(room.rating_review_avg_star)"
+                            :key="s"
+                          ></i>
+                        </span>
                         <h6 class="mb-3">
                           <span class="badge rounded-pill bg-light text-dark text-wrap"
                             ><strong>&#2547;</strong> {{ room.price }} Per Night</span
