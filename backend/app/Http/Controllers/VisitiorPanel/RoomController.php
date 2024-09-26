@@ -19,7 +19,7 @@ class RoomController extends BaseController
     // response single room related data
     public function room($id)
     {
-        $results["room"] = Room::with(['features:name', 'facilities:name', 'images:image,room_id'])->find($id);
+        $results["room"] = Room::with(['features:name', 'facilities:name', 'images:image,room_id'])->withAvg('rating_review', 'star')->find($id);
         return $this->send_response(message: "Room details.", results: $results);
     }
 
