@@ -58,26 +58,8 @@ watch(
 // show rating & review for room
 const showRatingReview = async () => {
   await getRatingReview(params.id)
-  await averageRating()
 }
 // -----------------------------
-
-// calculate average rating
-const avg = ref(null)
-const averageRating = () => {
-  const rating = []
-  let sum = 0
-  if (ratingReviewResults.value.data.rating_review.length > 0) {
-    ratingReviewResults.value.data.rating_review.forEach((n) => {
-      rating.push(n.star)
-    })
-    rating.forEach((star) => {
-      sum += star
-    })
-    avg.value = Math.ceil(sum / rating.length)
-  }
-}
-// ------------------------
 
 onMounted(() => {
   showRoom()
@@ -180,10 +162,14 @@ onMounted(() => {
                         >{{ roomDetails.area }} Squarefit</span
                       >
                     </div>
-                    <div class="area mb-3" v-if="avg">
+                    <div class="area mb-3" v-if="roomDetails.rating_review_avg_star">
                       <h6 class="mb-1">Average Rating</h6>
                       <span class="badge rounded-pill bg-light text-dark text-wrap">
-                        <i class="bi bi-star-fill text-warning" v-for="s in avg" :key="s"></i>
+                        <i
+                          class="bi bi-star-fill text-warning"
+                          v-for="s in Math.ceil(roomDetails.rating_review_avg_star)"
+                          :key="s"
+                        ></i>
                       </span>
                     </div>
                     <button
