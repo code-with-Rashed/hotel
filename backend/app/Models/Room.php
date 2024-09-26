@@ -26,4 +26,10 @@ class Room extends Model
     {
         return $this->belongsToMany(Facility::class, 'room_facilities');
     }
+
+    // assigned room ratings & reviews
+    public function rating_review()
+    {
+        return $this->hasMany(RatingReview::class);
+    }
 }
