@@ -1,6 +1,6 @@
 <script setup>
 import LayoutView from './layout/LayoutView.vue'
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, reactive } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { urlBasename } from '@/helpers/urlBasename'
 import useCarouselApi from '@/composables/visitor/carouselApi'
@@ -39,6 +39,21 @@ const maximumPerson = async () => {
   children.value = roomResults.value.data.children
 }
 // -------------------------
+
+// prepare by room searching for pesonal need
+const searchBtn = ref(true)
+const search = reactive({
+  checkin: '',
+  checkout: '',
+  adult: 1,
+  children: 1
+})
+const searchNow = async () => {
+  searchBtn.value = false
+  await router.push({ name: 'rooms-page', query: search })
+  searchBtn.value = true
+}
+// --------------------
 
 // show all room related record
 const roomReloader = ref(true)
@@ -151,36 +166,54 @@ onMounted(() => {
       </div>
       <!-- Carousel end -->
 
+      <!-- check available room by personal need -->
       <div class="container availability-form">
         <div class="row">
           <div class="col-lg-12 bg-white shadow p-4 rounded">
             <h5 class="mb-4">Check Booking Availability</h5>
-            <form>
+            <form @submit.prevent="searchNow">
               <input type="hidden" name="check-booking-availability" />
               <div class="row align-items-end">
                 <div class="col-lg-3 mb-3">
                   <label class="form-label fw-bold">Check-in</label>
-                  <input type="date" class="form-control shadow-none" name="checkin" />
+                  <input
+                    type="date"
+                    class="form-control shadow-none"
+                    v-model="search.checkin"
+                    required
+                  />
                 </div>
                 <div class="col-lg-3 mb-3">
                   <label class="form-label fw-bold">Check-out</label>
-                  <input type="date" class="form-control shadow-none" name="checkout" />
+                  <input
+                    type="date"
+                    class="form-control shadow-none"
+                    v-model="search.checkout"
+                    required
+                  />
                 </div>
                 <div class="col-lg-3 mb-3">
                   <label class="form-label fw-bold">Adult</label>
-                  <select class="form-select shadow-none">
+                  <select class="form-select shadow-none" v-model="search.adult" required>
                     <option :value="c" v-for="c in adult" :key="c">{{ c }}</option>
                   </select>
                 </div>
                 <div class="col-lg-2 mb-3">
                   <label class="form-label fw-bold">Children</label>
-                  <select class="form-select shadow-none" required>
+                  <select class="form-select shadow-none" v-model="search.children" required>
                     <option :value="c" v-for="c in children" :key="c">{{ c }}</option>
                   </select>
                 </div>
                 <div class="col-lg-1 mb-3">
-                  <button type="submit" class="btn text-white dhadow-none btn-primary">
+                  <button
+                    type="submit"
+                    class="btn text-white dhadow-none btn-primary"
+                    v-if="searchBtn"
+                  >
                     Submit
+                  </button>
+                  <button class="btn btn-sm btn-primary" type="button" disabled v-else>
+                    Proccssing...
                   </button>
                 </div>
               </div>
