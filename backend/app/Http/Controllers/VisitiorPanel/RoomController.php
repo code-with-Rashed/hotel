@@ -16,6 +16,14 @@ class RoomController extends BaseController
         return $this->send_response(message: "Room details.", results: $results);
     }
 
+    // response maximum adult & children number
+    public function max()
+    {
+        $results["adult"] = Room::max('adult');
+        $results["children"] = Room::max('children');
+        return $this->send_response(message: "Maximum adult & children stay in one room at the same time.", results: $results);
+    }
+
     // response single room related data
     public function room($id)
     {
