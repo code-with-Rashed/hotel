@@ -1,15 +1,25 @@
 <script setup>
 import LayoutView from './layout/LayoutView.vue'
 import { ref, onMounted, watch } from 'vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import { urlBasename } from '@/helpers/urlBasename'
 import useCarouselApi from '@/composables/visitor/carouselApi'
 import useFacilityApi from '@/composables/visitor/facilityApi'
 import useAddressApi from '@/composables/visitor/addressApi'
+import useRoomApi from '@/composables/visitor/roomApi'
+import { useUserCredentialsStore } from '@/stores/userCredentials'
+import ToastMessage from '@/components/ToastMessage.vue'
+import { useToastMessageStore } from '@/stores/toastMessage'
+import { useShutdownStore } from '@/stores/shutdown'
 
 const { results: carouselResults, get: getCarousel } = useCarouselApi()
 const { results: facilityResults, get: getFacility } = useFacilityApi()
 const { results: addressResults, get: getAddress } = useAddressApi()
+const { results: roomResults, allRoom } = useRoomApi()
+const storeUserCredentials = useUserCredentialsStore()
+const storeToastMessage = useToastMessageStore()
+const router = useRouter()
+const storeShutdown = useShutdownStore()
 
 // show all carousel image record
 const carouselReloader = ref(true)
@@ -20,6 +30,23 @@ const showCarousel = async () => {
 }
 // -------------------------
 
+// show all room related record
+const roomReloader = ref(true)
+const showRooms = async () => {
+  roomReloader.value = false
+  await allRoom()
+  roomReloader.value = true
+}
+// -------------------------
+// if any user is logedin ? then access specific routes
+const userStatus = (roomId) => {
+  if (storeUserCredentials.isUserAuthenticate) {
+    router.push({ name: 'confirm-booking', params: { id: roomId } })
+  } else {
+    storeToastMessage.showToastMessage(true, "Please Login you'r account.", 3000)
+  }
+}
+// -------------------------------
 // first time carousel runner
 const firstTimeRunCarousel = () => {
   setTimeout(() => {
@@ -58,6 +85,7 @@ const showAddress = async () => {
 
 onMounted(() => {
   showCarousel()
+  showRooms()
   showFacilities()
   showAddress()
 })
@@ -157,273 +185,103 @@ onMounted(() => {
         </div>
       </div>
 
+      <!-- show some rooms start-->
       <h2 class="text-center h-fonts mt-5 mb-4 pt-4 fw-bold">OUR ROOMS</h2>
       <div class="container">
         <div class="row">
-          <div class="col-lg-4 col-md-6 mb-4 g-0">
-            <div class="card border-0 shadow" style="max-width: 350px; margin: auto">
-              <img
-                src="http://localhost/hotel/images/rooms/IMG25375.png"
-                alt="card-img"
-                class="card-img-top"
-              />
+          <template v-if="roomReloader">
+            <template v-if="roomResults.data">
+              <template v-for="room in roomResults.data.rooms.data" :key="room.id">
+                <div class="col-lg-4 col-md-6 mb-4 g-0">
+                  <div class="card border-0 shadow" style="max-width: 350px; margin: auto">
+                    <img :src="room.images[0].image" alt="card-img" class="card-img-top" />
 
-              <div class="card-body">
-                <h5 class="mb-2 card-title">Cupple</h5>
+                    <div class="card-body">
+                      <h5 class="mb-2 card-title">{{ room.name }}</h5>
 
-                <h6 class="mb-3">
-                  <span class="badge rounded-pill bg-light text-dark text-wrap">৳ 45654</span> Per
-                  Night
-                </h6>
+                      <h6 class="mb-3">
+                        <span class="badge rounded-pill bg-light text-dark text-wrap"
+                          ><strong>&#2547;</strong> {{ room.price }}</span
+                        >
+                        Per Night
+                      </h6>
 
-                <div class="features mb-4">
-                  <h6 class="mb-1">Features</h6>
-                  <span class="badge rounded-pill bg-light text-dark text-wrap me-1 mb-1"
-                    >Belcony</span
-                  >
-                  <span class="badge rounded-pill bg-light text-dark text-wrap me-1 mb-1"
-                    >Buth</span
-                  >
-                  <span class="badge rounded-pill bg-light text-dark text-wrap me-1 mb-1"
-                    >Door</span
-                  >
-                  <span class="badge rounded-pill bg-light text-dark text-wrap me-1 mb-1"
-                    >Window</span
-                  >
-                </div>
+                      <div class="features mb-4">
+                        <h6 class="mb-1">Features</h6>
+                        <span
+                          class="badge rounded-pill bg-light text-dark text-wrap me-1 mb-1"
+                          v-for="(feature, i) in room.features"
+                          :key="i"
+                          >{{ feature.name }}</span
+                        >
+                      </div>
 
-                <div class="facilities mb-4">
-                  <h6 class="mb-1">Facilities</h6>
-                  <span class="badge text-wrap text-dark bg-light rounded-pill me-1 mb-1"
-                    >Telivision</span
-                  >
-                  <span class="badge text-wrap text-dark bg-light rounded-pill me-1 mb-1">Ac</span>
-                  <span class="badge text-wrap text-dark bg-light rounded-pill me-1 mb-1"
-                    >Cleaner</span
-                  >
-                  <span class="badge text-wrap text-dark bg-light rounded-pill me-1 mb-1"
-                    >Hitter</span
-                  >
-                  <span class="badge text-wrap text-dark bg-light rounded-pill me-1 mb-1"
-                    >Micro oven</span
-                  >
-                </div>
+                      <div class="facilities mb-4">
+                        <h6 class="mb-1">Facilities</h6>
+                        <span
+                          class="badge text-wrap text-dark bg-light rounded-pill me-1 mb-1"
+                          v-for="(facility, i) in room.facilities"
+                          :key="i"
+                          >{{ facility.name }}</span
+                        >
+                      </div>
 
-                <div class="guest mb-4">
-                  <h6 class="mb-1">Guest</h6>
-                  <span class="badge rounded-pill bg-light text-dark text-wrap me-1 mb-1"
-                    >5 Adult</span
-                  >
-                  <span class="badge rounded-pill bg-light text-dark text-wrap me-1 mb-1"
-                    >5 Children</span
-                  >
-                </div>
+                      <div class="guest mb-4">
+                        <h6 class="mb-1">Guest</h6>
+                        <span class="badge rounded-pill bg-light text-dark text-wrap me-1 mb-1"
+                          >{{ room.adult }} Adult</span
+                        >
+                        <span class="badge rounded-pill bg-light text-dark text-wrap me-1 mb-1"
+                          >{{ room.children }} Children</span
+                        >
+                      </div>
 
-                <div class="area mb-4">
-                  <h6 class="mb-1">Area</h6>
-                  <span class="badge rounded-pill bg-light text-dark text-wrap"
-                    >200&nbsp; Squarefit</span
-                  >
+                      <div class="area mb-4">
+                        <h6 class="mb-1">Area</h6>
+                        <span class="badge rounded-pill bg-light text-dark text-wrap"
+                          >{{ room.area }}&nbsp; Squarefit</span
+                        >
+                      </div>
+                      <div class="rating mb-4">
+                        <h6 class="mb-1">Average Rating</h6>
+                        <span class="badge bg-light rounded-pill">
+                          <i
+                            class="bi bi-star-fill text-warning"
+                            v-for="s in Math.ceil(room.rating_review_avg_star)"
+                            :key="s"
+                          ></i>
+                        </span>
+                      </div>
+                      <div class="d-flex mb-2 justify-content-evenly">
+                        <button
+                          @click="userStatus(room.id)"
+                          class="btn btn-sm btn-primary text-white shadow-none"
+                          v-if="!storeShutdown.shutdown"
+                        >
+                          Book Now
+                        </button>
+                        <RouterLink
+                          :to="{ name: 'room-details', params: { id: room.id } }"
+                          class="btn btn-sm btn-outline-dark shadow-none"
+                          >More Details
+                        </RouterLink>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div class="rating mb-4">
-                  <h6 class="mb-1">Average Rating</h6>
-                  <span class="badge bg-light rounded-pill">
-                    <i class="bi bi-star-fill text-warning"></i>
-                    <i class="bi bi-star-fill text-warning"></i>
-                    <i class="bi bi-star-fill text-warning"></i>
-                    <i class="bi bi-star-fill text-warning"></i>
-                  </span>
-                </div>
-                <div class="d-flex mb-2 justify-content-evenly">
-                  <button
-                    onclick="user_status(0 , 4)"
-                    class="btn btn-sm custom-bg text-white shadow-none"
-                  >
-                    Book Now
-                  </button>
-                  <a href="room_details.php?id=4" class="btn btn-sm btn-outline-dark shadow-none"
-                    >More Details</a
-                  >
-                </div>
+              </template>
+            </template>
+          </template>
+          <template v-else>
+            <div class="text-center mx-3">
+              <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
               </div>
             </div>
-          </div>
-          <div class="col-lg-4 col-md-6 mb-4 g-0">
-            <div class="card border-0 shadow" style="max-width: 350px; margin: auto">
-              <img
-                src="http://localhost/hotel/images/rooms/IMG33142.png"
-                alt="card-img"
-                class="card-img-top"
-              />
-
-              <div class="card-body">
-                <h5 class="mb-2 card-title">Duplex</h5>
-
-                <h6 class="mb-3">
-                  <span class="badge rounded-pill bg-light text-dark text-wrap">৳ 12000</span> Per
-                  Night
-                </h6>
-
-                <div class="features mb-4">
-                  <h6 class="mb-1">Features</h6>
-                  <span class="badge rounded-pill bg-light text-dark text-wrap me-1 mb-1"
-                    >Belcony</span
-                  >
-                  <span class="badge rounded-pill bg-light text-dark text-wrap me-1 mb-1"
-                    >Buth</span
-                  >
-                  <span class="badge rounded-pill bg-light text-dark text-wrap me-1 mb-1"
-                    >Window</span
-                  >
-                </div>
-
-                <div class="facilities mb-4">
-                  <h6 class="mb-1">Facilities</h6>
-                  <span class="badge text-wrap text-dark bg-light rounded-pill me-1 mb-1"
-                    >wifi</span
-                  >
-                  <span class="badge text-wrap text-dark bg-light rounded-pill me-1 mb-1"
-                    >Telivision</span
-                  >
-                  <span class="badge text-wrap text-dark bg-light rounded-pill me-1 mb-1">Ac</span>
-                  <span class="badge text-wrap text-dark bg-light rounded-pill me-1 mb-1"
-                    >Cleaner</span
-                  >
-                  <span class="badge text-wrap text-dark bg-light rounded-pill me-1 mb-1"
-                    >Hitter</span
-                  >
-                  <span class="badge text-wrap text-dark bg-light rounded-pill me-1 mb-1"
-                    >Micro oven</span
-                  >
-                </div>
-
-                <div class="guest mb-4">
-                  <h6 class="mb-1">Guest</h6>
-                  <span class="badge rounded-pill bg-light text-dark text-wrap me-1 mb-1"
-                    >5 Adult</span
-                  >
-                  <span class="badge rounded-pill bg-light text-dark text-wrap me-1 mb-1"
-                    >6 Children</span
-                  >
-                </div>
-
-                <div class="area mb-4">
-                  <h6 class="mb-1">Area</h6>
-                  <span class="badge rounded-pill bg-light text-dark text-wrap"
-                    >120&nbsp; Squarefit</span
-                  >
-                </div>
-                <div class="rating mb-4">
-                  <h6 class="mb-1">Average Rating</h6>
-                  <span class="badge bg-light rounded-pill">
-                    <i class="bi bi-star-fill text-warning"></i>
-                    <i class="bi bi-star-fill text-warning"></i>
-                    <i class="bi bi-star-fill text-warning"></i>
-                    <i class="bi bi-star-fill text-warning"></i>
-                    <i class="bi bi-star-fill text-warning"></i>
-                  </span>
-                </div>
-                <div class="d-flex mb-2 justify-content-evenly">
-                  <button
-                    onclick="user_status(0 , 3)"
-                    class="btn btn-sm custom-bg text-white shadow-none"
-                  >
-                    Book Now
-                  </button>
-                  <a href="room_details.php?id=3" class="btn btn-sm btn-outline-dark shadow-none"
-                    >More Details</a
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-4 col-md-6 mb-4 g-0">
-            <div class="card border-0 shadow" style="max-width: 350px; margin: auto">
-              <img
-                src="http://localhost/hotel/images/rooms/IMG42815.png"
-                alt="card-img"
-                class="card-img-top"
-              />
-
-              <div class="card-body">
-                <h5 class="mb-2 card-title">Laxary</h5>
-
-                <h6 class="mb-3">
-                  <span class="badge rounded-pill bg-light text-dark text-wrap">৳ 3223</span> Per
-                  Night
-                </h6>
-
-                <div class="features mb-4">
-                  <h6 class="mb-1">Features</h6>
-                  <span class="badge rounded-pill bg-light text-dark text-wrap me-1 mb-1"
-                    >Belcony</span
-                  >
-                  <span class="badge rounded-pill bg-light text-dark text-wrap me-1 mb-1"
-                    >Buth</span
-                  >
-                  <span class="badge rounded-pill bg-light text-dark text-wrap me-1 mb-1"
-                    >Door</span
-                  >
-                  <span class="badge rounded-pill bg-light text-dark text-wrap me-1 mb-1"
-                    >Window</span
-                  >
-                </div>
-
-                <div class="facilities mb-4">
-                  <h6 class="mb-1">Facilities</h6>
-                  <span class="badge text-wrap text-dark bg-light rounded-pill me-1 mb-1"
-                    >wifi</span
-                  >
-                  <span class="badge text-wrap text-dark bg-light rounded-pill me-1 mb-1"
-                    >Telivision</span
-                  >
-                  <span class="badge text-wrap text-dark bg-light rounded-pill me-1 mb-1"
-                    >Cleaner</span
-                  >
-                  <span class="badge text-wrap text-dark bg-light rounded-pill me-1 mb-1"
-                    >Hitter</span
-                  >
-                  <span class="badge text-wrap text-dark bg-light rounded-pill me-1 mb-1"
-                    >Micro oven</span
-                  >
-                </div>
-
-                <div class="guest mb-4">
-                  <h6 class="mb-1">Guest</h6>
-                  <span class="badge rounded-pill bg-light text-dark text-wrap me-1 mb-1"
-                    >4 Adult</span
-                  >
-                  <span class="badge rounded-pill bg-light text-dark text-wrap me-1 mb-1"
-                    >3 Children</span
-                  >
-                </div>
-
-                <div class="area mb-4">
-                  <h6 class="mb-1">Area</h6>
-                  <span class="badge rounded-pill bg-light text-dark text-wrap"
-                    >1234&nbsp; Squarefit</span
-                  >
-                </div>
-                <div class="rating mb-4">
-                  <h6 class="mb-1">Average Rating</h6>
-                  <span class="badge bg-light rounded-pill">
-                    <i class="bi bi-star-fill text-warning"></i>
-                    <i class="bi bi-star-fill text-warning"></i>
-                    <i class="bi bi-star-fill text-warning"></i>
-                    <i class="bi bi-star-fill text-warning"></i>
-                  </span>
-                </div>
-                <div class="d-flex mb-2 justify-content-evenly">
-                  <button class="btn btn-sm custom-bg text-white shadow-none">Book Now</button>
-                  <a href="room_details.php?id=2" class="btn btn-sm btn-outline-dark shadow-none"
-                    >More Details</a
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
+          </template>
         </div>
       </div>
+      <!-- show some rooms end-->
 
       <!-- show facility start -->
       <h2 class="text-center h-fonts mt-5 mb-4 pt-4 fw-bold">OUR FACILITIES</h2>
@@ -523,4 +381,5 @@ onMounted(() => {
       <!-- address section end -->
     </template>
   </LayoutView>
+  <ToastMessage />
 </template>
