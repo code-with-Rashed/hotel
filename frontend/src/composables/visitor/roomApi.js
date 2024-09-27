@@ -28,6 +28,24 @@ export default function useRoomApi() {
     }
   }
 
+  // fetch maximum adult & children number
+  const maxPerson = async () => {
+    results.value = []
+    errors.value = null
+    try {
+      const request = await fetch(url + '/max/person', {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json'
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+
   // fetch single room related record
   const room = async (id) => {
     results.value = []
@@ -66,5 +84,5 @@ export default function useRoomApi() {
     }
   }
 
-  return { results, errors, allRoom, room, confirmRoom }
+  return { results, errors, allRoom, room, confirmRoom, maxPerson }
 }

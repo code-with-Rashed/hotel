@@ -15,7 +15,7 @@ import { useShutdownStore } from '@/stores/shutdown'
 const { results: carouselResults, get: getCarousel } = useCarouselApi()
 const { results: facilityResults, get: getFacility } = useFacilityApi()
 const { results: addressResults, get: getAddress } = useAddressApi()
-const { results: roomResults, allRoom } = useRoomApi()
+const { results: roomResults, allRoom, maxPerson } = useRoomApi()
 const storeUserCredentials = useUserCredentialsStore()
 const storeToastMessage = useToastMessageStore()
 const router = useRouter()
@@ -27,6 +27,16 @@ const showCarousel = async () => {
   carouselReloader.value = false
   await getCarousel()
   carouselReloader.value = true
+}
+// -------------------------
+
+// show maximum adult & children number help by searching
+const adult = ref(null)
+const children = ref(null)
+const maximumPerson = async () => {
+  await maxPerson()
+  adult.value = roomResults.value.data.adult
+  children.value = roomResults.value.data.children
 }
 // -------------------------
 
@@ -85,6 +95,7 @@ const showAddress = async () => {
 
 onMounted(() => {
   showCarousel()
+  maximumPerson()
   showRooms()
   showFacilities()
   showAddress()
@@ -144,40 +155,33 @@ onMounted(() => {
         <div class="row">
           <div class="col-lg-12 bg-white shadow p-4 rounded">
             <h5 class="mb-4">Check Booking Availability</h5>
-            <form action="rooms.php" method="get">
+            <form>
               <input type="hidden" name="check-booking-availability" />
               <div class="row align-items-end">
                 <div class="col-lg-3 mb-3">
                   <label class="form-label fw-bold">Check-in</label>
-                  <input type="date" class="form-control shadow-none" name="checkin" required="" />
+                  <input type="date" class="form-control shadow-none" name="checkin" />
                 </div>
                 <div class="col-lg-3 mb-3">
                   <label class="form-label fw-bold">Check-out</label>
-                  <input type="date" class="form-control shadow-none" name="checkout" required="" />
+                  <input type="date" class="form-control shadow-none" name="checkout" />
                 </div>
                 <div class="col-lg-3 mb-3">
                   <label class="form-label fw-bold">Adult</label>
-                  <select class="form-select shadow-none" name="adult" required="">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
+                  <select class="form-select shadow-none">
+                    <option :value="c" v-for="c in adult" :key="c">{{ c }}</option>
                   </select>
                 </div>
                 <div class="col-lg-2 mb-3">
                   <label class="form-label fw-bold">Children</label>
-                  <select class="form-select shadow-none" name="children" required="">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
+                  <select class="form-select shadow-none" required>
+                    <option :value="c" v-for="c in children" :key="c">{{ c }}</option>
                   </select>
                 </div>
                 <div class="col-lg-1 mb-3">
-                  <button type="submit" class="btn text-white dhadow-none custom-bg">Submit</button>
+                  <button type="submit" class="btn text-white dhadow-none btn-primary">
+                    Submit
+                  </button>
                 </div>
               </div>
             </form>
