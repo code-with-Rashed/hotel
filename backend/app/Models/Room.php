@@ -15,6 +15,12 @@ class Room extends Model
         return $this->hasMany(RoomImage::class);
     }
 
+    // assigned Booking orders
+    public function booking_orders()
+    {
+        return $this->hasMany(BookingOrder::class);
+    }
+
     // assigned room features
     public function features()
     {
