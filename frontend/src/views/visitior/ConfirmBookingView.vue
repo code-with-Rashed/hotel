@@ -113,6 +113,14 @@ const showRoom = async () => {
 }
 // -------------------------
 
+// submit order & prevent duplicate order
+const orderSubmitBtn = ref(true)
+const orderSubmit = () => {
+  orderSubmitBtn.value = false
+  document.getElementById('paymentNow').click()
+}
+//---------------
+
 onMounted(() => {
   showRoom()
 })
@@ -259,13 +267,25 @@ onMounted(() => {
                         </div>
                       </template>
                       <button
-                        type="submit"
+                        v-if="orderSubmitBtn"
+                        type="button"
                         class="btn w-100 shadow-none"
                         :disabled="!active"
+                        @click="orderSubmit"
                         :class="{ 'btn-primary': active, 'btn-secondary': !active }"
                       >
                         Payment
                       </button>
+                      <button class="btn btn-primary w-100" type="button" disabled v-else>
+                        <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                        <span role="status"> Proccssing...</span>
+                      </button>
+                      <button
+                        type="submit"
+                        class="border-0 opacity-0"
+                        id="paymentNow"
+                        v-show="!orderSubmitBtn"
+                      ></button>
                     </div>
                   </div>
                 </form>
