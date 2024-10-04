@@ -1,6 +1,6 @@
 <script setup>
 import LayoutView from './layout/LayoutView.vue'
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, reactive } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import useFacilityApi from '@/composables/visitor/facilityApi'
 import useRoomApi from '@/composables/visitor/roomApi'
@@ -15,7 +15,7 @@ const route = useRoute()
 const storeToastMessage = useToastMessageStore()
 const storeUserCredentials = useUserCredentialsStore()
 const { results: facilityResults, get: getFacility } = useFacilityApi()
-const { results: roomResults, allRoom } = useRoomApi()
+const { results: roomResults, allRoom, filteredRoom } = useRoomApi()
 const storeShutdown = useShutdownStore()
 
 // if any user is logedin ? then access specific routes
@@ -47,11 +47,82 @@ const showRooms = async () => {
 // -------------------------
 
 // page switching for pagination
-watch(route, () => showRooms())
+watch(route, () => searchByFilters())
 //------------------------------
 
+// filtering room
+const queries = reactive({
+  checkin: '',
+  checkout: '',
+  adult: '',
+  children: '',
+  facilities: []
+})
+for (const key in queries) {
+  queries[key] = route.query[key]
+}
+const facilities = ref([])
+const addFacility = () => {
+  queries.facilities = facilities.value
+}
+const resetFacility = () => {
+  facilities.value = []
+  queries.facilities = []
+}
+const resetDate = () => {
+  queries.checkin = ''
+  queries.checkout = ''
+}
+const resetGuest = () => {
+  queries.adult = ''
+  queries.children = ''
+}
+const resetFilter = () => {
+  facilities.value = []
+  for (const key in queries) {
+    queries[key] = ''
+  }
+}
+watch(queries, () => {
+  searchByFilters()
+})
+const searchByFilters = () => {
+  if (
+    (queries.checkin && queries.checkout) ||
+    queries.facilities ||
+    (queries.adult && queries.children)
+  ) {
+    searchByQueries()
+  } else {
+    // if don't have any query then fetch room record without any filters
+    showRooms()
+  }
+}
+const searchByQueries = async () => {
+  await filteredRoom(queries, route.query.page)
+}
+// --------------
+
+// prepare for room listing
+const rooms = ref(null)
+watch(roomResults, () => {
+  const results = []
+  if (roomResults.value.data) {
+    for (const element of roomResults.value.data.rooms.data) {
+      if (element.booking_orders_count) {
+        if (element.quantity - element.booking_orders_count == 0) {
+          continue
+        }
+      }
+      results.push(element)
+    }
+  }
+  rooms.value = results
+})
+// -----------------
+
 onMounted(() => {
-  showRooms()
+  searchByFilters()
   showFacilities()
 })
 </script>
@@ -71,8 +142,8 @@ onMounted(() => {
                   <h4 class="mt-2">FILTERS</h4>
                   <button
                     type="button"
-                    class="btn btn-sm shadow-none btn-warning"
-                    onclick="reset_filters()"
+                    class="btn btn-sm shadow-none btn-warning ms-1"
+                    @click="resetFilter"
                   >
                     All Reset
                   </button>
@@ -97,9 +168,9 @@ onMounted(() => {
                       <h5 class="mb-3 fs-5">CHECK AVAILABILITY</h5>
                       <button
                         type="button"
-                        class="btn btn-sm shadow-none btn-warning d-none"
-                        onclick="reset_check_availability()"
-                        id="reset_check_availability_btn"
+                        class="btn btn-sm shadow-none btn-warning"
+                        v-if="queries.checkin && queries.checkout"
+                        @click="resetDate"
                       >
                         Reset
                       </button>
@@ -108,24 +179,27 @@ onMounted(() => {
                     <input
                       type="date"
                       id="checkin"
-                      onchange="checkin_checkout_data()"
                       class="form-control mb-3"
-                      value=""
+                      v-model="queries.checkin"
                     />
                     <label class="form-label" for="checkout">Check-out</label>
                     <input
                       type="date"
                       id="checkout"
-                      onchange="checkin_checkout_data()"
+                      v-model="queries.checkout"
                       class="form-control"
-                      value=""
                     />
                   </div>
                   <!-- facility listing start -->
                   <div class="bg-light rounded p-3 border mb-3">
                     <div class="d-flex justify-content-between align-items-center">
                       <h5 class="mb-3 fs-5">FACILITIES</h5>
-                      <button type="button" class="btn btn-sm shadow-none btn-warning">
+                      <button
+                        type="button"
+                        class="btn btn-sm shadow-none btn-warning"
+                        v-if="facilities.length"
+                        @click="resetFacility"
+                      >
                         Reset
                       </button>
                     </div>
@@ -141,6 +215,8 @@ onMounted(() => {
                               :id="`f-${facility.id}`"
                               class="form-check-input me-1"
                               :value="facility.id"
+                              v-model="facilities"
+                              @change="addFacility"
                             />
                             <label
                               class="form-check-label text-capitalize ms-1"
@@ -165,9 +241,9 @@ onMounted(() => {
                       <h5 class="mb-3 fs-5">GUESTS</h5>
                       <button
                         type="button"
-                        class="btn btn-sm shadow-none btn-warning d-none"
-                        onclick="reset_guest()"
-                        id="reset_guest_btn"
+                        class="btn btn-sm shadow-none btn-warning"
+                        v-if="queries.adult || queries.children"
+                        @click="resetGuest"
                       >
                         Reset
                       </button>
@@ -177,20 +253,18 @@ onMounted(() => {
                         <label for="adult" class="form-label">Adult</label>
                         <input
                           type="number"
-                          oninput="guest()"
                           class="form-control shadow-none"
                           id="adult"
-                          value=""
+                          v-model="queries.adult"
                         />
                       </div>
                       <div>
                         <label for="children" class="form-label">Children</label>
                         <input
                           type="number"
-                          oninput="guest()"
                           class="form-control shadow-none"
                           id="children"
-                          value=""
+                          v-model="queries.children"
                         />
                       </div>
                     </div>
@@ -203,7 +277,7 @@ onMounted(() => {
           <div class="col-lg-9 col-md-12 px-4" id="show-rooms">
             <template v-if="roomReloader">
               <template v-if="roomResults.data">
-                <template v-for="room in roomResults.data.rooms.data" :key="room.id">
+                <template v-for="room in rooms" :key="room.id">
                   <div class="card mb-4 border-0 shadow">
                     <div class="row g-0 align-items-center p-3">
                       <div class="col-md-5 mb-lg-0 mb-md-0 mb-3">
@@ -292,7 +366,7 @@ onMounted(() => {
               <div class="mt-4">
                 {{
                   `Showing ${roomResults.data.rooms.from ?? 0} to ${roomResults.data.rooms.to ?? 0} of
-                  ${roomResults.data.rooms.total} entries`
+                ${roomResults.data.rooms.total} entries`
                 }}
               </div>
               <ul class="pagination mt-2">
