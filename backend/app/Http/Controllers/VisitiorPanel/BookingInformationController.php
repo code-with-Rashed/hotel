@@ -48,9 +48,16 @@ class BookingInformationController extends BaseController
         }
 
         // get room record
-        $room = Room::find($request->room_id);
+        $room = Room::withCount(['booking_orders' => function ($subquery) use ($checkin, $checkout) {
+            $subquery->where([['booking_status', 'booked'], ['checkin', '<', $checkout], ['checkout', '>', $checkin]]);
+        }])->find($request->room_id);
 
         if (!is_null($room)) {
+            // check room availability
+            if (($room->quantity - $room->booking_orders_count) == 0) {
+                $this->errors[] = "Sory this room is not available among $request->checkin - $request->checkout date !";
+            }
+
             // room info validation
             if ($room->name != $request->room_name) {
                 $this->errors[] = "Room name is not match !";
