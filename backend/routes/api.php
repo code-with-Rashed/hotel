@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminPanel\AdminController;
 use App\Http\Controllers\AdminPanel\BookingsController;
 use App\Http\Controllers\AdminPanel\CarouselController;
 use App\Http\Controllers\AdminPanel\ContactController;
+use App\Http\Controllers\AdminPanel\DashboardController;
 use App\Http\Controllers\AdminPanel\FacilityController;
 use App\Http\Controllers\AdminPanel\FaviconController;
 use App\Http\Controllers\AdminPanel\FeatureController;
@@ -18,6 +19,12 @@ use App\Http\Controllers\AdminPanel\RoomImageController;
 use App\Http\Controllers\AdminPanel\SettingController;
 use App\Http\Controllers\AdminPanel\TeamController;
 
+// Routes for admin dashboard
+Route::prefix("/admin/dashboard")->middleware("auth:sanctum")->group(function () {
+    Route::get("/summary", [DashboardController::class, "summary"]);
+});
+
+//--------------------------
 // Admin profile routes
 Route::prefix('/admin/profile')->group(function () {
     Route::post('/login', [AdminController::class, 'login']);
