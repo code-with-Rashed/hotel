@@ -6,10 +6,10 @@ import useDashboardApi from '@/composables/admin/dashboardApi'
 const { results, getSummary } = useDashboardApi()
 
 // show achivement summary record
-const summaryResults = ref()
+const summaryResults = ref(null)
 const showSummary = async () => {
   await getSummary()
-  summaryResults.value = results.value
+  summaryResults.value = results.value.data
 }
 //--------------------------------
 
@@ -29,7 +29,7 @@ onMounted(() => {
             <RouterLink :to="{ name: 'new-bookings' }" class="text-decoration-none">
               <div class="card text-center text-success p-3">
                 <h6>New Bookings</h6>
-                <h1 class="mt-3 mb-0">{{ summaryResults.data.new_bookings }}</h1>
+                <h1 class="mt-3 mb-0">{{ summaryResults?.new_bookings }}</h1>
               </div>
             </RouterLink>
           </div>
@@ -37,7 +37,7 @@ onMounted(() => {
             <RouterLink :to="{ name: 'refund-bookings' }" class="text-decoration-none">
               <div class="card text-center text-warning p-3">
                 <h6>Request for refund Bookings</h6>
-                <h1 class="mt-3 mb-0">{{ summaryResults.data.request_refund_bookings }}</h1>
+                <h1 class="mt-3 mb-0">{{ summaryResults?.request_refund_bookings }}</h1>
               </div>
             </RouterLink>
           </div>
@@ -45,7 +45,7 @@ onMounted(() => {
             <RouterLink :to="{ name: 'contact-us' }" class="text-decoration-none">
               <div class="card text-center text-info p-3">
                 <h6>New Contacts</h6>
-                <h1 class="mt-3 mb-0">{{ summaryResults.data.new_contacts }}</h1>
+                <h1 class="mt-3 mb-0">{{ summaryResults?.new_contacts }}</h1>
               </div>
             </RouterLink>
           </div>
@@ -53,7 +53,7 @@ onMounted(() => {
             <RouterLink :to="{ name: 'ratings-reviews' }" class="text-decoration-none">
               <div class="card text-center text-info p-3">
                 <h6>New Ratings & Reviews</h6>
-                <h1 class="mt-3 mb-0">{{ summaryResults.data.new_ratings_reviews }}</h1>
+                <h1 class="mt-3 mb-0">{{ summaryResults?.new_ratings_reviews }}</h1>
               </div>
             </RouterLink>
           </div>
