@@ -3,7 +3,8 @@ import LayoutView from './layout/LayoutView.vue'
 import { onMounted, ref } from 'vue'
 import useDashboardApi from '@/composables/admin/dashboardApi'
 
-const { results, getSummary } = useDashboardApi()
+const { results, getSummary, getBookingAnalytics } = useDashboardApi()
+const period = ref(1)
 
 // show achivement summary record
 const summaryResults = ref(null)
@@ -13,8 +14,17 @@ const showSummary = async () => {
 }
 //--------------------------------
 
+// show booking analytics
+const bookingAnalyticsResults = ref(null)
+const showBookingAnalytics = async () => {
+  await getBookingAnalytics(period.value)
+  bookingAnalyticsResults.value = results.value.data[0]
+}
+//----------------------
+
 onMounted(() => {
   showSummary()
+  showBookingAnalytics()
 })
 </script>
 <template>
@@ -63,7 +73,8 @@ onMounted(() => {
           <h5>Booking Analytics</h5>
           <select
             class="form-select w-auto shadow-none bg-light"
-            onchange="booking_analytics(this.value)"
+            @change="showBookingAnalytics"
+            v-model="period"
           >
             <option value="1">Past 30 days</option>
             <option value="2">Past 90 days</option>
@@ -76,22 +87,37 @@ onMounted(() => {
           <div class="col-md-3 mb-4">
             <div class="card text-primary text-center p-3">
               <h6>Total Bookings</h6>
-              <h1 class="mt-2 mb-0" id="total_bookings">0</h1>
-              <h4 class="mt-2 mb-0" id="total_bookings_amount">&#2547; 0</h4>
+              <h1 class="mt-2 mb-0">{{ bookingAnalyticsResults?.total_bookings }}</h1>
+              <h4 class="mt-2 mb-0">
+                &#2547; {{ bookingAnalyticsResults?.total_bookings_amount }}
+              </h4>
             </div>
           </div>
           <div class="col-md-3 mb-4">
-            <div class="card text-primary text-center p-3">
+            <div class="card text-info text-center p-3">
               <h6>Active Bookings</h6>
-              <h1 class="mt-2 mb-0" id="active_bookings">0</h1>
-              <h4 class="mt-2 mb-0" id="active_bookings_amount">৳ 0</h4>
+              <h1 class="mt-2 mb-0">{{ bookingAnalyticsResults?.active_bookings }}</h1>
+              <h4 class="mt-2 mb-0">
+                &#2547; {{ bookingAnalyticsResults?.active_bookings_amount }}
+              </h4>
             </div>
           </div>
           <div class="col-md-3 mb-4">
-            <div class="card text-primary text-center p-3">
+            <div class="card text-warning text-center p-3">
+              <h6>Refunded Bookings</h6>
+              <h1 class="mt-2 mb-0">{{ bookingAnalyticsResults?.refunded_bookings }}</h1>
+              <h4 class="mt-2 mb-0">
+                &#2547; {{ bookingAnalyticsResults?.refunded_bookings_amount }}
+              </h4>
+            </div>
+          </div>
+          <div class="col-md-3 mb-4">
+            <div class="card text-danger text-center p-3">
               <h6>Cancelled Bookings</h6>
-              <h1 class="mt-2 mb-0" id="cancelled_bookings">0</h1>
-              <h4 class="mt-2 mb-0" id="cancelled_bookings_amount">৳ 0</h4>
+              <h1 class="mt-2 mb-0">{{ bookingAnalyticsResults?.cancelled_bookings }}</h1>
+              <h4 class="mt-2 mb-0">
+                &#2547; {{ bookingAnalyticsResults?.cancelled_bookings_amount }}
+              </h4>
             </div>
           </div>
         </div>

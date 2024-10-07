@@ -29,5 +29,24 @@ export default function useDashboardApi() {
     }
   }
 
-  return { results, errors, getSummary }
+  // fetch booking analytics
+  const getBookingAnalytics = async (period) => {
+    results.value = []
+    errors.value = null
+    try {
+      const request = await fetch(url + '/booking-analytics/' + period, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          Authorization: token
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+
+  return { results, errors, getSummary, getBookingAnalytics }
 }
