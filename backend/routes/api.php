@@ -22,6 +22,7 @@ use App\Http\Controllers\AdminPanel\TeamController;
 // Routes for admin dashboard
 Route::prefix("/admin/dashboard")->middleware("auth:sanctum")->group(function () {
     Route::get("/summary", [DashboardController::class, "summary"]);
+    Route::get("/booking-analytics/{period}", [DashboardController::class, "booking_analytics"]);
 });
 
 //--------------------------
