@@ -47,23 +47,7 @@ class DashboardController extends BaseController
     // response booking analytics
     public function booking_analytics($period)
     {
-        switch ($period) {
-            case 1:
-                $condition = "NOW() - INTERVAL 30 DAY AND NOW()";
-                break;
-
-            case 2:
-                $condition = "NOW() - INTERVAL 90 DAY AND NOW()";
-                break;
-
-            case 3:
-                $condition = "NOW() - INTERVAL 1 YEAR AND NOW()";
-                break;
-
-            default:
-                $condition = "";
-                break;
-        }
+        $condition = $this->what_condition($period);
         $results = BookingOrder::select(
             DB::raw(
                 "COUNT(id) AS total_bookings ,
