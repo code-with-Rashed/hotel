@@ -6,6 +6,7 @@ use App\Http\Controllers\BaseController;
 use App\Models\BookingOrder;
 use App\Models\Contact;
 use App\Models\RatingReview;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends BaseController
@@ -18,6 +19,29 @@ class DashboardController extends BaseController
         $results["new_contacts"] = Contact::where("status", 0)->count();
         $results["new_ratings_reviews"] = RatingReview::where("seen", 0)->count();
         return $this->send_response("achivement summary", $results);
+    }
+
+    // return condition for analytics
+    private function what_condition($period)
+    {
+        switch ($period) {
+            case 1:
+                $condition = "NOW() - INTERVAL 30 DAY AND NOW()";
+                break;
+
+            case 2:
+                $condition = "NOW() - INTERVAL 90 DAY AND NOW()";
+                break;
+
+            case 3:
+                $condition = "NOW() - INTERVAL 1 YEAR AND NOW()";
+                break;
+
+            default:
+                $condition = "";
+                break;
+        }
+        return $condition;
     }
 
     // response booking analytics
@@ -55,5 +79,15 @@ class DashboardController extends BaseController
             ->where("created_at", "<>", $condition)
             ->get();
         return $this->send_response("Booking analytics.", $results);
+    }
+
+    // response users, queries, ratings & reviews related analytics .
+    public function analytics($period)
+    {
+        $condition = $this->what_condition($period);
+        $results["total_users"] = User::where("created_at", "<>", $condition)->count();
+        $results["total_contact_query"] = Contact::where("created_at", "<>", $condition)->count();
+        $results["total_ratings_reviews"] = RatingReview::where("created_at", "<>", $condition)->count();
+        return $this->send_response("response users, queries, ratings & reviews related analytics .", $results);
     }
 }
