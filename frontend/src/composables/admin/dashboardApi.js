@@ -48,5 +48,24 @@ export default function useDashboardApi() {
     }
   }
 
-  return { results, errors, getSummary, getBookingAnalytics }
+  // fetch users, queries, ratings & reviews related analytics
+  const getAnalytics = async (period) => {
+    results.value = []
+    errors.value = null
+    try {
+      const request = await fetch(url + '/analytics/' + period, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          Authorization: token
+        }
+      })
+      const response = await request.json()
+      results.value = response
+    } catch (error) {
+      errors.value = error
+    }
+  }
+
+  return { results, errors, getSummary, getBookingAnalytics, getAnalytics }
 }

@@ -3,7 +3,7 @@ import LayoutView from './layout/LayoutView.vue'
 import { onMounted, ref } from 'vue'
 import useDashboardApi from '@/composables/admin/dashboardApi'
 
-const { results, getSummary, getBookingAnalytics } = useDashboardApi()
+const { results, getSummary, getBookingAnalytics, getAnalytics } = useDashboardApi()
 const period = ref(1)
 
 // show achivement summary record
@@ -22,9 +22,18 @@ const showBookingAnalytics = async () => {
 }
 //----------------------
 
+// show users, queries, ratings & reviews related analytics
+const analyticsResults = ref(null)
+const showAnalytics = async () => {
+  await getAnalytics(period.value)
+  analyticsResults.value = results.value.data
+}
+//----------------------
+
 onMounted(() => {
   showSummary()
   showBookingAnalytics()
+  showAnalytics()
 })
 </script>
 <template>
@@ -124,7 +133,11 @@ onMounted(() => {
 
         <div class="d-flex justify-content-between mb-4 align-items-center">
           <h5>User , Queries , Reviews Analytics</h5>
-          <select class="form-select w-auto shadow-none bg-light">
+          <select
+            class="form-select w-auto shadow-none bg-light"
+            @change="showAnalytics"
+            v-model="period"
+          >
             <option value="1">Past 30 days</option>
             <option value="2">Past 90 days</option>
             <option value="3">Past 1 Year</option>
@@ -136,19 +149,23 @@ onMounted(() => {
           <div class="col-md-3 mb-4">
             <div class="card text-primary text-center p-3">
               <h6>New Registration</h6>
-              <h1 class="mt-2 mb-0" id="total_user">5</h1>
+              <h1 class="mt-2 mb-0" id="total_user">{{ analyticsResults?.total_users }}</h1>
             </div>
           </div>
           <div class="col-md-3 mb-4">
             <div class="card text-success text-center p-3">
               <h6>Contact us</h6>
-              <h1 class="mt-2 mb-0" id="total_contact">3</h1>
+              <h1 class="mt-2 mb-0" id="total_contact">
+                {{ analyticsResults?.total_contact_query }}
+              </h1>
             </div>
           </div>
           <div class="col-md-3 mb-4">
             <div class="card text-primary text-center p-3">
               <h6>Reviews</h6>
-              <h1 class="mt-2 mb-0" id="total_rating_review">5</h1>
+              <h1 class="mt-2 mb-0" id="total_rating_review">
+                {{ analyticsResults?.total_ratings_reviews }}
+              </h1>
             </div>
           </div>
         </div>
