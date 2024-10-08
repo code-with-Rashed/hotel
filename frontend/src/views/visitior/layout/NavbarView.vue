@@ -22,7 +22,7 @@ const storeShutdown = useShutdownStore()
 // check shutdown status
 const shutdownStatus = async () => {
   await getSetting()
-  storeShutdown.shutdown = settingResults.value.data.setting.shutdown
+  storeShutdown.shutdown = settingResults.value.data.setting?.shutdown
 }
 // logout user
 const userLogout = async () => {
@@ -73,7 +73,7 @@ onMounted(() => {
       <template v-if="reloader">
         <template v-if="results.data">
           <RouterLink :to="{ name: 'home-page' }" class="navbar-brand me-5">
-            <img :src="results.data.logo.logo" alt="logo" height="50" width="50" class="rounded" />
+            <img :src="results.data.logo?.logo" alt="logo" height="50" width="50" class="rounded" />
           </RouterLink>
         </template>
       </template>

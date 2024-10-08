@@ -24,7 +24,7 @@ const showSocialLinks = async () => {
   reloader.value = false
   await get()
   reloader.value = true
-  socials.value = addressResults.value.data.company_information.social
+  socials.value = addressResults.value.data.company_information?.social
 }
 //-----------------
 
@@ -43,7 +43,7 @@ onMounted(() => {
           <h3 class="h-fonts fw-bold fs-3 mb-2">My Hotel</h3>
           <template v-if="descriptionReloader">
             <template v-if="settingResults.data">
-              <p class="fw-normal">{{ settingResults.data.setting.description }}</p>
+              <p class="fw-normal">{{ settingResults.data.setting?.description }}</p>
             </template>
           </template>
           <template v-else>

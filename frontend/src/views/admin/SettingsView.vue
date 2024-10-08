@@ -52,7 +52,7 @@ const getSettingsData = async () => {
 
   if (settingsResult.value.success) {
     storeToastMessage.showToastMessage(settingsResult.value.success, settingsResult.value.message)
-    siteDescription.description = settingsResult.value.data.setting.description
+    siteDescription.description = settingsResult.value.data.setting?.description
   } else {
     storeToastMessage.showToastMessage(settingsResult.value.success, settingsResult.value.message)
   }
@@ -92,7 +92,7 @@ const getFaviconData = async () => {
   await getFavicon()
   faviconResultReloader.value = true
   if (faviconResults.value.success) {
-    favicon.value = faviconResults.value.data.favicon.icon
+    favicon.value = faviconResults.value.data.favicon?.icon
     storeToastMessage.showToastMessage(faviconResults.value.success, faviconResults.value.message)
   } else {
     storeToastMessage.showToastMessage(faviconResults.value.success, faviconResults.value.message)
@@ -144,7 +144,7 @@ const getLogoData = async () => {
   await getLogo()
   logoResultReloader.value = true
   if (logoResults.value.success) {
-    logo.value = logoResults.value.data.logo.logo
+    logo.value = logoResults.value.data.logo?.logo
     storeToastMessage.showToastMessage(logoResults.value.success, logoResults.value.message)
   } else {
     storeToastMessage.showToastMessage(logoResults.value.success, logoResults.value.message)
@@ -244,7 +244,7 @@ onMounted(() => {
                   type="checkbox"
                   title="Shutdown Button"
                   class="form-check-input"
-                  :checked="settingsResult.data.setting.shutdown"
+                  :checked="settingsResult.data.setting?.shutdown"
                   @change="shutdownProccess"
                 />
               </div>
