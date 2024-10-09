@@ -193,7 +193,7 @@ const update = async () => {
               </div>
               <div class="col-md-6">
                 <div class="mb-3" v-for="(social, index) in socials" :key="index">
-                  <label class="form-label fw-bold">Facebook link</label>
+                  <label class="form-label fw-bold">Social link</label>
                   <div class="input-group">
                     <span class="input-group-text border-0"
                       ><i class="bi" :class="'bi-' + urlBasename(social.social, 'globe')"></i
