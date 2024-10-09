@@ -8,10 +8,14 @@ use App\Models\User;
 
 class UserController extends BaseController
 {
-    // response all users
-    public function index()
+    // response all users or searched users
+    public function index($search = null)
     {
-        $results["users"] = User::orderBy('id', 'desc')->paginate(5);
+        $query = User::orderBy('id', 'desc');
+        if ($search) {
+            $query = $query->where("name", "like", "%$search%")->orWhere("email", "like", "%$search%")->orWhere("number", "like", "%$search%");
+        }
+        $results["users"] = $query->paginate(5);
         return $this->send_response(message: "Users data .", results: $results);
     }
 

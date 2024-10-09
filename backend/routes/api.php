@@ -161,7 +161,7 @@ Route::prefix("/admin/room/ratings-reviews")->middleware("auth:sanctum")->group(
 
 // User routes for admin panel
 Route::prefix("/admin/user")->middleware("auth:sanctum")->group(function () {
-    Route::get("/", [AdminPanelUserController::class, "index"]);
+    Route::get("/data/{search?}", [AdminPanelUserController::class, "index"]);
     Route::put("/status/{id}", [AdminPanelUserController::class, "status"]);
     Route::get("/details/{user_id}", [AdminPanelUserController::class, "details"]);
 });
