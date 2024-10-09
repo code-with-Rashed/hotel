@@ -11,6 +11,7 @@ import { dateFormatter, timeFormatter } from '@/helpers/dateTime'
 const route = useRoute()
 const { results, errors, get, userStatus, userDetails } = useUserApi()
 const storeToastMessage = useToastMessageStore()
+const search = ref(null)
 
 // update user status
 const updateUserStatus = async (id) => {
@@ -48,7 +49,7 @@ const userRecordResults = ref(null)
 const reloader = ref(true)
 const userRecords = async () => {
   reloader.value = false
-  await get(route.query.page)
+  await get(search.value, route.query.page)
   reloader.value = true
   if (results.value.success) {
     userRecordResults.value = results.value.data.users
@@ -80,16 +81,15 @@ watch(route, () => userRecords())
                 Reload
                 <span class="badge text-bg-secondary"> <i class="bi bi-arrow-repeat"></i> </span>
               </button>
-              <!-- Button trigger modal -->
-              <button
-                type="button"
-                class="btn btn-dark btn-sm shadow-none"
-                data-bs-toggle="modal"
-                data-bs-target="#addRoomModal"
-              >
-                <i class="bi bi-plus-square"></i>
-                Add
-              </button>
+              <div>
+                <input
+                  type="search"
+                  class="form-control shadow-none"
+                  placeholder="search"
+                  v-model.trim="search"
+                  @keyup.enter="userRecords"
+                />
+              </div>
             </div>
             <div class="row px-3">
               <div class="table-responsive-lg">

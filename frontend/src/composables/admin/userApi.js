@@ -11,10 +11,13 @@ export default function useUserApi() {
   const errors = ref(null)
 
   // get all user record
-  const get = async (pagenumber = null) => {
+  const get = async (search = null, pagenumber = null) => {
     results.value = []
     errors.value = null
-    let finalurl = url
+    let finalurl = url + '/data'
+    if (search) {
+      finalurl = finalurl + '/' + search
+    }
     if (pagenumber) {
       finalurl = finalurl + '?page=' + pagenumber
     }
