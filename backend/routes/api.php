@@ -18,6 +18,7 @@ use App\Http\Controllers\AdminPanel\RoomFeatureFacilityController;
 use App\Http\Controllers\AdminPanel\RoomImageController;
 use App\Http\Controllers\AdminPanel\SettingController;
 use App\Http\Controllers\AdminPanel\TeamController;
+use App\Http\Controllers\AdminPanel\UserController as AdminPanelUserController;
 
 // Routes for admin dashboard
 Route::prefix("/admin/dashboard")->middleware("auth:sanctum")->group(function () {
@@ -156,6 +157,13 @@ Route::prefix("/admin/room/ratings-reviews")->middleware("auth:sanctum")->group(
     Route::get("/", [RatingReviewController::class, "index"]);
     Route::put("/status/{id}", [RatingReviewController::class, "status"]);
     Route::delete("/delete/{id}", [RatingReviewController::class, "delete"]);
+});
+
+// User routes for admin panel
+Route::prefix("/admin/user")->middleware("auth:sanctum")->group(function () {
+    Route::get("/", [AdminPanelUserController::class, "index"]);
+    Route::put("/status/{id}", [AdminPanelUserController::class, "status"]);
+    Route::get("/details/{user_id}", [AdminPanelUserController::class, "details"]);
 });
 
 // visitior panel related routes
