@@ -57,6 +57,12 @@ const router = createRouter({
           meta: { title: 'Ratings & Reviews' }
         },
         {
+          path: 'user-records',
+          name: 'user-records',
+          component: () => import('../views/admin/UsersView.vue'),
+          meta: { title: 'User Records' }
+        },
+        {
           path: 'room/facilities',
           name: 'facilities',
           component: () => import('../views/admin/FacilitiesView.vue'),
