@@ -171,6 +171,13 @@ const router = createRouter({
           meta: { title: 'My Bookings History' }
         }
       ]
+    },
+    // 404 page not found
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      component: () => import('../views/visitior/PageNotFound.vue'),
+      meta: { title: '404 Page Not Found !' }
     }
   ]
 })
