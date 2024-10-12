@@ -19,19 +19,20 @@ use App\Http\Controllers\AdminPanel\RoomImageController;
 use App\Http\Controllers\AdminPanel\SettingController;
 use App\Http\Controllers\AdminPanel\TeamController;
 use App\Http\Controllers\AdminPanel\UserController as AdminPanelUserController;
+use App\Http\Middleware\AccessAdminPanel;
 
 // Routes for admin dashboard
-Route::prefix("/admin/dashboard")->middleware("auth:sanctum")->group(function () {
+Route::prefix("/admin/dashboard")->middleware(["auth:sanctum", AccessAdminPanel::class])->group(function () {
     Route::get("/summary", [DashboardController::class, "summary"]);
     Route::get("/booking-analytics/{period}", [DashboardController::class, "booking_analytics"]);
     Route::get("/analytics/{period}", [DashboardController::class, "analytics"]);
 });
-
 //--------------------------
+
 // Admin profile routes
 Route::prefix('/admin/profile')->group(function () {
     Route::post('/login', [AdminController::class, 'login']);
-    Route::middleware("auth:sanctum")->group(function () {
+    Route::middleware(["auth:sanctum", AccessAdminPanel::class])->group(function () {
         Route::get('/show/{id}', [AdminController::class, 'show']);
         Route::put('/update/password/{id}', [AdminController::class, 'update_password']);
         Route::post('/update/{id}', [AdminController::class, 'update_profile']);
@@ -41,7 +42,7 @@ Route::prefix('/admin/profile')->group(function () {
 //---------------------
 
 // Routes for booking record
-Route::prefix("/admin")->middleware("auth:sanctum")->group(function () {
+Route::prefix("/admin")->middleware(["auth:sanctum", AccessAdminPanel::class])->group(function () {
     Route::get("/all/bookings/{search?}", [BookingsController::class, "all_bookings"]);
     Route::get("/new/bookings/{search?}", [BookingsController::class, "new_bookings"]);
     Route::get("/refund/bookings/{search?}", [BookingsController::class, "refund_bookings"]);
@@ -52,7 +53,7 @@ Route::prefix("/admin")->middleware("auth:sanctum")->group(function () {
 //--------------------------
 
 // Room feature routes
-Route::prefix("/admin/feature")->middleware("auth:sanctum")->group(function () {
+Route::prefix("/admin/feature")->middleware(["auth:sanctum", AccessAdminPanel::class])->group(function () {
     Route::get("/", [FeatureController::class, 'index']);
     Route::post("/create", [FeatureController::class, 'create']);
     Route::get("/show/{id}", [FeatureController::class, 'show']);
@@ -62,7 +63,7 @@ Route::prefix("/admin/feature")->middleware("auth:sanctum")->group(function () {
 //--------------------
 
 // Contact routes
-Route::prefix("/admin/contact")->middleware("auth:sanctum")->group(function () {
+Route::prefix("/admin/contact")->middleware(["auth:sanctum", AccessAdminPanel::class])->group(function () {
     Route::get("/", [ContactController::class, 'index']);
     Route::post("/create", [ContactController::class, 'create']);
     Route::get("/show/{id}", [ContactController::class, "show"]);
@@ -74,7 +75,7 @@ Route::prefix("/admin/contact")->middleware("auth:sanctum")->group(function () {
 //--------------------
 
 // Carousel routes for admin panel
-Route::prefix("/admin/carousel")->middleware("auth:sanctum")->group(function () {
+Route::prefix("/admin/carousel")->middleware(["auth:sanctum", AccessAdminPanel::class])->group(function () {
     Route::get("/", [CarouselController::class, "index"]);
     Route::post("/create", [CarouselController::class, "create"]);
     Route::get("/show/{id}", [CarouselController::class, "show"]);
@@ -83,19 +84,19 @@ Route::prefix("/admin/carousel")->middleware("auth:sanctum")->group(function () 
 });
 
 // Favicon routes for admin panel
-Route::prefix("/admin/favicon")->middleware("auth:sanctum")->group(function () {
+Route::prefix("/admin/favicon")->middleware(["auth:sanctum", AccessAdminPanel::class])->group(function () {
     Route::get("/", [FaviconController::class, "index"]);
     Route::put("/update", [FaviconController::class, "update"]);
 });
 
 // Logo routes for admin panel
-Route::prefix("/admin/logo")->middleware("auth:sanctum")->group(function () {
+Route::prefix("/admin/logo")->middleware(["auth:sanctum", AccessAdminPanel::class])->group(function () {
     Route::get("/", [LogoController::class, "index"]);
     Route::put("/update", [LogoController::class, "update"]);
 });
 
 // Team member routes for admin panel
-Route::prefix("/admin/team")->middleware("auth:sanctum")->group(function () {
+Route::prefix("/admin/team")->middleware(["auth:sanctum", AccessAdminPanel::class])->group(function () {
     Route::get("/", [TeamController::class, "index"]);
     Route::post("/create", [TeamController::class, "create"]);
     Route::get("/show/{id}", [TeamController::class, "show"]);
@@ -104,7 +105,7 @@ Route::prefix("/admin/team")->middleware("auth:sanctum")->group(function () {
 });
 
 // Facility routes for admin panel
-Route::prefix("/admin/facility")->middleware("auth:sanctum")->group(function () {
+Route::prefix("/admin/facility")->middleware(["auth:sanctum", AccessAdminPanel::class])->group(function () {
     Route::get("/", [FacilityController::class, "index"]);
     Route::post("/create", [FacilityController::class, "create"]);
     Route::get("/show/{id}", [FacilityController::class, "show"]);
@@ -113,20 +114,20 @@ Route::prefix("/admin/facility")->middleware("auth:sanctum")->group(function () 
 });
 
 // Settings routes for admin panel
-Route::prefix("/admin/setting")->middleware("auth:sanctum")->group(function () {
+Route::prefix("/admin/setting")->middleware(["auth:sanctum", AccessAdminPanel::class])->group(function () {
     Route::get("/", [SettingController::class, "index"]);
     Route::put("/shutdown", [SettingController::class, 'shutdown']);
     Route::put("/update", [SettingController::class, "update"]);
 });
 
 // Information routes for admin panel
-Route::prefix("/admin/company/information")->middleware("auth:sanctum")->group(function () {
+Route::prefix("/admin/company/information")->middleware(["auth:sanctum", AccessAdminPanel::class])->group(function () {
     Route::get("/", [InformationController::class, "index"]);
     Route::put("/update", [InformationController::class, "update"]);
 });
 
 // Roome routes for admin panel
-Route::prefix("/admin/room")->middleware("auth:sanctum")->group(function () {
+Route::prefix("/admin/room")->middleware(["auth:sanctum", AccessAdminPanel::class])->group(function () {
     Route::get("/", [RoomController::class, "index"]);
     Route::post("/create", [RoomController::class, "create"]);
     Route::get("/show/{id}", [RoomController::class, "show"]);
@@ -136,7 +137,7 @@ Route::prefix("/admin/room")->middleware("auth:sanctum")->group(function () {
 });
 
 // Roome Image routes for admin panel
-Route::prefix("/admin/room/image")->middleware("auth:sanctum")->group(function () {
+Route::prefix("/admin/room/image")->middleware(["auth:sanctum", AccessAdminPanel::class])->group(function () {
     Route::get("/{room_id}", [RoomImageController::class, "get_image"]);
     Route::post("/create", [RoomImageController::class, "create"]);
     Route::put("/update/{id}", [RoomImageController::class, "update"]);
@@ -145,7 +146,7 @@ Route::prefix("/admin/room/image")->middleware("auth:sanctum")->group(function (
 });
 
 // Roome feature & facility routes for admin panel
-Route::prefix("/admin/room/feature-facility")->middleware("auth:sanctum")->group(function () {
+Route::prefix("/admin/room/feature-facility")->middleware(["auth:sanctum", AccessAdminPanel::class])->group(function () {
     Route::get("/features-id/{room_id}", [RoomFeatureFacilityController::class, "get_room_features_id"]);
     Route::get("/facilities-id/{room_id}", [RoomFeatureFacilityController::class, "get_room_facilities_id"]);
     Route::post("/create", [RoomFeatureFacilityController::class, "create"]);
@@ -153,14 +154,14 @@ Route::prefix("/admin/room/feature-facility")->middleware("auth:sanctum")->group
 });
 
 // Roome ratings & reviews routes for admin panel
-Route::prefix("/admin/room/ratings-reviews")->middleware("auth:sanctum")->group(function () {
+Route::prefix("/admin/room/ratings-reviews")->middleware(["auth:sanctum", AccessAdminPanel::class])->group(function () {
     Route::get("/", [RatingReviewController::class, "index"]);
     Route::put("/status/{id}", [RatingReviewController::class, "status"]);
     Route::delete("/delete/{id}", [RatingReviewController::class, "delete"]);
 });
 
 // User routes for admin panel
-Route::prefix("/admin/user")->middleware("auth:sanctum")->group(function () {
+Route::prefix("/admin/user")->middleware(["auth:sanctum", AccessAdminPanel::class])->group(function () {
     Route::get("/data/{search?}", [AdminPanelUserController::class, "index"]);
     Route::put("/status/{id}", [AdminPanelUserController::class, "status"]);
     Route::get("/details/{user_id}", [AdminPanelUserController::class, "details"]);
