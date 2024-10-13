@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    // routes for admin panel
     {
       path: '/admin',
       meta: { isAdminPanelRoutes: true },
@@ -106,8 +107,10 @@ const router = createRouter({
         }
       ]
     },
+    // routes for visitiors
     {
-      path: '/',
+      path: '/home',
+      alias: '/',
       name: 'home-page',
       component: () => import('../views/visitior/HomeView.vue'),
       meta: { title: 'Home' }
@@ -154,6 +157,7 @@ const router = createRouter({
       component: () => import('../views/visitior/BookingStatus.vue'),
       meta: { title: 'Booking Status', isBookingStatusPage: true }
     },
+    // routes for user panel
     {
       path: '/user',
       meta: { isUserPanelRoutes: true },
