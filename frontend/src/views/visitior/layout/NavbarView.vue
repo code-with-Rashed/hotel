@@ -36,6 +36,10 @@ const userLogout = async () => {
     if (router.currentRoute.value.meta.isUserPanelRoutes) {
       router.push({ name: 'home-page' })
     }
+    // if user need logout from confirm booking page . then redirect to rooms page .
+    if (router.currentRoute.value.meta.isConfirmBookingRoomRoutes) {
+      router.push({ name: 'rooms-page' })
+    }
   } else {
     storeToastMessage.showToastMessage(false, userResults.value.message)
   }
