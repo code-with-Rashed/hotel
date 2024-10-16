@@ -20,7 +20,7 @@ return new class extends Migration
             $table->date('dob');
             $table->string('photo');
             $table->string('email')->unique();
-            $table->boolean("status")->default(1)->comment("1 means user is active & 0 means room is inactive .");
+            $table->boolean("status")->default(1)->comment("1 means user is active & 0 means user is inactive .");
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
