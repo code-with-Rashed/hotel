@@ -216,6 +216,7 @@ Route::get('/rating-review/{room_id}', [VisitiorPanelRatingReviewController::cla
 // Routes for users
 use App\Http\Controllers\UsersPanel\UserController;
 use App\Http\Controllers\UsersPanel\MyBookingsController;
+use App\Http\Controllers\OtpEmailController;
 
 Route::post('/user/register', [UserController::class, 'register']);
 Route::post('/user/login', [UserController::class, 'login']);
@@ -230,3 +231,6 @@ Route::prefix('/user/profile')->middleware('auth:sanctum')->group(function () {
 Route::get('/my-booking-records/{user_id}', [MyBookingsController::class, 'index'])->middleware("auth:sanctum");
 Route::put('/cancel-my-booking', [MyBookingsController::class, 'cancel'])->middleware("auth:sanctum");
 Route::post('/rating-review', [MyBookingsController::class, 'rating_review'])->middleware("auth:sanctum");
+
+// routes for user email verify & password forget 
+Route::post('/user/send/email-verify-otp', [OtpEmailController::class, 'send_email_verify_otp']);
