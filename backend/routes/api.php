@@ -234,3 +234,4 @@ Route::post('/rating-review', [MyBookingsController::class, 'rating_review'])->m
 
 // routes for user email verify & password forget 
 Route::post('/user/send/email-verify-otp', [OtpEmailController::class, 'send_email_verify_otp']);
+Route::post('/user/send/valid-otp', [OtpEmailController::class, 'verify_email_verification_otp']);
