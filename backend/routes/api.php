@@ -216,7 +216,7 @@ Route::get('/rating-review/{room_id}', [VisitiorPanelRatingReviewController::cla
 // Routes for users
 use App\Http\Controllers\UsersPanel\UserController;
 use App\Http\Controllers\UsersPanel\MyBookingsController;
-use App\Http\Controllers\OtpEmailController;
+use App\Http\Controllers\UsersPanel\OtpEmailController;
 
 Route::post('/user/register', [UserController::class, 'register']);
 Route::post('/user/login', [UserController::class, 'login']);
@@ -232,6 +232,8 @@ Route::get('/my-booking-records/{user_id}', [MyBookingsController::class, 'index
 Route::put('/cancel-my-booking', [MyBookingsController::class, 'cancel'])->middleware("auth:sanctum");
 Route::post('/rating-review', [MyBookingsController::class, 'rating_review'])->middleware("auth:sanctum");
 
-// routes for user email verify & password forget 
-Route::post('/user/send/email-verify-otp', [OtpEmailController::class, 'send_email_verify_otp']);
-Route::post('/user/send/valid-otp', [OtpEmailController::class, 'verify_email_verification_otp']);
+// routes for user email verify 
+Route::prefix('/user/send')->middleware('auth:sanctum')->group(function () {
+    Route::post('/email-verify-otp', [OtpEmailController::class, 'send_email_verify_otp']);
+    Route::post('/valid-otp', [OtpEmailController::class, 'verify_email_verification_otp']);
+});

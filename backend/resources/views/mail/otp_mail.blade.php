@@ -9,7 +9,7 @@
 
 <body>
     <h3>{{ $subject }}</h3>
-    <p>{{ $mailmessage }}</p>
+    <p>{!! $mailmessage !!}</p>
 </body>
 
 </html>

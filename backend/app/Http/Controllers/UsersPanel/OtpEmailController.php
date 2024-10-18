@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\UsersPanel;
 
+use App\Http\Controllers\BaseController;
+use Illuminate\Http\Request;
 use App\Mail\OtpEmail;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
 
@@ -34,9 +35,9 @@ class OtpEmailController extends BaseController
         // prepare for send otp
         $to_email = $user->email;
         $subject = "Email Verification";
-        $message = "Your email verification otp is $otp";
+        $message = "Your email verification otp is <strong>$otp</strong>";
         Mail::to($to_email)->send(new OtpEmail($subject, $message));
-        return $this->send_response("You Have an email. so check your email account.");
+        return $this->send_response("You Have an OTP in your email. so check your email account.");
     }
 
     // verify valid otp for user email verification
