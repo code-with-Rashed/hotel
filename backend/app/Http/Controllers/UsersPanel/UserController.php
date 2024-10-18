@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\UsersPanel;
 
 use App\Http\Controllers\BaseController;
+use App\Mail\OtpEmail;
+use App\Models\PasswordResetToken;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Sanctum\PersonalAccessToken;
 
@@ -143,5 +146,76 @@ class UserController extends BaseController
         $user->save();
 
         return $this->send_response(message: "Password successfully updated !");
+    }
+
+    // reset user password
+    public function reset_password(Request $request)
+    {
+        $validation = Validator::make($request->all(), [
+            "email" => "required|email|max:70"
+        ]);
+        if ($validation->fails()) {
+            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+        }
+        $user = User::where('email', $request->email)->first();
+        if (is_null($user)) {
+            return $this->send_error(message: "Your ($request->email) email is unregistered !", status_code: 401);
+        }
+        // genarate otp
+        $otp = rand(11111, 99999);
+
+        // save user account reset otp
+        PasswordResetToken::updateOrInsert(
+            ["email" => $user->email],
+            ["email" => $user->email, "token" => $otp, "created_at" => now()]
+        );
+        // prepare for send otp
+        $to_email = $user->email;
+        $subject = "Account Recovery";
+        $message = "Your Account Recovery OTP is <strong>$otp</strong>";
+        Mail::to($to_email)->send(new OtpEmail($subject, $message));
+        return $this->send_response(message: "You Have an OTP in your email. so check your email account.");
+    }
+
+    // verify valid otp for user account recovery
+    public function verify_account_recovery_otp(Request $request)
+    {
+        $validation = Validator::make($request->all(), [
+            "email" => "required|email|max:70",
+            "otp" => "required|max:10",
+        ]);
+        if ($validation->fails()) {
+            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+        }
+        $valid_otp = PasswordResetToken::where([['email', $request->email], ['token', $request->otp]])->first();
+        $valid_otp_time = Carbon::now()->subMinute(5)->toDateTimeString();
+        if (is_null($valid_otp) || $valid_otp->created_at <= $valid_otp_time) {
+            return $this->send_error(message: "Your otp is invalid or expired !");
+        }
+        // save valid otp for validation before user set new password
+        $user = User::where('email', $valid_otp->email)->first();
+        $user->remember_token = $valid_otp->token;
+        $user->save();
+
+        return $this->send_response("Your OTP is Valid. Update your password.");
+    }
+
+    // user set new password
+    public function set_new_password(Request $request)
+    {
+        $validation = Validator::make($request->all(), [
+            "email" => "required|email|max:70",
+            "token" => "required|max:10",
+            "password" => "required|confirmed"
+        ]);
+        if ($validation->fails()) {
+            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+        }
+        $user = User::where([['email', $request->email], ['remember_token', $request->token]])->first();
+        if (!is_null($user)) {
+            $user->password = $request->password;
+            $user->save();
+            return $this->send_response(message: "Your new password is successfully added. login your account.");
+        }
     }
 }

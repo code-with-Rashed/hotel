@@ -220,6 +220,9 @@ use App\Http\Controllers\UsersPanel\OtpEmailController;
 
 Route::post('/user/register', [UserController::class, 'register']);
 Route::post('/user/login', [UserController::class, 'login']);
+Route::post('/user/reset-password', [UserController::class, 'reset_password']);
+Route::post('/user/verify-otp', [UserController::class, 'verify_account_recovery_otp']);
+Route::post('/user/new-password', [UserController::class, 'set_new_password']);
 Route::delete('/user/logout', [UserController::class, 'logout'])->middleware("auth:sanctum");
 Route::prefix('/user/profile')->middleware('auth:sanctum')->group(function () {
     Route::put('/update/{id}', [UserController::class, 'profile_update']);
