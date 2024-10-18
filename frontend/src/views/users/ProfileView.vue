@@ -5,15 +5,24 @@ import ToastMessage from '@/components/ToastMessage.vue'
 import { useToastMessageStore } from '@/stores/toastMessage'
 import { useUserCredentialsStore } from '@/stores/userCredentials'
 import useProfileApi from '@/composables/users/profileApi'
+import useUserVerifyApi from '@/composables/users/userVerify'
+import { hideBsModal } from '@/helpers/hideBsModal'
 
 const storeUserCredentials = useUserCredentialsStore()
 const { results, errors, updateProfile, updateProfileImage, updatePassword } = useProfileApi()
+const {
+  results: userVerifyResults,
+  errors: userVerifyErrors,
+  verifyEmail,
+  verifyOtp
+} = useUserVerifyApi()
 const storeToastMessage = useToastMessageStore()
 
 const userInfo = reactive({
   id: '',
   name: '',
   email: '',
+  email_verified_at: '',
   number: '',
   pincode: '',
   address: '',
@@ -120,6 +129,70 @@ const changePassword = async () => {
   }
 }
 //------------------------
+
+// send request for verify user email
+const verifyMyEmailBtn = ref(true)
+const verifyMyEmail = async () => {
+  verifyMyEmailBtn.value = false
+  await verifyEmail(userInfo.email)
+  verifyMyEmailBtn.value = true
+  if (userVerifyResults.value.success) {
+    storeToastMessage.showToastMessage(
+      userVerifyResults.value.success,
+      userVerifyResults.value.message
+    )
+    document.getElementById('otpModalBtn').click()
+  } else {
+    // show validation error
+    let message = ''
+    message += '<strong>' + userVerifyResults.value.message + '</strong><br>'
+    if (userVerifyResults.value.message == 'validation error') {
+      userVerifyResults.value.data.forEach((element) => {
+        message += element + '<br>'
+      })
+    }
+    storeToastMessage.showToastMessage(userVerifyResults.value.success, message, 15000)
+  }
+  if (userVerifyErrors.value) {
+    storeToastMessage.showToastMessage(false, userVerifyErrors.value.message)
+  }
+}
+
+// send request for email verify otp
+const otpInfo = reactive({
+  email: '',
+  otp: ''
+})
+const verifyOtpBtn = ref(true)
+const verifyMyOtp = async () => {
+  verifyOtpBtn.value = false
+  otpInfo.email = userInfo.email
+  await verifyOtp(otpInfo)
+  verifyOtpBtn.value = true
+  if (userVerifyResults.value.success) {
+    hideBsModal('otpModal')
+    otpInfo.otp = ''
+    storeToastMessage.showToastMessage(
+      userVerifyResults.value.success,
+      userVerifyResults.value.message
+    )
+    storeUserCredentials.user.email_verified_at = true
+    userInfo.email_verified_at = true
+  } else {
+    // show validation error
+    let message = ''
+    message += '<strong>' + userVerifyResults.value.message + '</strong><br>'
+    if (userVerifyResults.value.message == 'validation error') {
+      userVerifyResults.value.data.forEach((element) => {
+        message += element + '<br>'
+      })
+    }
+    storeToastMessage.showToastMessage(userVerifyResults.value.success, message, 15000)
+  }
+  if (userVerifyErrors.value) {
+    storeToastMessage.showToastMessage(false, userVerifyErrors.value.message)
+  }
+}
 </script>
 <template>
   <LayoutView>
@@ -155,13 +228,44 @@ const changePassword = async () => {
                     />
                   </div>
                   <div class="col-md-6 mb-3 ps-0">
-                    <label class="form-label">Email</label>
+                    <label class="form-label"
+                      >Email
+                      <template v-if="userInfo.email_verified_at">
+                        <span class="badge bg-primary" title="This emeil is verified"
+                          >verified</span
+                        >
+                      </template>
+                      <template v-else>
+                        <span class="badge bg-danger" title="This email is unverified"
+                          >unverified</span
+                        >
+                        <span
+                          class="invisible"
+                          data-bs-toggle="modal"
+                          data-bs-target="#otpModal"
+                          id="otpModalBtn"
+                        ></span>
+                        <button
+                          class="btn btn-sm btn-primary ms-2"
+                          type="button"
+                          @click="verifyMyEmail"
+                          v-if="verifyMyEmailBtn"
+                        >
+                          verify my email
+                        </button>
+                        <button class="btn btn-sm btn-primary ms-2" type="button" disabled v-else>
+                          <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                          <span role="status"> verify my email...</span>
+                        </button>
+                      </template>
+                    </label>
                     <input
                       type="email"
                       class="form-control shadow-none"
                       maxlength="70"
                       required
                       v-model.trim="userInfo.email"
+                      readonly
                     />
                   </div>
                   <div class="col-md-6 mb-3 ps-0">
@@ -313,6 +417,58 @@ const changePassword = async () => {
           </div>
         </div>
       </div>
+      <!-- otp modal start -->
+      <div
+        class="modal fade"
+        id="otpModal"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabindex="-1"
+        aria-labelledby="staticBackdropLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <form @submit.prevent="verifyMyOtp">
+              <div class="modal-header">
+                <h5 class="modal-title d-flex align-items-center">
+                  <i class="bi bi-check-circle fs-3 me-2"></i>Verify Your OTP
+                </h5>
+                <button
+                  type="reset"
+                  class="btn-close"
+                  aria-label="Close"
+                  data-bs-toggle="modal"
+                  data-bs-dismiss="modal"
+                  data-bs-target="#otpModal"
+                ></button>
+              </div>
+              <div class="modal-body">
+                <div class="mb-3">
+                  <label class="form-label">Enter OTP</label>
+                  <input
+                    type="text"
+                    class="form-control shadow-none"
+                    maxlength="10"
+                    required
+                    v-model="otpInfo.otp"
+                  />
+                </div>
+                <div class="mb-2 d-flex align-items-center justify-content-between">
+                  <button type="submit" class="btn btn-dark shadow-none" v-if="verifyOtpBtn">
+                    VERIFY
+                  </button>
+                  <button class="btn btn-primary" type="button" disabled v-else>
+                    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                    <span role="status"> Proccssing...</span>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <!-- otp modal end -->
     </template>
   </LayoutView>
   <ToastMessage />
