@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\OrderConfirmationJob;
 use Illuminate\Http\Request;
 use App\Models\BookingOrder;
 use App\Models\BookingDetail;
@@ -84,6 +85,7 @@ class SslCommerzController extends Controller
                 $update_booking_order->tran_status = $status;
                 $update_booking_order->bank_tran_id = $bank_tran_id;
                 $update_booking_order->save();
+                dispatch(new OrderConfirmationJob($booking_order->id)); // run queue job for order confirmation email
             }
             return redirect($this->frontend_app_url . '/booking/status?s=success');
         } else if ($booking_order->tran_status == 'VALID') {
