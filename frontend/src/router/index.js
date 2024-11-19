@@ -94,6 +94,12 @@ const router = createRouter({
           meta: { title: 'Team Profile Management' }
         },
         {
+          path: 'achievements',
+          name: 'achievements',
+          component: () => import('../views/admin/AchievementsView.vue'),
+          meta: { title: 'Manage Achievements' }
+        },
+        {
           path: 'address',
           name: 'address',
           component: () => import('../views/admin/AddressView.vue'),
