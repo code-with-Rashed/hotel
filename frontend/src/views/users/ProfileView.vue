@@ -141,7 +141,7 @@ const verifyMyEmail = async () => {
       userVerifyResults.value.success,
       userVerifyResults.value.message
     )
-    document.getElementById('otpModalBtn').click()
+    document.getElementById('verifyOtpModalBtn').click()
   } else {
     // show validation error
     let message = ''
@@ -170,7 +170,7 @@ const verifyMyOtp = async () => {
   await verifyOtp(otpInfo)
   verifyOtpBtn.value = true
   if (userVerifyResults.value.success) {
-    hideBsModal('otpModal')
+    hideBsModal('verifyOtpModal')
     otpInfo.otp = ''
     storeToastMessage.showToastMessage(
       userVerifyResults.value.success,
@@ -242,8 +242,8 @@ const verifyMyOtp = async () => {
                         <span
                           class="invisible"
                           data-bs-toggle="modal"
-                          data-bs-target="#otpModal"
-                          id="otpModalBtn"
+                          data-bs-target="#verifyOtpModal"
+                          id="verifyOtpModalBtn"
                         ></span>
                         <button
                           class="btn btn-sm btn-primary ms-2"
@@ -420,7 +420,7 @@ const verifyMyOtp = async () => {
       <!-- otp modal start -->
       <div
         class="modal fade"
-        id="otpModal"
+        id="verifyOtpModal"
         data-bs-backdrop="static"
         data-bs-keyboard="false"
         tabindex="-1"
@@ -440,7 +440,7 @@ const verifyMyOtp = async () => {
                   aria-label="Close"
                   data-bs-toggle="modal"
                   data-bs-dismiss="modal"
-                  data-bs-target="#otpModal"
+                  data-bs-target="#verifyOtpModal"
                 ></button>
               </div>
               <div class="modal-body">
