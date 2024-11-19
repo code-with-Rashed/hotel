@@ -188,6 +188,7 @@ use App\Http\Controllers\VisitiorPanel\SettingController as VisitiorPanelSetting
 use App\Http\Controllers\VisitiorPanel\LogoController as VisitiorPanelLogoController;
 use App\Http\Controllers\VisitiorPanel\RatingReviewController as VisitiorPanelRatingReviewController;
 use App\Http\Controllers\VisitiorPanel\RoomController as VisitiorPanelRoomController;
+use App\Http\Controllers\VisitiorPanel\AchievementController as VisitiorPanelAchievementController;
 
 // room facility routes for visitiors
 Route::get('/facility', [VisitiorPanelFacilityController::class, 'index']);
@@ -203,6 +204,9 @@ Route::get('/carousel', [VisitiorPanelCarouselController::class, 'index']);
 
 // Team member routes
 Route::get('/team-members', [TeamMemberController::class, 'index']);
+
+// Achievement routes
+Route::get('/achievements', [VisitiorPanelAchievementController::class, 'index']);
 
 // Settings routes for visitior panel
 Route::get('/setting', [VisitiorPanelSettingController::class, 'index']);
