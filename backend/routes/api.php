@@ -20,6 +20,7 @@ use App\Http\Controllers\AdminPanel\SettingController;
 use App\Http\Controllers\AdminPanel\TeamController;
 use App\Http\Controllers\AdminPanel\UserController as AdminPanelUserController;
 use App\Http\Middleware\AccessAdminPanel;
+use App\Http\Controllers\AdminPanel\AchievementController;
 
 // Routes for admin dashboard
 Route::prefix("/admin/dashboard")->middleware(["auth:sanctum", AccessAdminPanel::class])->group(function () {
@@ -102,6 +103,15 @@ Route::prefix("/admin/team")->middleware(["auth:sanctum", AccessAdminPanel::clas
     Route::get("/show/{id}", [TeamController::class, "show"]);
     Route::put("/update/{id}", [TeamController::class, "update"]);
     Route::delete("/delete/{id}", [TeamController::class, "delete"]);
+});
+
+// Achievement routes for admin panel
+Route::prefix("/admin/achievement")->middleware(["auth:sanctum", AccessAdminPanel::class])->group(function () {
+    Route::get("/", [AchievementController::class, "index"]);
+    Route::post("/create", [AchievementController::class, "create"]);
+    Route::get("/show/{id}", [AchievementController::class, "show"]);
+    Route::put("/update/{id}", [AchievementController::class, "update"]);
+    Route::delete("/delete/{id}", [AchievementController::class, "delete"]);
 });
 
 // Facility routes for admin panel
