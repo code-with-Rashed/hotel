@@ -5,6 +5,7 @@ namespace App\Http\Controllers\AdminPanel;
 use App\Http\Controllers\BaseController;
 use App\Models\Carousel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 
 class CarouselController extends BaseController
@@ -30,6 +31,7 @@ class CarouselController extends BaseController
         $carousel = new Carousel();
         $carousel->image = $image_path;
         $carousel->save();
+        Cache::forget("carousel");
         return $this->send_response(message: "New carousel image successfully created .", status_code: 201);
     }
 
@@ -61,6 +63,7 @@ class CarouselController extends BaseController
 
         $carousel->image = $image_path;
         $carousel->save();
+        Cache::forget("carousel");
         return $this->send_response(message: "Carousel image successfully updated .");
     }
 
@@ -74,6 +77,7 @@ class CarouselController extends BaseController
                 @unlink($image_path);
             }
             $carousel->delete();
+            Cache::forget("carousel");
         }
         return $this->send_response(message: "Carousel image successfully deleted .");
     }

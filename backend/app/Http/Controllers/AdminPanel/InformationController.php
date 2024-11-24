@@ -5,6 +5,7 @@ namespace App\Http\Controllers\AdminPanel;
 use App\Http\Controllers\BaseController;
 use App\Models\Information;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 
 class InformationController extends BaseController
@@ -38,6 +39,7 @@ class InformationController extends BaseController
             $information->phone = $request->phone;
             $information->social = $request->social;
             $information->save();
+            Cache::forget("company_information");
             return $this->send_response(message: "Company information successfully updated .");
         }
 
@@ -49,6 +51,7 @@ class InformationController extends BaseController
         $information->phone = $request->phone;
         $information->social = $request->social;
         $information->save();
+        Cache::forget("company_information");
         return $this->send_response(message: "Company information successfully created .", status_code: 201);
     }
 }

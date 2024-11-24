@@ -5,6 +5,7 @@ namespace App\Http\Controllers\AdminPanel;
 use App\Http\Controllers\BaseController;
 use App\Models\Team;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 
 class TeamController extends BaseController
@@ -35,6 +36,7 @@ class TeamController extends BaseController
         $team->name = $request->name;
         $team->designation = $request->designation;
         $team->save();
+        Cache::forget("team");
         return $this->send_response(message: "New team member successfully created .", status_code: 201);
     }
 
@@ -73,6 +75,7 @@ class TeamController extends BaseController
         $team->name = $request->name;
         $team->designation = $request->designation;
         $team->save();
+        Cache::forget("team");
         return $this->send_response(message: "Team member record successfully updated .");
     }
 
@@ -86,6 +89,7 @@ class TeamController extends BaseController
                 @unlink($photo);
             }
             $team->delete();
+            Cache::forget("team");
             return $this->send_response(message: "Team member record successfully deleted .");
         }
     }

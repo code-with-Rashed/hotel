@@ -5,6 +5,7 @@ namespace App\Http\Controllers\AdminPanel;
 use App\Http\Controllers\BaseController;
 use App\Models\Facility;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 
 class FacilityController extends BaseController
@@ -35,6 +36,7 @@ class FacilityController extends BaseController
         $facility->name = $request->name;
         $facility->description = $request->description;
         $facility->save();
+        Cache::forget("facilities");
         return $this->send_response(message: "New facility successfully created .", status_code: 201);
     }
 
@@ -73,6 +75,7 @@ class FacilityController extends BaseController
         $facility->name = $request->name;
         $facility->description = $request->description;
         $facility->save();
+        Cache::forget("facilities");
         return $this->send_response(message: "Facility record successfully updated .");
     }
 
@@ -86,6 +89,7 @@ class FacilityController extends BaseController
                 @unlink($image);
             }
             $facility->delete();
+            Cache::forget("facilities");
             return $this->send_response(message: "Facility record successfully deleted .");
         }
     }

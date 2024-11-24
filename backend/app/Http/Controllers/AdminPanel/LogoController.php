@@ -5,6 +5,7 @@ namespace App\Http\Controllers\AdminPanel;
 use App\Http\Controllers\BaseController;
 use App\Models\Logo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 
 class LogoController extends BaseController
@@ -37,6 +38,7 @@ class LogoController extends BaseController
             }
             $logo->logo = $new_logo;
             $logo->save();
+            Cache::forget("logo");
             return $this->send_response(message: "Logo successfully updated .");
         }
 
@@ -44,6 +46,7 @@ class LogoController extends BaseController
         $logo = new Logo();
         $logo->logo = $new_logo;
         $logo->save();
+        Cache::forget("logo");
         return $this->send_response(message: "Logo successfully created .", status_code: 201);
     }
 }

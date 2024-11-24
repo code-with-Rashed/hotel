@@ -5,6 +5,7 @@ namespace App\Http\Controllers\AdminPanel;
 use App\Http\Controllers\BaseController;
 use App\Models\Achievement;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 
 class AchievementController extends BaseController
@@ -33,6 +34,7 @@ class AchievementController extends BaseController
         $achievement->photo = $photo;
         $achievement->achievement = $request->achievement;
         $achievement->save();
+        Cache::forget("achievement");
         return $this->send_response(message: "New achievement record successfully created .", status_code: 201);
     }
 
@@ -69,6 +71,7 @@ class AchievementController extends BaseController
 
         $achievement->achievement = $request->achievement;
         $achievement->save();
+        Cache::forget("achievement");
         return $this->send_response(message: "Achievement record successfully updated .");
     }
 
@@ -82,6 +85,7 @@ class AchievementController extends BaseController
                 @unlink($photo);
             }
             $achievement->delete();
+            Cache::forget("achievement");
             return $this->send_response(message: "Achievement record successfully deleted .");
         }
     }
