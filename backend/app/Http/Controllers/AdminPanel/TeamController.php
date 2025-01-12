@@ -14,7 +14,7 @@ class TeamController extends BaseController
     public function index()
     {
         $results["team"] = Team::all();
-        return $this->send_response(message: "Team members data .", results: $results);
+        return $this->send_response(message: "Team members data.", results: $results);
     }
 
     // create a new team member
@@ -26,7 +26,7 @@ class TeamController extends BaseController
             "designation" => "required|string"
         ]);
         if ($validation->fails()) {
-            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+            return $this->send_error(message: "Validation error!", errors: $validation->errors()->all());
         }
 
         $photo = $request->photo->store("image/team", "public");
@@ -37,14 +37,14 @@ class TeamController extends BaseController
         $team->designation = $request->designation;
         $team->save();
         Cache::forget("team");
-        return $this->send_response(message: "New team member successfully created .", status_code: 201);
+        return $this->send_response(message: "New team member successfully created.", status_code: 201);
     }
 
     // show single team record
     public function show($id)
     {
         $results["team"] = Team::find($id);
-        return $this->send_response(message: "Team member data .", results: $results);
+        return $this->send_response(message: "Team member data.", results: $results);
     }
 
     // update team record
@@ -56,7 +56,7 @@ class TeamController extends BaseController
             "designation" => "required|string"
         ]);
         if ($validation->fails()) {
-            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+            return $this->send_error(message: "Validation error!", errors: $validation->errors()->all());
         }
 
         $team = Team::find($id);
@@ -76,7 +76,7 @@ class TeamController extends BaseController
         $team->designation = $request->designation;
         $team->save();
         Cache::forget("team");
-        return $this->send_response(message: "Team member record successfully updated .");
+        return $this->send_response(message: "Team member record successfully updated.");
     }
 
     // delete team record
@@ -90,7 +90,7 @@ class TeamController extends BaseController
             }
             $team->delete();
             Cache::forget("team");
-            return $this->send_response(message: "Team member record successfully deleted .");
+            return $this->send_response(message: "Team member record successfully deleted.");
         }
     }
 }

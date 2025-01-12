@@ -19,11 +19,11 @@ class OtpEmailController extends BaseController
             "email" => "required|email|max:70",
         ]);
         if ($validation->fails()) {
-            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+            return $this->send_error(message: "Validation error!", errors: $validation->errors()->all());
         }
         $user = User::where('email', $request->email)->first();
         if (is_null($user)) {
-            return $this->send_error(message: "This ( $request->email ) email is not exist.");
+            return $this->send_error(message: "Your email ( $request->email ) is unregistered!");
         }
         // genarate otp
         $otp = rand(11111, 99999);
@@ -37,7 +37,7 @@ class OtpEmailController extends BaseController
         $subject = "Email Verification";
         $message = "Your email verification otp is <strong>$otp</strong>";
         Mail::to($to_email)->send(new OtpEmail($subject, $message));
-        return $this->send_response("You Have an OTP in your email. so check your email account.");
+        return $this->send_response("You have been an OTP in your email. so, check your email account.");
     }
 
     // verify valid otp for user email verification
@@ -48,15 +48,15 @@ class OtpEmailController extends BaseController
             "otp" => "required|max:10",
         ]);
         if ($validation->fails()) {
-            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+            return $this->send_error(message: "Validation error!", errors: $validation->errors()->all());
         }
         $user = User::where('email', $request->email)->first();
         $valid_otp_time = Carbon::now()->subMinute(5)->toDateTimeString();
         if (is_null($user) || $user->remember_token != $request->otp || $user->updated_at <= $valid_otp_time) {
-            return $this->send_error(message: "Your otp is invalid or expired !");
+            return $this->send_error(message: "Your OTP is invalid or expired!");
         }
         $user->email_verified_at = Carbon::now()->toDateTimeString();
         $user->save();
-        return $this->send_response("Your email is successfully verified .");
+        return $this->send_response("Your email is successfully verified.");
     }
 }

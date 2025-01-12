@@ -26,13 +26,13 @@ class MyBookingsController extends BaseController
             "user_id" => "required|integer"
         ]);
         if ($validation->fails()) {
-            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+            return $this->send_error(message: "Validation error!", errors: $validation->errors()->all());
         }
         $booking_order = BookingOrder::where([['id', $request->order_id], ['user_id', $request->user_id]])->first();
         $booking_order->booking_status = "cancelled";
         $booking_order->refund = 0;
         $booking_order->save();
-        return $this->send_response('Your booking is cancelled. Refund in Proccess.');
+        return $this->send_response('Your booking is canceled. Refund in Process.');
     }
 
     // save rating & review for room
@@ -46,7 +46,7 @@ class MyBookingsController extends BaseController
             "message" => "required"
         ]);
         if ($validation->fails()) {
-            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+            return $this->send_error(message: "Validation error!", errors: $validation->errors()->all());
         }
 
         $rating_review = new RatingReview();
@@ -61,6 +61,6 @@ class MyBookingsController extends BaseController
         $booking_details->rating = 1;
         $booking_details->save();
 
-        return $this->send_response('Thanks For Your Feedback.');
+        return $this->send_response('Thanks for your feedback.');
     }
 }

@@ -14,14 +14,14 @@ class RoomFeatureFacilityController extends BaseController
     public function get_room_features_id($room_id)
     {
         $results["room_features"] = RoomFeature::where("room_id", $room_id)->get();
-        return $this->send_response(message: "Rooms features .", results: $results);
+        return $this->send_response(message: "Rooms features.", results: $results);
     }
 
     // show room related saved facilities id
     public function get_room_facilities_id($room_id)
     {
         $results["facilities"] = RoomFacility::where("room_id", $room_id)->get();
-        return $this->send_response(message: "Rooms facilities .", results: $results);
+        return $this->send_response(message: "Rooms facilities.", results: $results);
     }
 
     // save room related feature & facility id
@@ -35,7 +35,7 @@ class RoomFeatureFacilityController extends BaseController
             "facility_id.*" => "required|integer|exists:facilities,id"
         ]);
         if ($validation->fails()) {
-            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+            return $this->send_error(message: "Validation error!", errors: $validation->errors()->all());
         }
 
         foreach ($request->feature_id as $id) {
@@ -52,7 +52,7 @@ class RoomFeatureFacilityController extends BaseController
             $room_facility->save();
         }
 
-        return $this->send_response(message: "Hotel Room related feature & facility successfully saved .", status_code: 201);
+        return $this->send_response(message: "Hotel Room related feature & facility successfully saved.", status_code: 201);
     }
 
     // update room related feature & facility id
@@ -66,7 +66,7 @@ class RoomFeatureFacilityController extends BaseController
             "facility_id.*" => "required|integer|exists:facilities,id"
         ]);
         if ($validation->fails()) {
-            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+            return $this->send_error(message: "Validation error!", errors: $validation->errors()->all());
         }
 
         foreach ($request->feature_id as $id) {
@@ -85,7 +85,7 @@ class RoomFeatureFacilityController extends BaseController
 
         $this->delete($request->room_id, $request->feature_id, $request->facility_id);
 
-        return $this->send_response(message: "Hotel Room related feature & facility successfully updated .");
+        return $this->send_response(message: "Hotel Room related feature & facility successfully updated.");
     }
 
     // non used room feature & facility id delete

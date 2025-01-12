@@ -19,7 +19,7 @@ class ContactController extends BaseController
             "message" => "required|string|max:255"
         ]);
         if ($validation->fails()) {
-            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+            return $this->send_error(message: "Validation error", errors: $validation->errors()->all());
         }
 
         $contact = new Contact();
@@ -28,6 +28,6 @@ class ContactController extends BaseController
         $contact->subject = $request->subject;
         $contact->message = $request->message;
         $contact->save();
-        return $this->send_response(message: "Contact details successfully send .", status_code: 201);
+        return $this->send_response(message: "Contact details were successfully sent.", status_code: 201);
     }
 }

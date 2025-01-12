@@ -16,7 +16,7 @@ class UserController extends BaseController
             $query = $query->where("name", "like", "%$search%")->orWhere("email", "like", "%$search%")->orWhere("number", "like", "%$search%");
         }
         $results["users"] = $query->paginate(5);
-        return $this->send_response(message: "Users data .", results: $results);
+        return $this->send_response(message: "Users data.", results: $results);
     }
 
     // response user activity details
@@ -33,10 +33,10 @@ class UserController extends BaseController
 
         if ($user->status) {
             $user->status = 0;
-            $message = "The user has been inactivate .";
+            $message = "The user has been inactivate.";
         } else {
             $user->status = 1;
-            $message = "The user has been activate .";
+            $message = "The user has been activate.";
         }
         $user->save();
         return $this->send_response(message: $message);

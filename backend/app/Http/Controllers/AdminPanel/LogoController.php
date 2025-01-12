@@ -14,7 +14,7 @@ class LogoController extends BaseController
     public function index()
     {
         $results["logo"] = Logo::first();
-        return $this->send_response(message: "Logo .", results: $results);
+        return $this->send_response(message: "Logo.", results: $results);
     }
 
     // update logo
@@ -24,7 +24,7 @@ class LogoController extends BaseController
             "logo" => "required|image|max:2048|mimes:jpg,jpeg,png,webp,svg"
         ]);
         if ($validation->fails()) {
-            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+            return $this->send_error(message: "Validation error!", errors: $validation->errors()->all());
         }
 
         // upload logo
@@ -39,7 +39,7 @@ class LogoController extends BaseController
             $logo->logo = $new_logo;
             $logo->save();
             Cache::forget("logo");
-            return $this->send_response(message: "Logo successfully updated .");
+            return $this->send_response(message: "Logo successfully updated.");
         }
 
         // if logo table is empty then create & upload first logo
@@ -47,6 +47,6 @@ class LogoController extends BaseController
         $logo->logo = $new_logo;
         $logo->save();
         Cache::forget("logo");
-        return $this->send_response(message: "Logo successfully created .", status_code: 201);
+        return $this->send_response(message: "Logo successfully created.", status_code: 201);
     }
 }

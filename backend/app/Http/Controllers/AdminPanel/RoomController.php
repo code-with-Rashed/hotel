@@ -13,7 +13,7 @@ class RoomController extends BaseController
     public function index()
     {
         $results["rooms"] = Room::orderBy('status', 'desc')->paginate(5);
-        return $this->send_response(message: "Rooms data .", results: $results);
+        return $this->send_response(message: "Rooms data.", results: $results);
     }
 
     // create a new room
@@ -29,7 +29,7 @@ class RoomController extends BaseController
             "description" => "required|string"
         ]);
         if ($validation->fails()) {
-            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+            return $this->send_error(message: "Validation error!", errors: $validation->errors()->all());
         }
 
         $room = new Room();
@@ -41,14 +41,14 @@ class RoomController extends BaseController
         $room->children = $request->children;
         $room->description = $request->description;
         $room->save();
-        return $this->send_response(message: "New Room successfully created .", status_code: 201);
+        return $this->send_response(message: "New Room successfully created.", status_code: 201);
     }
 
     // show single room
     public function show($id)
     {
         $results["room"] = Room::find($id);
-        return $this->send_response(message: "Room data .", results: $results);
+        return $this->send_response(message: "Room data.", results: $results);
     }
 
     // update room record
@@ -64,7 +64,7 @@ class RoomController extends BaseController
             "description" => "required|string"
         ]);
         if ($validation->fails()) {
-            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+            return $this->send_error(message: "Validation error!", errors: $validation->errors()->all());
         }
 
         $room = Room::find($id);
@@ -76,7 +76,7 @@ class RoomController extends BaseController
         $room->children = $request->children;
         $room->description = $request->description;
         $room->save();
-        return $this->send_response(message: "Room record successfully updated .");
+        return $this->send_response(message: "Room record successfully updated.");
     }
 
     // update room status
@@ -86,10 +86,10 @@ class RoomController extends BaseController
 
         if ($room->status) {
             $room->status = 0;
-            $message = "The room has been activate .";
+            $message = "The room has been activate.";
         } else {
             $room->status = 1;
-            $message = "The room has been inactivate .";
+            $message = "The room has been inactivate.";
         }
         $room->save();
         return $this->send_response(message: $message);
@@ -101,7 +101,7 @@ class RoomController extends BaseController
         $room = Room::find($id);
         if (!is_null($room)) {
             $room->delete();
-            return $this->send_response(message: "Room successfully deleted .");
+            return $this->send_response(message: "Room successfully deleted.");
         }
     }
 }

@@ -14,6 +14,6 @@ class TeamMemberController extends BaseController
         $results["team"] = Cache::rememberForever("team", function () {
             return Team::all();
         });
-        return $this->send_response(message: "Team members data .", results: $results);
+        return $this->send_response(message: "Team member's data.", results: $results);
     }
 }

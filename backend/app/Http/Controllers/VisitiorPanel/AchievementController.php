@@ -14,6 +14,6 @@ class AchievementController extends BaseController
         $results["achievement"] = Cache::rememberForever("achievement", function () {
             return Achievement::all();
         });
-        return $this->send_response(message: "Achievement record .", results: $results);
+        return $this->send_response(message: "Achievement record.", results: $results);
     }
 }

@@ -14,7 +14,7 @@ class InformationController extends BaseController
     public function index()
     {
         $results["company_information"] = Information::first();
-        return $this->send_response(message: "Company information .", results: $results);
+        return $this->send_response(message: "Company information.", results: $results);
     }
 
     // update company information
@@ -28,7 +28,7 @@ class InformationController extends BaseController
             "social.*" => "required|url:https"
         ]);
         if ($validation->fails()) {
-            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+            return $this->send_error(message: "Validation error!", errors: $validation->errors()->all());
         }
 
         $information = Information::first();
@@ -40,7 +40,7 @@ class InformationController extends BaseController
             $information->social = $request->social;
             $information->save();
             Cache::forget("company_information");
-            return $this->send_response(message: "Company information successfully updated .");
+            return $this->send_response(message: "Company information successfully updated.");
         }
 
         // if information table is empty then create first company information
@@ -52,6 +52,6 @@ class InformationController extends BaseController
         $information->social = $request->social;
         $information->save();
         Cache::forget("company_information");
-        return $this->send_response(message: "Company information successfully created .", status_code: 201);
+        return $this->send_response(message: "Company information successfully created.", status_code: 201);
     }
 }

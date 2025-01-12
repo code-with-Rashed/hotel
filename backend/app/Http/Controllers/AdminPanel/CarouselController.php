@@ -24,7 +24,7 @@ class CarouselController extends BaseController
             "image" => "required|image|mimes:jpg,jpeg,png,webp|max:3072"
         ]);
         if ($validation->fails()) {
-            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+            return $this->send_error(message: "Validation error!", errors: $validation->errors()->all());
         }
 
         $image_path = $request->image->store("image/carousel", "public");
@@ -32,14 +32,14 @@ class CarouselController extends BaseController
         $carousel->image = $image_path;
         $carousel->save();
         Cache::forget("carousel");
-        return $this->send_response(message: "New carousel image successfully created .", status_code: 201);
+        return $this->send_response(message: "New carousel image successfully created.", status_code: 201);
     }
 
     // show single carousel record
     public function show($id)
     {
         $results["carousel"] = Carousel::find($id);
-        return $this->send_response(message: "Carousel data .", results: $results);
+        return $this->send_response(message: "Carousel data.", results: $results);
     }
 
     // update & upload crousel image 
@@ -49,7 +49,7 @@ class CarouselController extends BaseController
             "image" => "required|image|mimes:jpg,jpeg,png,webp|max:3072"
         ]);
         if ($validation->fails()) {
-            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+            return $this->send_error(message: "Validation error!", errors: $validation->errors()->all());
         }
 
         $carousel = Carousel::find($id);
@@ -64,7 +64,7 @@ class CarouselController extends BaseController
         $carousel->image = $image_path;
         $carousel->save();
         Cache::forget("carousel");
-        return $this->send_response(message: "Carousel image successfully updated .");
+        return $this->send_response(message: "Carousel image successfully updated.");
     }
 
     // delete & unlinnk carousel image
@@ -79,6 +79,6 @@ class CarouselController extends BaseController
             $carousel->delete();
             Cache::forget("carousel");
         }
-        return $this->send_response(message: "Carousel image successfully deleted .");
+        return $this->send_response(message: "Carousel image successfully deleted.");
     }
 }

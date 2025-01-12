@@ -21,10 +21,10 @@ class RatingReviewController extends BaseController
 
         if ($rating_review->seen) {
             $rating_review->seen = 0;
-            $message = "The room has been inactivate .";
+            $message = "The room has been inactivate.";
         } else {
             $rating_review->seen = 1;
-            $message = "The room has been activate .";
+            $message = "The room has been activate.";
         }
         $rating_review->save();
         return $this->send_response(message: $message);
@@ -36,7 +36,7 @@ class RatingReviewController extends BaseController
         $rating_review = RatingReview::find($id);
         if (!is_null($rating_review)) {
             $rating_review->delete();
-            return $this->send_response(message: "The Rating & Review successfully deleted .");
+            return $this->send_response(message: "The Rating & Review successfully deleted.");
         }
     }
 }

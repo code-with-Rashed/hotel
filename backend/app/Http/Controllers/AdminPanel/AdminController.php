@@ -22,12 +22,12 @@ class AdminController extends BaseController
             ]
         );
         if ($validation->fails()) {
-            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+            return $this->send_error(message: "Validation error!", errors: $validation->errors()->all());
         }
 
         $admin = Admin::where('email', $request->email)->first();
         if (!$admin || !Hash::check($request->password, $admin->password)) {
-            return $this->send_error(message: "Invalid login details !", status_code: 401);
+            return $this->send_error(message: "Invalid login credentials!", status_code: 401);
         }
         $token = $admin->createToken('admin_auth_token')->plainTextToken;
         $results = [
@@ -35,7 +35,7 @@ class AdminController extends BaseController
             'admin_access_token' => $token,
             'token_type' => 'Bearer'
         ];
-        return $this->send_response(message: "Authentication successfull .", results: $results);
+        return $this->send_response(message: "Authentication successfull.", results: $results);
     }
 
     // Admin profile logout
@@ -44,7 +44,7 @@ class AdminController extends BaseController
         $id = explode('|', $request->bearerToken())[0];
         PersonalAccessToken::where('id', $id)->delete();
 
-        return $this->send_response(message: "You have been successfully logged out .");
+        return $this->send_response(message: "You have been successfully logged out.");
     }
 
     // show admin profile record
@@ -63,7 +63,7 @@ class AdminController extends BaseController
             "email" => "required|email|unique:admins,email,$id"
         ]);
         if ($validation->fails()) {
-            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+            return $this->send_error(message: "Validation error!", errors: $validation->errors()->all());
         }
 
         $admin = Admin::find($id);
@@ -94,18 +94,18 @@ class AdminController extends BaseController
             'password_confirmation' => 'required'
         ]);
         if ($validation->fails()) {
-            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+            return $this->send_error(message: "Validation error!", errors: $validation->errors()->all());
         }
 
         $admin = Admin::find($id);
 
         if (!Hash::check($request->old_password, $admin->password)) {
-            return $this->send_error(message: "Invalid Old Password !");
+            return $this->send_error(message: "Invalid Old Password!");
         }
 
         $admin->password = Hash::make($request->password);
         $admin->save();
 
-        return $this->send_response(message: "Password successfully updated !");
+        return $this->send_response(message: "Password successfully updated!");
     }
 }

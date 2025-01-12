@@ -14,6 +14,6 @@ class LogoController extends BaseController
         $results["logo"] = Cache::rememberForever("logo", function () {
             return Logo::first();
         });
-        return $this->send_response(message: "Logo .", results: $results);
+        return $this->send_response(message: "The logo.", results: $results);
     }
 }

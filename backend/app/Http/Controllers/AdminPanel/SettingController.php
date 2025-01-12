@@ -23,7 +23,7 @@ class SettingController extends BaseController
 
         if ($setting->shutdown) {
             $setting->shutdown = 0;
-            $message = "The web application is running .";
+            $message = "The web application is running.";
         } else {
             $setting->shutdown = 1;
             $message = "The web application is under maintenance.";
@@ -40,7 +40,7 @@ class SettingController extends BaseController
             "description" => "required|string"
         ]);
         if ($validation->fails()) {
-            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+            return $this->send_error(message: "Validation error!", errors: $validation->errors()->all());
         }
 
         $setting = Setting::first();
@@ -48,13 +48,13 @@ class SettingController extends BaseController
         if (!is_null($setting)) {
             $setting->description = $request->description;
             $setting->save();
-            return $this->send_response(message: "The web description successfully updated .");
+            return $this->send_response(message: "The web description successfully updated.");
         }
 
         // if settings table is empty then create first the web description
         $setting = new Setting();
         $setting->description = $request->description;
         $setting->save();
-        return $this->send_response(message: "The web description successfully created .", status_code: 201);
+        return $this->send_response(message: "The web description successfully created.", status_code: 201);
     }
 }

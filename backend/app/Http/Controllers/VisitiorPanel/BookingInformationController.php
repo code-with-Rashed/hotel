@@ -25,7 +25,7 @@ class BookingInformationController extends BaseController
             "total_pay" => "required|integer"
         ]);
         if ($validation->fails()) {
-            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+            return $this->send_error(message: "Validation error.", errors: $validation->errors()->all());
         }
 
         // date validation
@@ -34,17 +34,17 @@ class BookingInformationController extends BaseController
         $checkout = new DateTime($request->checkout);
 
         if ($checkin == $checkout) {
-            $this->errors[] = "You cannot Check-out of same day !";
+            $this->errors[] = "You cannot check out on the same day!";
         } else if ($checkin < $today) {
-            $this->errors[] = "Check-in date is earlier than Today's date !";
+            $this->errors[] = "The check-in date is earlier than Today's date!";
         } else if ($checkout < $checkin) {
-            $this->errors[] = "Check-out date is earlier than Check-in date !";
+            $this->errors[] = "The check-out date is earlier than the Check-in date!";
         }
 
         // date between validation
         $total_day = date_diff($checkin, $checkout)->days;
         if ($total_day != $request->total_day) {
-            $this->errors[] = "Total day is not match !";
+            $this->errors[] = "The total day is not a match!";
         }
 
         // get room record
@@ -55,30 +55,30 @@ class BookingInformationController extends BaseController
         if (!is_null($room)) {
             // check room availability
             if (($room->quantity - $room->booking_orders_count) == 0) {
-                $this->errors[] = "Sory this room is not available among $request->checkin - $request->checkout date !";
+                $this->errors[] = "Sorry, this room is not available between $request->checkin - $request->checkout date!";
             }
 
             // room info validation
             if ($room->name != $request->room_name) {
-                $this->errors[] = "Room name is not match !";
+                $this->errors[] = "The room name does not match!";
             }
             if ($room->price != $request->price) {
-                $this->errors[] = "Room price is not match !";
+                $this->errors[] = "The room price is not match!";
             }
 
             // total price validation
             if (($room->price * $total_day) != $request->total_pay) {
-                $this->errors[] = "Total price is not match !";
+                $this->errors[] = "The total price is not match!";
             }
         } else {
-            $this->errors[] = "Room is Not Found !";
+            $this->errors[] = "The room is not found!";
         }
 
         // response
         if (empty($this->errors)) {
             return $this->send_response('all ok');
         } else {
-            return $this->send_error('invalid information', $this->errors);
+            return $this->send_error('Invalid information!', $this->errors);
         }
     }
 }

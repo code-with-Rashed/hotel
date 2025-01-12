@@ -14,6 +14,6 @@ class CarouselController extends BaseController
         $results["carousel"] = Cache::rememberForever("carousel", function () {
             return Carousel::all();
         });
-        return $this->send_response(message: "Carousel Data .", results: $results);
+        return $this->send_response(message: "Carousel data.", results: $results);
     }
 }

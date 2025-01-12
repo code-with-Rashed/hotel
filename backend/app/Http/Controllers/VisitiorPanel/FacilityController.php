@@ -14,6 +14,6 @@ class FacilityController extends BaseController
          $results["facilities"] = Cache::rememberForever("facilities",function(){
             return Facility::all();
          });
-         return $this->send_response(message: "Facility data .", results: $results);
+         return $this->send_response(message: "Facility data.", results: $results);
      }   
 }

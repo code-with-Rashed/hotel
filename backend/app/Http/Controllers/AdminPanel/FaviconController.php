@@ -13,7 +13,7 @@ class FaviconController extends BaseController
     public function index()
     {
         $results["favicon"] = Favicon::first();
-        return $this->send_response(message: "Favicon .", results: $results);
+        return $this->send_response(message: "Favicon.", results: $results);
     }
 
     // update favicon
@@ -23,7 +23,7 @@ class FaviconController extends BaseController
             "icon" => "required|image|max:1024|mimes:jpg,jpeg,png,svg,webp"
         ]);
         if ($validation->fails()) {
-            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+            return $this->send_error(message: "Validation error!", errors: $validation->errors()->all());
         }
 
         $new_favicon = $request->icon->store("image/favicon", "public");
@@ -39,13 +39,13 @@ class FaviconController extends BaseController
 
             $favicon->icon = $new_favicon;
             $favicon->save();
-            return $this->send_response(message: "Favicon successfully updated .");
+            return $this->send_response(message: "Favicon successfully updated.");
         }
 
         // if favicon table is empty then create & upload first favicon
         $favicon = new Favicon();
         $favicon->icon = $new_favicon;
         $favicon->save();
-        return $this->send_response(message: "Favicon successfully created .", status_code: 201);
+        return $this->send_response(message: "Favicon successfully created.", status_code: 201);
     }
 }

@@ -77,7 +77,7 @@ class BookingsController extends BaseController
             "room_no" => "required"
         ]);
         if ($validation->fails()) {
-            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+            return $this->send_error(message: "Validation error!", errors: $validation->errors()->all());
         }
 
         // user is arrived
@@ -90,7 +90,7 @@ class BookingsController extends BaseController
         $booking_details->room_no = $request->room_no;
         $booking_details->save();
 
-        return $this->send_response("Room successfully assigned for user.");
+        return $this->send_response("The Room successfully assigned for user.");
     }
 
     // cancel booking order
@@ -115,7 +115,7 @@ class BookingsController extends BaseController
             $booking_order->booking_status = "refunded";
             $booking_order->refund = 1;
             $booking_order->save();
-            return $this->send_response("Payment Successfully Refunded .");
+            return $this->send_response("The Payment Successfully Refunded.");
         }
         return $this->send_error($sslcommerz->failedReason());
     }

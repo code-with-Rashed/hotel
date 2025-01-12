@@ -14,7 +14,7 @@ class AchievementController extends BaseController
     public function index()
     {
         $results["achievement"] = Achievement::all();
-        return $this->send_response(message: "Achievement data .", results: $results);
+        return $this->send_response(message: "Achievements data.", results: $results);
     }
 
     // create a new achievement record
@@ -25,7 +25,7 @@ class AchievementController extends BaseController
             "photo" => "required|image|max:2048|mimes:jpg,jpeg,png,webp,svg",
         ]);
         if ($validation->fails()) {
-            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+            return $this->send_error(message: "Validation error!", errors: $validation->errors()->all());
         }
 
         $photo = $request->photo->store("image/achievement", "public");
@@ -35,14 +35,14 @@ class AchievementController extends BaseController
         $achievement->achievement = $request->achievement;
         $achievement->save();
         Cache::forget("achievement");
-        return $this->send_response(message: "New achievement record successfully created .", status_code: 201);
+        return $this->send_response(message: "New achievement record successfully created.", status_code: 201);
     }
 
     // show single achievement record
     public function show($id)
     {
         $results["achievement"] = Achievement::find($id);
-        return $this->send_response(message: "Achievement data .", results: $results);
+        return $this->send_response(message: "Achievement data.", results: $results);
     }
 
     // update achievement record
@@ -53,7 +53,7 @@ class AchievementController extends BaseController
             "photo" => "nullable|image|max:2048|mimes:jpg,jpeg,png,webp,svg",
         ]);
         if ($validation->fails()) {
-            return $this->send_error(message: "validation error", errors: $validation->errors()->all());
+            return $this->send_error(message: "Validation error!", errors: $validation->errors()->all());
         }
 
         $achievement = Achievement::find($id);
@@ -72,7 +72,7 @@ class AchievementController extends BaseController
         $achievement->achievement = $request->achievement;
         $achievement->save();
         Cache::forget("achievement");
-        return $this->send_response(message: "Achievement record successfully updated .");
+        return $this->send_response(message: "Achievement record successfully updated.");
     }
 
     // delete achievement record
@@ -86,7 +86,7 @@ class AchievementController extends BaseController
             }
             $achievement->delete();
             Cache::forget("achievement");
-            return $this->send_response(message: "Achievement record successfully deleted .");
+            return $this->send_response(message: "Achievement record successfully deleted.");
         }
     }
 }

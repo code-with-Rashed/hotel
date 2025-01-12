@@ -14,6 +14,6 @@ class AddressController extends BaseController
         $results["company_information"] = Cache::rememberForever("company_information", function () {
             return Information::first();
         });
-        return $this->send_response(message: "Company information .", results: $results);
+        return $this->send_response(message: "Company information.", results: $results);
     }
 }
