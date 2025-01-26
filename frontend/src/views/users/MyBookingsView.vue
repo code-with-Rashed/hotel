@@ -6,9 +6,17 @@ import { dateFormatter, timeFormatter } from '@/helpers/dateTime'
 import ToastMessage from '@/components/ToastMessage.vue'
 import { useToastMessageStore } from '@/stores/toastMessage'
 import { hideBsModal } from '@/helpers/hideBsModal'
+import useLogoApi from '@/composables/visitor/logoApi'
 
+const { results: logoResult, get: getLogo } = useLogoApi()
 const { results, get, put, sendRatingReview } = useMyBookingsApi()
 const storeToastMessage = useToastMessageStore()
+
+// show logo for invoice
+const showLogo = async () => {
+  await getLogo()
+}
+// --------------------
 
 // show all order list
 const reloader = ref(true)
@@ -17,7 +25,10 @@ const show = async () => {
   await get()
   reloader.value = true
 }
-onMounted(() => show())
+onMounted(() => {
+  show()
+  showLogo()
+})
 //------------------
 
 // show booking details for print/download
@@ -96,6 +107,10 @@ const sendFeedbackNow = async () => {
                   <div class="card border-0 shadow p-3">
                     <div>
                       <strong>{{ booking.booking_details.room_name }}</strong
+                      ><br />
+                      <strong>Room Unique ID : {{ booking.room_id }}</strong
+                      ><br />
+                      <strong>Room No : {{ booking.booking_details.room_no }}</strong
                       ><br />
                       <span class="mt-1 d-block"
                         ><span class="fs-5">&#2547;</span> {{ booking.booking_details.price }} Per
@@ -248,9 +263,18 @@ const sendFeedbackNow = async () => {
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5 d-print-none" id="staticBackdropLabel">Booking Details</h1>
-          <h1 class="modal-title fs-5 d-none d-print-block" id="staticBackdropLabel">
-            Invoice Details
-          </h1>
+          <div class="d-none d-print-block">
+            <template v-if="logoResult.data">
+              <img
+                :src="logoResult.data.logo?.logo"
+                alt="logo"
+                height="50"
+                width="50"
+                class="rounded"
+              />
+            </template>
+            <h1 class="modal-title fs-5" id="staticBackdropLabel">Invoice Details</h1>
+          </div>
           <button
             type="button"
             class="btn-close"

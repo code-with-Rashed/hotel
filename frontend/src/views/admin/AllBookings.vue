@@ -114,6 +114,10 @@ const printInvoice = () => {
                             <b>Phone : </b> {{ booking.phone }}
                           </td>
                           <td>
+                            <b>Room Unique ID : </b> {{ booking.room_id }}
+                            <br />
+                            <b>Room No : </b> {{ booking.room_no }}
+                            <br />
                             <b>Room : </b> {{ booking.room_name }}
                             <br />
                             <b>Price : </b>&#2547; {{ booking.price }}

@@ -130,6 +130,12 @@ const cancelNow = async () => {
                           </td>
 
                           <td>
+                            <b>Room Unique ID : </b> {{ booking.room_id }}
+                            <br />
+                            <b>Room No : </b> {{ booking.room_no }}
+                            <br />
+                            <b>Room : </b> {{ booking.room_name }}
+                            <br />
                             <b>Room : </b> {{ booking.room_name }}
                             <br />
                             <b>Price : </b>&#2547; {{ booking.price }}
@@ -254,12 +260,11 @@ const cancelNow = async () => {
                     id="room_no"
                     class="form-control shadow-none"
                     title="Assign Room Number"
-                    required
                     v-model.trim="assignRoom.room_no"
                   />
                 </div>
                 <span class="badge rounded-pill bg-light text-dark mb-3 text-wrap lh-base">
-                  Note : Assign Room Number only when user has been arrived !
+                  Note : Assign Another Room Number only when user has been arrived ! If required .
                 </span>
               </div>
               <div class="modal-footer">
