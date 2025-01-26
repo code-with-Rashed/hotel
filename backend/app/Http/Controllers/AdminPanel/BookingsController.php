@@ -74,7 +74,7 @@ class BookingsController extends BaseController
     {
         $validation = Validator::make($request->all(), [
             "id" => "required|integer",
-            "room_no" => "required"
+            "room_no" => "nullable",
         ]);
         if ($validation->fails()) {
             return $this->send_error(message: "Validation error!", errors: $validation->errors()->all());
@@ -86,9 +86,11 @@ class BookingsController extends BaseController
         $booking_order->save();
 
         // user room is assigned
-        $booking_details = BookingDetail::where("booking_order_id", $request->id)->first();
-        $booking_details->room_no = $request->room_no;
-        $booking_details->save();
+        if(!is_null($request->room_no)){
+            $booking_details = BookingDetail::where("booking_order_id", $request->id)->first();
+            $booking_details->room_no = $request->room_no;
+            $booking_details->save();
+        }
 
         return $this->send_response("The Room successfully assigned for user.");
     }

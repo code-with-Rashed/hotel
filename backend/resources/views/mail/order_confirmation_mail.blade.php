@@ -19,6 +19,8 @@
         <li><strong>User Name : </strong> {{ $newbooking->booking_details->user_name }}</li>
         <li><strong>User Email : </strong> {{ $newbooking->booking_details->email }}</li>
         <li><strong>Room Name : </strong> {{ $newbooking->booking_details->room_name }}</li>
+        <li><strong>Room Unique ID : </strong> {{ $newbooking->room_id }}</li>
+        <li><strong>Room No : </strong> {{ $newbooking->booking_details->room_no }}</li>
         <li><strong>Order Id : </strong>{{ $newbooking->id }}</li>
         <li><strong>Trasection Id : </strong>{{ $newbooking->tran_id }}</li>
         <li><strong>Check In : </strong>{{ date('d/m/Y', strtotime($newbooking->checkin)) }}</li>
