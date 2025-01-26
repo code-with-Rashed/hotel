@@ -20,6 +20,10 @@ const storeUserCredentials = useUserCredentialsStore()
 const storeToastMessage = useToastMessageStore()
 const router = useRouter()
 const storeShutdown = useShutdownStore()
+// disable previous date
+const month =
+  new Date().getMonth() + 1 > 9 ? new Date().getMonth() + 1 : '0' + (new Date().getMonth() + 1)
+const disablePreviousDate = ref(new Date().getFullYear() + '-' + month + '-' + new Date().getDate())
 
 // show all carousel image record
 const carouselReloader = ref(true)
@@ -181,6 +185,7 @@ onMounted(() => {
                     class="form-control shadow-none"
                     v-model="search.checkin"
                     required
+                    :min="disablePreviousDate"
                   />
                 </div>
                 <div class="col-lg-3 mb-3">
@@ -190,6 +195,7 @@ onMounted(() => {
                     class="form-control shadow-none"
                     v-model="search.checkout"
                     required
+                    :min="disablePreviousDate"
                   />
                 </div>
                 <div class="col-lg-3 mb-3">

@@ -48,6 +48,12 @@ const bookingInfo = reactive({
 })
 //--------------------
 
+// disable previous date
+const month =
+  new Date().getMonth() + 1 > 9 ? new Date().getMonth() + 1 : '0' + (new Date().getMonth() + 1)
+const disablePreviousDate = ref(new Date().getFullYear() + '-' + month + '-' + new Date().getDate())
+// ----------------------------
+
 // compare checkin & checkout date
 const compareDate = () => {
   active.value = false // payment button is in-active now
@@ -236,6 +242,7 @@ onMounted(() => {
                         required
                         v-model="bookingInfo.checkin"
                         @change="compareDate"
+                        :min="disablePreviousDate"
                       />
                     </div>
                     <div class="col-md-6 mb-4">
@@ -246,6 +253,7 @@ onMounted(() => {
                         required
                         v-model="bookingInfo.checkout"
                         @change="compareDate"
+                        :min="disablePreviousDate"
                       />
                     </div>
                     <div class="col-12">

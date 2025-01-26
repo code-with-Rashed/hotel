@@ -7,7 +7,6 @@ import useRoomApi from '@/composables/visitor/roomApi'
 import ToastMessage from '@/components/ToastMessage.vue'
 import { useToastMessageStore } from '@/stores/toastMessage'
 import { useUserCredentialsStore } from '@/stores/userCredentials'
-import { useShutdownStore } from '@/stores/shutdown'
 import { urlSplit } from '@/helpers/urlSplit'
 
 const router = useRouter()
@@ -16,7 +15,11 @@ const storeToastMessage = useToastMessageStore()
 const storeUserCredentials = useUserCredentialsStore()
 const { results: facilityResults, get: getFacility } = useFacilityApi()
 const { results: roomResults, allRoom, filteredRoom } = useRoomApi()
-const storeShutdown = useShutdownStore()
+// disable previous date
+const month =
+  new Date().getMonth() + 1 > 9 ? new Date().getMonth() + 1 : '0' + (new Date().getMonth() + 1)
+const disablePreviousDate = ref(new Date().getFullYear() + '-' + month + '-' + new Date().getDate())
+// ----------------------------
 
 // if any user is logedin ? then access specific routes
 const userStatus = (roomId) => {
@@ -181,6 +184,7 @@ onMounted(() => {
                       id="checkin"
                       class="form-control mb-3"
                       v-model="queries.checkin"
+                      :min="disablePreviousDate"
                     />
                     <label class="form-label" for="checkout">Check-out</label>
                     <input
@@ -188,6 +192,7 @@ onMounted(() => {
                       id="checkout"
                       v-model="queries.checkout"
                       class="form-control"
+                      :min="disablePreviousDate"
                     />
                   </div>
                   <!-- facility listing start -->
