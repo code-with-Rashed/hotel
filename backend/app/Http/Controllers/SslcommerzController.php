@@ -58,7 +58,7 @@ class SslCommerzController extends Controller
             $booking_detais->room_name = $request->room_name;
             $booking_detais->price = $request->price;
             $booking_detais->total_pay = $request->total_pay;
-            $booking_detais->room_no = rand(1,20);
+            $booking_detais->room_no = rand(1,100);
             $booking_detais->user_name = $request->name;
             $booking_detais->phone = $request->number;
             $booking_detais->email = $request->email;
