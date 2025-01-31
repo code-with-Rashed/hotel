@@ -7,6 +7,7 @@ import useBookingInformationApi from '@/composables/visitor/bookingInformation'
 import { useUserCredentialsStore } from '@/stores/userCredentials'
 import ToastMessage from '@/components/ToastMessage.vue'
 import { useToastMessageStore } from '@/stores/toastMessage'
+import { todayDate } from '@/helpers/dateTime'
 
 const { results, confirmRoom } = useRoomApi()
 const { results: bookingInfoResult, checkBookingInfo } = useBookingInformationApi()
@@ -47,12 +48,6 @@ const bookingInfo = reactive({
   total_pay: ''
 })
 //--------------------
-
-// disable previous date
-const month =
-  new Date().getMonth() + 1 > 9 ? new Date().getMonth() + 1 : '0' + (new Date().getMonth() + 1)
-const disablePreviousDate = ref(new Date().getFullYear() + '-' + month + '-' + new Date().getDate())
-// ----------------------------
 
 // compare checkin & checkout date
 const compareDate = () => {
@@ -245,7 +240,7 @@ onMounted(() => {
                         required
                         v-model="bookingInfo.checkin"
                         @change="compareDate"
-                        :min="disablePreviousDate"
+                        :min="todayDate()"
                       />
                     </div>
                     <div class="col-md-6 mb-4">
@@ -256,7 +251,7 @@ onMounted(() => {
                         required
                         v-model="bookingInfo.checkout"
                         @change="compareDate"
-                        :min="disablePreviousDate"
+                        :min="todayDate()"
                       />
                     </div>
                     <div class="col-12">
