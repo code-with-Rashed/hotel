@@ -8,6 +8,7 @@ import ToastMessage from '@/components/ToastMessage.vue'
 import { useToastMessageStore } from '@/stores/toastMessage'
 import { useUserCredentialsStore } from '@/stores/userCredentials'
 import { urlSplit } from '@/helpers/urlSplit'
+import { useShutdownStore } from '@/stores/shutdown'
 
 const router = useRouter()
 const route = useRoute()
@@ -15,6 +16,7 @@ const storeToastMessage = useToastMessageStore()
 const storeUserCredentials = useUserCredentialsStore()
 const { results: facilityResults, get: getFacility } = useFacilityApi()
 const { results: roomResults, allRoom, filteredRoom } = useRoomApi()
+const storeShutdown = useShutdownStore()
 // disable previous date
 const month =
   new Date().getMonth() + 1 > 9 ? new Date().getMonth() + 1 : '0' + (new Date().getMonth() + 1)
