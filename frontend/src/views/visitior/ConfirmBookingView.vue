@@ -71,8 +71,11 @@ const compareDate = () => {
       dateValidationMessage.value = 'Check-out date is earlier than Check-in date !'
     } else {
       dateValidationMessage.value = ''
-      bookingInfo.total_day =
-        new Date(bookingInfo.checkout).getDate() - new Date(bookingInfo.checkin).getDate()
+      const date1 = new Date(bookingInfo.checkin)
+      const date2 = new Date(bookingInfo.checkout)
+      const diffTime = Math.abs(date2 - date1)
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+      bookingInfo.total_day = diffDays
       prepareBookingInfo()
     }
   }
