@@ -47,6 +47,7 @@ onMounted(() => {
           <div class="col-md-3 mb-4">
             <RouterLink :to="{ name: 'new-bookings' }" class="text-decoration-none">
               <div class="card text-center text-success p-3">
+                <i class="bi bi-box-arrow-up-right d-block text-end"></i>
                 <h6>New Bookings</h6>
                 <h1 class="mt-3 mb-0">{{ summaryResults?.new_bookings }}</h1>
               </div>
@@ -55,6 +56,7 @@ onMounted(() => {
           <div class="col-md-3 mb-4">
             <RouterLink :to="{ name: 'refund-bookings' }" class="text-decoration-none">
               <div class="card text-center text-warning p-3">
+                <i class="bi bi-box-arrow-up-right d-block text-end"></i>
                 <h6>Request for refund Bookings</h6>
                 <h1 class="mt-3 mb-0">{{ summaryResults?.request_refund_bookings }}</h1>
               </div>
@@ -63,6 +65,7 @@ onMounted(() => {
           <div class="col-md-3 mb-4">
             <RouterLink :to="{ name: 'contact-us' }" class="text-decoration-none">
               <div class="card text-center text-info p-3">
+                <i class="bi bi-box-arrow-up-right d-block text-end"></i>
                 <h6>New Contacts</h6>
                 <h1 class="mt-3 mb-0">{{ summaryResults?.new_contacts }}</h1>
               </div>
@@ -71,6 +74,7 @@ onMounted(() => {
           <div class="col-md-3 mb-4">
             <RouterLink :to="{ name: 'ratings-reviews' }" class="text-decoration-none">
               <div class="card text-center text-info p-3">
+                <i class="bi bi-box-arrow-up-right d-block text-end"></i>
                 <h6>New Ratings & Reviews</h6>
                 <h1 class="mt-3 mb-0">{{ summaryResults?.new_ratings_reviews }}</h1>
               </div>
