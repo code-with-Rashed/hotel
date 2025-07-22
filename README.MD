@@ -135,3 +135,60 @@ npm run build
 ```sh
 npm run preview
 ```
+
+<hr/><hr/>
+
+#### This project's database diagram
+![database-diagram](./previews/diagrams/database_diagram.png)<br><hr><br>
+
+## Here are the project's UML diagrams
+#### Here are the activity & use-case diagrams for the admin panel
+![admin-activity-diagram](./previews/diagrams/admin_activity_diagram.png)<br><hr><br>
+![admin-use-case-diagram](./previews/diagrams/admin_use_case_diagram.png)<br><hr><br>
+#### Here are the activity & use-case diagrams for the customer panel
+![customer-activity-diagram](./previews/diagrams/customer_activity_diagram.png)<br><hr><br>
+![customer-use-case-diagram](./previews/diagrams/customer_use_case_diagram.png)<br><hr><br>
+
+#### Here are the project's related preview images for the customer panel
+![home-page-preview-images](./previews/visitor_panel/home-page.png)<br><hr><br>
+![room-page-preview-images](./previews/visitor_panel/room-page.png)<br><hr><br>
+![room-details-page-preview-images](./previews/visitor_panel/room-details-page.png)<br><hr><br>
+![room-booking-page-preview-images](./previews/visitor_panel/room-booking-page.png)<br><hr><br>
+![payment-page-preview-images](./previews/visitor_panel/payment-page.png)<br><hr><br>
+![payment-success-page-preview-images](./previews/visitor_panel/payment-success-page.png)<br><hr><br>
+![login-page-preview-images](./previews/visitor_panel/login-page.jpeg)<br><hr><br>
+![registration-page-preview-images](./previews/visitor_panel/registration-page.jpeg)<br><hr><br>
+![facility-page-preview-images](./previews/visitor_panel/facility-page.png)<br><hr><br>
+![contact-page-preview-images](./previews/visitor_panel/contact-page.png)<br><hr><br>
+![about-page-preview-images](./previews/visitor_panel/about-page.png)<br><hr><br>
+
+#### Here are the project's related preview images for the user panel
+![user-profile-preview-images](./previews/user_panel/user-profile-page.png)<br><hr><br>
+![booking-list-preview-images](./previews/user_panel/booking-list-page.png)<br><hr><br>
+![rating-review-preview-images](./previews/user_panel/rating-review-modal.jpeg)<br><hr><br>
+![booking-details-preview-images](./previews/user_panel/booking-details-modal.jpeg)<br><hr><br>
+![invoice-preview-images](./previews/user_panel/invoice.jpeg)<br><hr><br>
+
+#### Here are the project's related preview images for the admin panel
+![admin-login-preview-images](./previews/admin_panel/room/admin-login-page.png)<br><hr><br>
+![dashboard-preview-images](./previews/admin_panel/room/dashboard-page.png)<br><hr><br>
+<!-- Room management -->
+![room-management-preview-images](./previews/admin_panel/room/room-management-page.png)<br><hr><br>
+![add-room-details-preview-images](./previews/admin_panel/room/add-room-details-modal.jpeg)<br><hr><br>
+![edit-room-details-preview-images](./previews/admin_panel/room/edit-room-details-modal.jpeg)<br><hr><br>
+![room-image-management-preview-images](./previews/admin_panel/room/room-image-management-page.png)<br><hr><br>
+![room-feture-facility-management-preview-images](./previews/admin_panel/room/room-feture-facility-management-modal.jpeg)<br><hr><br>
+<!-- carousel management -->
+![carousel-management-preview-images](./previews/admin_panel/carousel/carousel-management.png)<br><hr><br>
+![add-carousel-preview-images](./previews/admin_panel/carousel/add-carousel-image-modal.jpeg)<br><hr><br>
+![update-carousel-preview-images](./previews/admin_panel/carousel/update-carousel-image-modal.jpeg)<br><hr><br>
+<!-- facility & feature management -->
+![facility-management-preview-images](./previews/admin_panel/facility/facility-management.png)<br><hr><br>
+![add-facility-preview-images](./previews/admin_panel/facility/add-facility-modal.jpeg)<br><hr><br>
+![update-facility-preview-images](./previews/admin_panel/facility/update-facility-modal.png)<br><hr><br>
+![feature-management-preview-images](./previews/admin_panel/features/feature-management.png)<br><hr><br>
+![add-feature-preview-images](./previews/admin_panel/features/add-feature-modal.jpeg)<br><hr><br>
+![update-feature-preview-images](./previews/admin_panel/features/update-feature-modal.jpeg)<br><hr><br>
+
+
+
