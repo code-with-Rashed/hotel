@@ -105,3 +105,33 @@ APP_URL=http://your-backend-domain-name.com
 ```
 php artisan queue:work
 ```
+
+<hr/><hr/>
+
+## Let's start setup the application's frontend
+1. enter to the frontend folder
+```sh
+cd frontend
+```
+2. install the  dependencies
+```sh
+npm install
+```
+##### Set Environment Variables
+1. To open the `.env` file
+- You can need set your backend application's ( api's ) exact url. like...
+```sh
+VITE_API_URL=http://your-backend-api-domain-name.com
+```
+##### Run frontend application in development environment
+```sh
+npm run dev
+```
+##### If you need a production build? Then run this command.
+```sh
+npm run build
+```
+##### Run production build
+```sh
+npm run preview
+```
