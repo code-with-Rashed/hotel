@@ -5,6 +5,7 @@ namespace App\Http\Controllers\AdminPanel;
 use App\Http\Controllers\BaseController;
 use App\Models\Favicon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 
 class FaviconController extends BaseController
@@ -39,6 +40,7 @@ class FaviconController extends BaseController
 
             $favicon->icon = $new_favicon;
             $favicon->save();
+            Cache::forget("favicon");
             return $this->send_response(message: "Favicon successfully updated.");
         }
 
@@ -46,6 +48,7 @@ class FaviconController extends BaseController
         $favicon = new Favicon();
         $favicon->icon = $new_favicon;
         $favicon->save();
+        Cache::forget("favicon");
         return $this->send_response(message: "Favicon successfully created.", status_code: 201);
     }
 }

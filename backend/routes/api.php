@@ -189,6 +189,7 @@ use App\Http\Controllers\VisitiorPanel\LogoController as VisitiorPanelLogoContro
 use App\Http\Controllers\VisitiorPanel\RatingReviewController as VisitiorPanelRatingReviewController;
 use App\Http\Controllers\VisitiorPanel\RoomController as VisitiorPanelRoomController;
 use App\Http\Controllers\VisitiorPanel\AchievementController as VisitiorPanelAchievementController;
+use App\Http\Controllers\VisitiorPanel\FaviconController as VisitiorPanelFaviconController;
 
 // room facility routes for visitiors
 Route::get('/facility', [VisitiorPanelFacilityController::class, 'index']);
@@ -213,6 +214,9 @@ Route::get('/setting', [VisitiorPanelSettingController::class, 'index']);
 
 // Logo routes for visitior panel
 Route::get('/logo', [VisitiorPanelLogoController::class, 'index']);
+
+// favicon routes for visitior panel
+Route::get('/favicon', [VisitiorPanelFaviconController::class, 'index']);
 
 // Rooms routes for visitior panel
 Route::get('/all/room', [VisitiorPanelRoomController::class, 'all_room']);
