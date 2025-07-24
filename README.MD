@@ -189,6 +189,35 @@ npm run preview
 ![feature-management-preview-images](./previews/admin_panel/features/feature-management.png)<br><hr><br>
 ![add-feature-preview-images](./previews/admin_panel/features/add-feature-modal.jpeg)<br><hr><br>
 ![update-feature-preview-images](./previews/admin_panel/features/update-feature-modal.jpeg)<br><hr><br>
+<!-- achievement management -->
+![achievement-management-preview-images](./previews/admin_panel/achievement/achievement-management.png)<br><hr><br>
+![add-achievement-preview-images](./previews/admin_panel/achievement/add-achievement-info-modal.jpeg)<br><hr><br>
+![update-achievement-preview-images](./previews/admin_panel/achievement/update-achievement-info-modal.jpeg)<br><hr><br>
+<!-- address management -->
+![address-management-preview-images](./previews/admin_panel/address/address-management-page.png)<br><hr><br>
+![update-address-management-preview-images](./previews/admin_panel/address/update-address-details-modal.jpeg)<br><hr><br>
+<!-- admin profile management -->
+![admin-profile-management-preview-images](./previews/admin_panel/admin-profile/admin-profile-management-page.png)<br><hr><br>
+<!-- contact request management -->
+![contact-request-management-preview-images](./previews/admin_panel/contact-request/contact-request-management.png)<br><hr><br>
+![view-contact-message-preview-images](./previews/admin_panel/contact-request/view-contact-message-modal.jpeg)<br><hr><br>
+<!-- rating-review management -->
+![rating-review-management-preview-images](./previews/admin_panel/rating-review/rating-review-management.png)<br><hr><br>
+<!-- settings management -->
+![settings-management-preview-images](./previews/admin_panel/settings/settings-management.png)<br><hr><br>
+<!-- team profile management -->
+![team-profile-management-preview-images](./previews/admin_panel/team/team-profile-management.png)<br><hr><br>
+![add-team-profile-preview-images](./previews/admin_panel/team/add-team-profile-modal.jpeg)<br><hr><br>
+![update-team-profile-preview-images](./previews/admin_panel/team/update-team-profile-details-modal.jpeg)<br><hr><br>
+<!-- users management -->
+![users-management-preview-images](./previews/admin_panel/users/user-management.png)<br><hr><br>
+![users-activity-preview-images](./previews/admin_panel/users/user-activity-modal.png)<br><hr><br>
+<!-- booking management -->
+![all-booking-management-preview-images](./previews/admin_panel/booking/all-booking-management.png)<br><hr><br>
+![new-booking-management-preview-images](./previews/admin_panel/booking/new-booking-management.png)<br><hr><br>
+![refund-booking-management-preview-images](./previews/admin_panel/booking/refund-booking-management.png)<br><hr><br>
+
+
 
 
 
