@@ -91,6 +91,8 @@ php artisan migrate:fresh
 ```
 php artisan db:seed --class=AdminDefaultCredential
 ```
+This project's admin panel URL is `https://your-domain-name.com/admin`
+
 Please note that the default admin email is `admin@gmail.com` and the default password is `12345`. You should change admin user credentials before deploying to production.
 
 6. Start the webserver
