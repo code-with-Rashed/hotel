@@ -13,4 +13,10 @@ class Facility extends Model
     {
         return asset('storage') . "/" . $photo;
     }
+
+    // assigned room's facilities
+    public function room_facilities()
+    {
+        return $this->hasMany(RoomFacility::class);
+    }
 }

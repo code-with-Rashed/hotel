@@ -82,8 +82,8 @@ class FacilityController extends BaseController
     // delete facility record
     public function delete($id)
     {
-        $facility = Facility::find($id);
-        if (!is_null($facility)) {
+        $facility = Facility::withExists('room_facilities')->find($id);
+        if (!$facility->room_facilities_exists) {
             $image = public_path("storage/") . $facility->getRawOriginal('image');
             if (file_exists($image)) {
                 @unlink($image);
@@ -91,6 +91,8 @@ class FacilityController extends BaseController
             $facility->delete();
             Cache::forget("facilities");
             return $this->send_response(message: "Facility record successfully deleted.");
+        } else {
+            return $this->send_error(message: "This Facility item has already been assigned to rooms. So don't delete.");
         }
     }
 }

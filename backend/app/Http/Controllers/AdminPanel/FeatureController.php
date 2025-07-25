@@ -58,10 +58,12 @@ class FeatureController extends BaseController
     // delete room feature
     public function delete($id)
     {
-        $feature = Feature::find($id);
-        if (!is_null($feature)) {
+        $feature = Feature::withExists('room_features')->find($id);
+        if (!$feature->room_features_exists) {
             $feature->delete();
             return $this->send_response(message: "Feature successfully deleted.");
+        } else {
+            return $this->send_error(message: "This Feature item has already been assigned to rooms. So don't delete.");
         }
     }
 }
