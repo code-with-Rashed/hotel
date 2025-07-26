@@ -4,6 +4,7 @@ namespace App\Http\Controllers\AdminPanel;
 
 use App\Http\Controllers\BaseController;
 use App\Models\Room;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -99,9 +100,14 @@ class RoomController extends BaseController
     public function delete($id)
     {
         $room = Room::find($id);
-        if (!is_null($room)) {
+        if (is_null($room)) {
+            return $this->send_error(message: "Room not found.");
+        }
+        try {
             $room->delete();
             return $this->send_response(message: "Room successfully deleted.");
+        } catch (QueryException $e) {
+            return $this->send_error(message: "Cannot delete this room because it has associated data (images or features or facilities or bookings, etc.). Please delete related data first.");
         }
     }
 }
