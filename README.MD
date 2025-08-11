@@ -150,6 +150,8 @@ npm run preview
 #### Here are the activity & use-case diagrams for the customer panel
 ![customer-activity-diagram](./previews/diagrams/customer_activity_diagram.png)<br><hr><br>
 ![customer-use-case-diagram](./previews/diagrams/customer_use_case_diagram.png)<br><hr><br>
+![file-structure](./previews/diagrams/file-structure.jpeg)
+<br><hr><br>
 
 #### Here are the project's related preview images for the customer panel
 ![home-page-preview-images](./previews/visitor_panel/home-page.png)<br><hr><br>
