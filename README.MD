@@ -1,16 +1,27 @@
 # MY HOTEL
 
-my hotel is a hotel booking web app that comes will all the necessary feature for a hotel to get their business online. it allows users to book room , give review and ratings to the hotel services.
+My Hotel is a complete online hotel booking solution that helps hotels bring their business online.
 
-It is a hotel booking platform. the guests can check room availability , make reservations , view detaild room information , and provide feedback through integrated review and rating systems.
+### Guest Features
 
-It include an admin panel for booking management , room control , fund & refund management , guest review monitoring and business analytics for informed decision making.
+- Real-time room availability
+- Easy reservations & secure payments
+- Detailed room information with images & facilities
+- Review and rating system for hotel services
 
-It provides real time booking availability , automated reservation management , and detaild reporting to help hotel owners optimize their operations.
+### Admin Features
 
-It handles complete hotel content management including room details , feature & facility information, image galleries and SSLCOMMERZ payment getway.
+- Booking and reservation management
+- Room & availability control
+- Fund and refund management
+- Guest review monitoring
+- Business analytics and detailed reporting
 
-#### If you use this project ? then follow the bellow instructions. 
+### Other Capabilities
+
+- Automated reservation handling
+- Full hotel content management (room details, facilities, galleries)
+- Integrated SSLCOMMERZ payment gateway
 
 ## Installation Proccess
 [Download the Project ( ZIP file ) ](https://github.com/code-with-Rashed/hotel/archive/refs/heads/master.zip)
